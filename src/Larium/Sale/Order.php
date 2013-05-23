@@ -6,7 +6,18 @@ namespace Larium\Sale;
 
 class Order implements OrderInterface 
 {
-    private $status;
+    protected $status;
+
+    protected $items;
+
+    protected $total_amount;
+    
+    protected $items_total;
+
+    public function __construct()
+    {
+        $this->items = new \SplObjectStorage();
+    }
 
     /**
      * {@inheritdoc}
@@ -21,7 +32,13 @@ class Order implements OrderInterface
      */
     public function addItem(OrderItemInterface $item)
     {
-        $this->getItems()->add($item);
+        if ($this->containsItem($item)) {
+            $item->setQuantity($item->getQuantity() + $item->getQuantity());
+        } else {
+            $this->addAdjustment($item);
+        }
+        
+        $item->calculateTotalAmount();
     }
 
     /**
@@ -29,11 +46,144 @@ class Order implements OrderInterface
      */
     public function removeItem(OrderItemInterface $item)
     {
-        $this->getItems()->remove($item);
+        $this->removeAdjustment($item);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function containsItem(OrderItemInterface $item)
+    {
+        return $this->containsAdjustment($item);
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function getItems()
     {
-        return $this->getOrderItems();
+        return $this->getAdjustments();
+    }
+
+
+    public function getOrderItems()
+    {
+        return new \CallbackFilterIterator(
+            $this->items,
+            function ($current, $key, $iterator) {
+                return $current->getType() == OrderItemInterface::TYPE_PRODUCT; 
+            }
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setItems($items)
+    {
+        foreach ($this->items as $item) {
+            $this->addItem($item);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function calculateItemsTotal()
+    {
+        $total = 0;
+        foreach ( $this->getOrderItems() as $item) {
+            $total += $item->getTotalAmount();
+        }
+
+        $this->items_total = $total;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItemsTotal()
+    {
+        $this->calculateItemsTotal();
+
+        return $this->items_total;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function calculateTotalAmount()
+    {
+        $this->calculateAdjustmentsTotal();
+    }
+
+    /**
+     * {@inheritdoc}
+     */   
+    public function getTotalAmount()
+    {
+        return $this->getAdjustmentsTotal();
+    }
+    
+    /* -(  AdjustableInterface  ) ------------------------------------------ */
+
+    /**
+     * {@inheritdoc}
+     */ 
+    public function addAdjustment(AdjustmentInterface $adjustment)
+    {
+        $type = $adjustment->isCharge() 
+            ? AdjustmentInterface::CHARGE
+            : AdjustmentInterface::CREDIT;
+
+        $this->items->attach($adjustment, $type);
+    }
+
+    /**
+     * {@inheritdoc}
+     */ 
+    public function removeAdjustment(AdjustmentInterface $adjustment)
+    {
+        $this->items->detach($adjustment); 
+    }
+
+    /**
+     * {@inheritdoc}
+     */ 
+    public function containsAdjustment(AdjustmentInterface $adjustment)
+    {
+        return $this->items->contains($adjustment);
+    }
+
+    /**
+     * {@inheritdoc}
+     */ 
+    public function getAdjustments()
+    {
+        return $this->items; 
+    }
+
+    /**
+     * {@inheritdoc}
+     */ 
+    public function calculateAdjustmentsTotal()
+    {
+        $total = 0;
+        foreach ( $this->getAdjustments() as $item) {
+            $total += $item->getTotalAmount();
+        }
+
+        $this->total_amount = $total;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */ 
+    public function getAdjustmentsTotal()
+    {
+
+        $this->calculateAdjustmentsTotal();
+
+        return $this->total_amount;   
     }
 }
