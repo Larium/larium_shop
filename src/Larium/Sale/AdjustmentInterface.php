@@ -79,7 +79,7 @@ interface AdjustmentInterface
      * @access public
      * @return void
      */
-    public function setDescription($description);
+    public function setTitle($title);
 
     /**
      * Gets the description for Adjustment 
@@ -87,5 +87,5 @@ interface AdjustmentInterface
      * @access public
      * @return string
      */
-    public function getDescription();
+    public function getTitle();
 }
