@@ -6,7 +6,7 @@ namespace Larium\Sale;
 
 /**
  * AdjustableInterface contains a collection of Adjustments and calculates a 
- * total amount besed on the behaviour of each Adjustment. 
+ * total amount based on the behaviour of each Adjustment. 
  * 
  * @package Larium\Sale
  * @author  Andreas Kollaros <php@andreaskollaros.com> 
@@ -15,21 +15,54 @@ namespace Larium\Sale;
 interface AdjustableInterface
 {
 
+    /**
+     * Adds an Adjustment to Adjustable
+     * 
+     * @param  AdjustmentInterface $adjustment 
+     * @access public
+     * @return void
+     */
     public function addAdjustment(AdjustmentInterface $adjustment);
-    
+
+    /**
+     * Removes an Adjustment 
+     * 
+     * @param  AdjustmentInterface $adjustment 
+     * @access public
+     * @return void
+     */
     public function removeAdjustment(AdjustmentInterface $adjustment);
-    
+
+    /**
+     * Checks if given Adjustment exists in Adjustable.
+     * 
+     * @param  AdjustmentInterface $adjustment 
+     * @access public
+     * @return boolean
+     */
     public function containsAdjustment(AdjustmentInterface $adjustment);
 
+    /**
+     * Gets all Adjustments for Adjustable object.
+     * 
+     * @access public
+     * @return array|mixed
+     */
     public function getAdjustments();
 
     /**
-     * Calculates the total amount of adjustments.
+     * Calculates the total amount of Adjustments.
      *  
      * @access public
      * @return void
      */
     public function calculateAdjustmentsTotal();
     
+    /**
+     * Returns the total amount of all Adjustments
+     * 
+     * @access public
+     * @return number
+     */
     public function getAdjustmentsTotal();
 }
