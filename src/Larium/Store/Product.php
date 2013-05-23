@@ -4,7 +4,9 @@
 
 namespace Larium\Store;
 
-class Product
+use Larium\Sale\OrderableInterface;
+
+class Product implements OrderableInterface;
 {
     protected $name;
 
@@ -23,4 +25,36 @@ class Product
     protected $updated_at;
 
     protected $deleted_at;
+
+    protected $unit_price;
+
+    public function getUnitPrice()
+    {
+        return $this->unit_price;
+    }
+
+    public function setUnitPrice($price)
+    {
+        $this->unit_price = $price;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
 }
