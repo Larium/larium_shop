@@ -12,9 +12,9 @@ interface OrderItemInterface
 
     public function getUnitPrice();
 
-    public function setQuantity();
+    public function setQuantity($quantity);
     
-    public function getQuantity($quantity);
+    public function getQuantity();
 
     public function setOrder(OrderInterface $order);
     
