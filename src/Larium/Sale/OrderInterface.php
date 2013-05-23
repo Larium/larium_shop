@@ -53,7 +53,8 @@ interface OrderInterface extends AdjustableInterface
     public function containsItem(OrderItemInterface $item);
 
     /**
-     * Returns a collection of OrderItem.
+     * Returns a collection of items in order that are chargable 
+     * products
      * 
      * @access public
      * @return array|mixed
@@ -61,7 +62,8 @@ interface OrderInterface extends AdjustableInterface
     public function getItems();
 
     /**
-     * Calculates the total amount of OrderItem collection.
+     * Calculates the total amount of items in order that are chargable 
+     * products.
      * 
      * @access public
      * @return void
@@ -91,6 +93,4 @@ interface OrderInterface extends AdjustableInterface
      * @return number
      */
     public function getTotalAmount();
-
-
 }
