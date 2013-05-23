@@ -77,7 +77,7 @@ interface OrderInterface extends AdjustableInterface
     public function getItemsTotal();
 
     /**
-     * Calculates the total amount of Order.
+     * Calculates the total amount of Order including Adjustments.
      * 
      * @access public
      * @return void
