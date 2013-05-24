@@ -6,9 +6,11 @@ namespace Larium\Store;
 
 use Larium\Sale\OrderableInterface;
 
-class Product implements OrderableInterface;
+class Product implements OrderableInterface
 {
-    protected $name;
+    protected $sku;
+
+    protected $title;
 
     protected $description;
 
@@ -56,5 +58,16 @@ class Product implements OrderableInterface;
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+
+
+    public function setSku($sku)
+    {
+        $this->sku = $sku;
+    }
+
+    public function getSku()
+    {
+        return $this->sku;
     }
 }
