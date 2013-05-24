@@ -1,0 +1,25 @@
+# vim: set expandtab tabstop=2 shiftwidth=2 softtabstop=2:
+product_1:
+  sku: 'PRD-01-0001'
+  title: 'T-Shirt LongSleeve'
+  unit_price: 12
+product_2:
+  sku: 'PRD-01-0002'
+  title: 'T-Shirt ShortSleeve'
+  unit_price: 6
+product_3:
+  sku: 'PRD-02-0001'
+  title: 'Coffee Mug'
+  unit_price: 9
+credit_card:
+  id: 'BILL-01'
+  title: 'CreditCard'
+  cost: 0
+cash:
+  id: 'BILL-02'
+  title: 'Cash'
+  cost: 0
+cash_on_delivery:
+  id: 'BILL-03'
+  title: 'Cash On Delivery'
+  cost: 4
