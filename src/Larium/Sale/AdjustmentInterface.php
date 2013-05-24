@@ -73,19 +73,19 @@ interface AdjustmentInterface
     public function getAdjustable();
 
     /**
-     * Sets the description for Adjustment 
+     * Sets the identify variable for Adjustment 
      * 
-     * @param  mixed $description 
+     * @param  string $id
      * @access public
      * @return void
      */
-    public function setTitle($title);
+    public function setIdentify($id);
 
     /**
-     * Gets the description for Adjustment 
+     * Gets the identify variable for Adjustment 
      * 
      * @access public
      * @return string
      */
-    public function getTitle();
+    public function getIdentify();
 }

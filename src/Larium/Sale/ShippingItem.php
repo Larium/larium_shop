@@ -8,5 +8,5 @@ class ShippingItem extends OrderItem
 {
     protected $type = OrderItemInterface::TYPE_SHIPPING;
 
-    protected $title = 'Shipping Method #1';
+    protected $sku = 'Shipping Method #1';
 }

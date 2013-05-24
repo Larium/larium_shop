@@ -12,11 +12,13 @@ class OrderItem implements OrderItemInterface
 
     protected $order;
 
-    protected $total_amount;
+    protected $total_price;
 
     protected $type = OrderItemInterface::TYPE_PRODUCT;
 
-    protected $title;
+    protected $sku;
+
+    protected $description;
 
     protected $is_charge = true;
     
@@ -68,19 +70,29 @@ class OrderItem implements OrderItemInterface
         return $this->type;
     }
 
-    public function calculateTotalAmount()
+    public function calculateTotalPrice()
     {
-        $this->total_amount = $this->getQuantity() * $this->getAmount();
+        $this->total_price = $this->getQuantity() * $this->getAmount();
     }
 
     /**
      * {@inheritdoc}
      */ 
-    public function getTotalAmount()
+    public function getTotalPrice()
     {
-        $this->calculateTotalAmount();
+        $this->calculateTotalPrice();
 
-        return $this->total_amount;
+        return $this->total_price;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
     }
 
     /* -(  AdjustmentInterface  ) ------------------------------------------ */
@@ -119,7 +131,7 @@ class OrderItem implements OrderItemInterface
      */ 
     public function setAdjustable(AdjustableInterface $adjustable)
     {
-        $this->adjustable = $order;
+        $this->order = $adjustable;
     }
 
     /**
@@ -133,16 +145,16 @@ class OrderItem implements OrderItemInterface
     /**
      * {@inheritdoc}
      */ 
-    public function setTitle($title)
+    public function setIdentify($id)
     {
-        $this->title = $title;
+        $this->sku = $id;
     }
 
     /**
      * {@inheritdoc}
      */ 
-    public function getTitle()
+    public function getIdentify()
     {
-        return $this->title;
+        return $this->sku;
     }
 }

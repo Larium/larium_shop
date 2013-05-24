@@ -76,5 +76,9 @@ interface OrderItemInterface extends AdjustmentInterface
      * @access public
      * @return number
      */
-    public function getTotalAmount();
+    public function getTotalPrice();
+
+    public function getDescription();
+
+    public function setDescription($description);
 }
