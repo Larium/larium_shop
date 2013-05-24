@@ -68,7 +68,7 @@ interface OrderInterface extends AdjustableInterface
      * @access public
      * @return void
      */
-    public function calculateItemsTotal();
+    public function calculateProductsTotal();
     
     /**
      * Gets the total amount of OrderItem collection.
@@ -76,7 +76,7 @@ interface OrderInterface extends AdjustableInterface
      * @access public
      * @return number
      */
-    public function getItemsTotal();
+    public function getProductsTotal();
 
     /**
      * Calculates the total amount of Order including Adjustments.

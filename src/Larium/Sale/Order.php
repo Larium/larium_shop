@@ -32,13 +32,13 @@ class Order implements OrderInterface
      */
     public function addItem(OrderItemInterface $item)
     {
-        if ($this->containsItem($item)) {
-            $item->setQuantity($item->getQuantity() + $item->getQuantity());
-        } else {
-            $this->addAdjustment($item);
-        }
+        $item->calculateTotalPrice();
+
+        $this->addAdjustment($item);
         
-        $item->calculateTotalAmount();
+        $this->calculateTotalAmount();
+
+        $item->setOrder($this);
     }
 
     /**
@@ -47,6 +47,8 @@ class Order implements OrderInterface
     public function removeItem(OrderItemInterface $item)
     {
         $this->removeAdjustment($item);
+        
+        $this->calculateTotalAmount();    
     }
 
     /**
@@ -66,7 +68,13 @@ class Order implements OrderInterface
     }
 
 
-    public function getOrderItems()
+    /**
+     * Gets only adjustments that have the type of Product. 
+     * 
+     * @access public
+     * @return Iterator
+     */
+    public function getProductItems()
     {
         return new \CallbackFilterIterator(
             $this->items,
@@ -89,11 +97,11 @@ class Order implements OrderInterface
     /**
      * {@inheritdoc}
      */
-    public function calculateItemsTotal()
+    public function calculateProductsTotal()
     {
         $total = 0;
-        foreach ( $this->getOrderItems() as $item) {
-            $total += $item->getTotalAmount();
+        foreach ( $this->getProductItems() as $item) {
+            $total += $item->getTotalPrice();
         }
 
         $this->items_total = $total;
@@ -102,10 +110,8 @@ class Order implements OrderInterface
     /**
      * {@inheritdoc}
      */
-    public function getItemsTotal()
+    public function getProductsTotal()
     {
-        $this->calculateItemsTotal();
-
         return $this->items_total;
     }
 
@@ -114,7 +120,10 @@ class Order implements OrderInterface
      */
     public function calculateTotalAmount()
     {
+        $this->calculateProductsTotal();
+        
         $this->calculateAdjustmentsTotal();
+        
     }
 
     /**
@@ -170,7 +179,7 @@ class Order implements OrderInterface
     {
         $total = 0;
         foreach ( $this->getAdjustments() as $item) {
-            $total += $item->getTotalAmount();
+            $total += $item->getTotalPrice();
         }
 
         $this->total_amount = $total;
