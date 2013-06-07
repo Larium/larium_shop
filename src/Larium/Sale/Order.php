@@ -4,6 +4,8 @@
 
 namespace Larium\Sale;
 
+use Larium\CallbackFilterIterator;
+
 class Order implements OrderInterface 
 {
     protected $status;
@@ -76,12 +78,23 @@ class Order implements OrderInterface
      */
     public function getProductItems()
     {
-        return new \CallbackFilterIterator(
-            $this->items,
-            function ($current, $key, $iterator) {
-                return $current->getType() == OrderItemInterface::TYPE_PRODUCT; 
-            }
-        );
+        return $this->filter_by_type(OrderItemInterface::TYPE_PRODUCT);
+    }
+
+
+    public function getCreditItems()
+    {
+        return $this->filter_by_type(OrderItemInterface::TYPE_DISCOUNT);
+    }
+
+    public function getShippingItems()
+    {
+        return $this->filter_by_type(OrderItemInterface::TYPE_SHIPPING);
+    }
+
+    public function getBillingItems()
+    {
+        return $this->filter_by_type(OrderItemInterface::TYPE_BILLING);
     }
 
     /**
@@ -194,5 +207,16 @@ class Order implements OrderInterface
         $this->calculateAdjustmentsTotal();
 
         return $this->total_amount;   
+    }
+
+
+    protected function filter_by_type($type)
+    {
+        return new CallbackFilterIterator(
+            $this->items,
+            function ($current, $key, $iterator) use ($type) {
+                return $current->getType() == $type; 
+            }
+        );        
     }
 }
