@@ -11,14 +11,14 @@ class Cart
     protected $order;
 
     /**
-     * Add a Product to the Order. 
+     * Add an Orderable class to the Order. 
      * 
-     * @param  Product $product 
-     * @param  int     $quantity 
+     * @param  OrderableInterface $product 
+     * @param  int                $quantity 
      * @access public
      * @return OrderItem
      */
-    public function addProduct(Product $product, $quantity=1)
+    public function addProduct(OrderableInterface $product, $quantity=1)
     {
         $item = $this->item_from_product($product, $quantity);
 
@@ -85,22 +85,28 @@ class Cart
     }
 
 
-    public function addBillingMethod(BillingMethod $billing, $amount=0)
+    public function setBillingMethod(BillingMethod $billing, $amount=0)
     {
         if ($billing->getCost() > 0 ) {
             $billing_item = new OrderItem();
             $billing_item->setUnitPrice($billing->getCost());
-            $billing_item->setIdentify($billing->getId());
-            $billing_item->setType(OrderItemInterface::TYPE_BILLING);            
         } else {
             $billing_item = new CreditItem();
             $billing_item->setUnitPrice($amount);
-            $billing_item->setIdentify($billing->getId());
-            $billing_item->setType(OrderItemInterface::TYPE_BILLING);
         }
+
+        $billing_item->setIdentify($billing->getId());
+        $billing_item->setType(OrderItemInterface::TYPE_BILLING);
+        $billing_item->setDescription($billing->getTitle());
 
         $this->getOrder()->addItem($billing_item);
     }
+
+    public function setShippingMethod()
+    {
+        
+    }
+    
 
     /**
      * Creates an OrderItem from a given Product. 
