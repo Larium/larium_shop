@@ -4,12 +4,8 @@
 
 namespace Larium\Store;
 
-use Larium\Sale\OrderableInterface;
-
-class Product implements OrderableInterface
+class Product
 {
-    protected $sku;
-
     protected $title;
 
     protected $description;
@@ -28,7 +24,17 @@ class Product implements OrderableInterface
 
     protected $deleted_at;
 
-    protected $unit_price;
+    protected $variants;
+
+    protected $default_variant;
+
+    public function __construct()
+    {
+        $this->variants = new \SplObjectStorage();
+
+        $default = new Variant();
+        $this->addVariant($default, true);
+    }
 
     public function getUnitPrice()
     {
@@ -60,14 +66,45 @@ class Product implements OrderableInterface
         $this->title = $title;
     }
 
-
-    public function setSku($sku)
-    {
-        $this->sku = $sku;
-    }
-
     public function getSku()
     {
-        return $this->sku;
+        return $this->getDefaultVariant()->getSku();
+    }
+
+    public function getVariants()
+    {
+        return $this->variants;
+    }
+
+    public function setVariants($variants)
+    {
+        $this->variants = $variants;
+    }
+
+    public function addVariant(Variant $variant, $is_default=false)
+    {
+        $variant->setIsDefault($is_default);
+        $this->variants->attach($variant, 'default');
+    }
+
+    public function removeVariant(Variant $variant)
+    {
+        $this->variants->detach($variant);
+    }
+
+
+    public function getDefaultVariant()
+    {
+        if (null === $this->default_variant)  {
+            $variants = $this->getVariants();
+            foreach( $variants as $v) {
+                if ($v->getIsDefault()) {
+                    $this->default_variant = $v;
+                    break;
+                }
+            }
+        }
+
+        return $this->default_variant;
     }
 }

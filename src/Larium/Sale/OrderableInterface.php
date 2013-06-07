@@ -7,7 +7,7 @@ namespace Larium\Sale;
 interface OrderableInterface
 {
     /**
-     * Gets the price of a unit of this product.
+     * Gets the price of a unit.
      *
      * @access public
      * @return number
@@ -15,10 +15,10 @@ interface OrderableInterface
     public function getUnitPrice();
 
     /**
-     * Gets the title of the product.
+     * Gets the unique sku number.
      *
      * @access public
      * @return string 
      */
-    public function getTitle(); 
+    public function getSku(); 
 }
