@@ -8,20 +8,27 @@ use Larium\Payment\BillingMethod;
 
 class Cart
 {
+    /**
+     * An order instance that belongs to this cart.
+     *
+     * @var Order
+     * @access protected
+     */
     protected $order;
 
     /**
      * Add an Orderable class to the Order. 
      * 
-     * @param  OrderableInterface $product 
+     * @param  OrderableInterface $orderable 
      * @param  int                $quantity 
      * @access public
      * @return OrderItem
      */
-    public function addProduct(OrderableInterface $product, $quantity=1)
+    public function addItem(OrderableInterface $orderable, $quantity=1)
     {
-        $item = $this->item_from_product($product, $quantity);
+        $item = $this->item_from_orderable($orderable, $quantity);
 
+        // Checks for duplicated item an increase quantity instead of adding.
         foreach ($this->getOrder()->getProductItems() as $order_item) {
             if ($item->getIdentify() == $order_item->getIdentify()) {
                 
@@ -106,25 +113,47 @@ class Cart
     {
         
     }
-    
+
+    public function getItems()
+    {
+        return $this->getOrder()->getItems();
+    }
+
+    public function getItemsCount()
+    {
+        $items = $this->getItems();
+
+        if (is_array($items)) {
+            return count($items);
+        } else {
+            return $items->count();
+        }
+    } 
+
+    public function getTotalQuantity()
+    {
+        return $this->getOrder()->getTotalQuantity();
+    }   
 
     /**
      * Creates an OrderItem from a given Product. 
      * 
-     * @param  Product $product 
-     * @param  int $quantity 
+     * @param  OrderableInterface $orderable 
+     * @param  int                $quantity 
      * @access protected
      * @return void
      */
-    protected function item_from_product(Product $product, $quantity=1)
-    {
+    protected function item_from_orderable(
+        OrderableInterface $orderable, 
+        $quantity=1
+    ) {
         $item = new OrderItem();
         
         $item->setType(OrderItemInterface::TYPE_PRODUCT);
-        $item->setIdentify($product->getSku());
-        $item->setUnitPrice($product->getUnitPrice());
+        $item->setIdentify($orderable->getSku());
+        $item->setUnitPrice($orderable->getUnitPrice());
         $item->setQuantity($quantity);
-        $item->setDescription($product->getTitle());
+        $item->setDescription($orderable->getDescription());
 
         return $item;
     }
