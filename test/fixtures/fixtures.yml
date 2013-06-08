@@ -7,7 +7,7 @@ product_1:
 product_2:
   title: 'Coffee Mug'
   variants:
-    - {sku: 'PRD-02-0001', unit_price: 9}
+    - {sku: 'PRD-02-0001', unit_price: 9, is_default: true}
     - {sku: 'PRD-02-0002', unit_price: 9}
 credit_card:
   id: 'BILL-01'
