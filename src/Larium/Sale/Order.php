@@ -146,6 +146,17 @@ class Order implements OrderInterface
     {
         return $this->getAdjustmentsTotal();
     }
+
+
+    public function getTotalQuantity()
+    {
+        $quantity = 0;
+        foreach ($this->getItems() as $item) {
+            $quantity += $item->getQuantity();
+        }
+
+        return $quantity;
+    }
     
     /* -(  AdjustableInterface  ) ------------------------------------------ */
 
@@ -213,7 +224,7 @@ class Order implements OrderInterface
     protected function filter_by_type($type)
     {
         return new CallbackFilterIterator(
-            $this->items,
+            $this->getAdjustments(),
             function ($current, $key, $iterator) use ($type) {
                 return $current->getType() == $type; 
             }
