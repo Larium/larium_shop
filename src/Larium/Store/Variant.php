@@ -78,6 +78,11 @@ class Variant implements OrderableInterface
         $this->unit_price = $unit_price;
     }
     
+    public function getDescription()
+    {
+        return $this->getProduct()->getTitle();
+    }
+        
     /**
      * Get stock_units.
      *

@@ -20,5 +20,17 @@ interface OrderableInterface
      * @access public
      * @return string 
      */
-    public function getSku(); 
+    public function getSku();
+
+
+    /**
+     * Gets a description of Orderable.
+     *
+     * Usefull when preview Order Items whithout the need to load Orderable 
+     * resource.
+     * 
+     * @access public
+     * @return void
+     */
+    public function getDescription();
 }
