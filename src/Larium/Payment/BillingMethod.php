@@ -14,7 +14,6 @@ class BillingMethod
 
     protected $cost;
 
-
     public function getId()
     {
         return $this->id;

@@ -10,48 +10,64 @@ class OrderItem implements OrderItemInterface
 
     protected $quantity=1;
 
-    protected $order;
-
     protected $total_price;
-
-    protected $type = OrderItemInterface::TYPE_PRODUCT;
 
     protected $sku;
 
     protected $description;
 
-    protected $is_charge = true;
-    
-    protected $is_credit = false;
+    protected $order;
 
+    protected $orderable;
+
+    protected $identifier;
+
+    /**
+     * {@inheritdoc}
+     */
     public function setUnitPrice($price)
     {
-        $this->setAmount($price);
+        $this->unit_price = $price;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getUnitPrice()
     {
-        return $this->getAmount();
+        return $this->unit_price;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function getQuantity()
     {
         return $this->quantity;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setOrder(OrderInterface $order)
     {
-        $this->setAdjustable($order);
+        $this->order = $order;
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
     public function getOrder()
     {
-        return $this->getAdjustable();
+        return $this->order;
     }
 
     /**
@@ -72,7 +88,7 @@ class OrderItem implements OrderItemInterface
 
     public function calculateTotalPrice()
     {
-        $this->total_price = $this->getQuantity() * $this->getAmount();
+        $this->total_price = $this->getQuantity() * $this->getUnitPrice();
     }
 
     /**
@@ -85,6 +101,11 @@ class OrderItem implements OrderItemInterface
         return $this->total_price;
     }
 
+    public function setTotalPrice($price)
+    {
+        $this->total_price = $price;
+    }
+
     public function getDescription()
     {
         return $this->description;
@@ -95,66 +116,54 @@ class OrderItem implements OrderItemInterface
         $this->description = $description;
     }
 
-    /* -(  AdjustmentInterface  ) ------------------------------------------ */
-
-    public function setAmount($amount)
+    public function setSku($sku)
     {
-        $this->unit_price = $amount;
+        $this->setIdentify($sku);
     }
 
-    /**
-     * {@inheritdoc}
-     */  
-    public function getAmount()
+    public function getSku()
     {
-        return $this->unit_price;
+        return $this->getIdentify();
     }
 
     /**
      * {@inheritdoc}
      */ 
-    public function isCharge()
+    public function setIdentifier($id)
     {
-        return $this->is_charge;
+        $this->identifier = $id;
     }
 
     /**
      * {@inheritdoc}
      */ 
-    public function isCredit()
+    public function getIdentifier()
     {
-        return $this->is_credit;
+        if (null == $this->identifier) {
+            $this->generateIdentifier();
+        }
+
+        return $this->identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */ 
-    public function setAdjustable(AdjustableInterface $adjustable)
+
+    public function generateIdentifier()
     {
-        $this->order = $adjustable;
+        if (null === $this->getOrderable()) {
+            throw new \Exception("You must add an Orderable object before adding this item in Order");
+        }
+        
+        $this->identifier = md5($this->getOrderable()->getSku());
     }
 
-    /**
-     * {@inheritdoc}
-     */ 
-    public function getAdjustable()
+    public function setOrderable(OrderableInterface $orderable)
     {
-        return $this->order;
+        $this->orderable = $orderable;
     }
 
-    /**
-     * {@inheritdoc}
-     */ 
-    public function setIdentify($id)
+    public function getOrderable()
     {
-        $this->sku = $id;
+        return $this->orderable;
     }
 
-    /**
-     * {@inheritdoc}
-     */ 
-    public function getIdentify()
-    {
-        return $this->sku;
-    }
 }

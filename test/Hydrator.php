@@ -6,18 +6,28 @@ class Hydrator
 {
     protected $class_name;
     protected $mapping;
+    protected $storage;
 
-    public function __construct($class_name, array $mappings)
+    public function __construct($class_name)
     {
         $this->class_name = $class_name;
-        $this->mappings = $mappings;
+        $this->mappings = include __DIR__ . '/data_mapping.conf.php';
+        $this->storage = new \SplObjectStorage();
     }
 
-    public function hydrate(array $data, $class_name = null)
+    public function hydrate(array $data, $key=null, $class_name=null)
     {
+        foreach ($this->storage as $item) {
+            if ($this->storage[$item] == $key) {
+                return $item;
+            }
+        }
+        
         $class_name = $class_name ?: $this->class_name;
         
-        $maps = $this->mappings[$this->class_name];
+        $maps = isset($this->mappings[$this->class_name])
+            ? $this->mappings[$this->class_name]
+            : array();
         
         $class = new $class_name();
         
@@ -30,7 +40,7 @@ class Hydrator
                 if (array_key_exists($key, $maps)) {
                     $storage = new SplObjectStorage();
                     foreach ($value as $k=>$v) {
-                        $nest = $this->hydrate($v, $maps[$key]['class']);
+                        $nest = $this->hydrate($v, null, $maps[$key]['class']);
                         $storage->attach($nest);
                         if (isset($maps[$key]['inverse'])) {
                             $nest_mutator = 'set' . $this->camelize($maps[$key]['inverse']);
@@ -44,6 +54,8 @@ class Hydrator
             } 
         }
         
+        $this->storage->attach($class, $key);
+
         return $class;
     }
 

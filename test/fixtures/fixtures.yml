@@ -21,3 +21,10 @@ cash_on_delivery:
   id: 'BILL-03'
   title: 'Cash On Delivery'
   cost: 4
+order_item_1:
+  unit_price: 12
+  quantity: 1
+  total_price: 12
+  type: 1
+  sku: 'PRD-01-0001'
+  description: 'T-Shirt LongSleeve'

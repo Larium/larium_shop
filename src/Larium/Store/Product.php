@@ -84,7 +84,7 @@ class Product
     public function addVariant(Variant $variant, $is_default=false)
     {
         $variant->setIsDefault($is_default);
-        $this->variants->attach($variant, 'default');
+        $this->variants->attach($variant);
     }
 
     public function removeVariant(Variant $variant)

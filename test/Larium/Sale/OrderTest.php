@@ -4,6 +4,9 @@
 
 namespace Larium\Sale;
 
+use Larium\Payment\Payment;
+use Larium\Payment\CreditCard;
+
 require_once 'init.php';
 
 class OrderTest extends \PHPUnit_Framework_TestCase
@@ -28,12 +31,13 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $variant2 = $product2->getDefaultVariant();
         $item2 = $cart->addItem($variant2);
         
+        $this->assertEquals(2, $cart->getItemsCount());
         $this->assertEquals(2, $cart->getTotalQuantity());
 
         $this->assertEquals(21, $cart->getOrder()->getTotalAmount());
 
     }
-
+    
     public function testCartAddSameVariant()
     {
         $cart = new Cart();
@@ -48,12 +52,38 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $cart->getOrder()->getTotalQuantity());
     }
 
+
+    public function testOrderContainsItem()
+    {
+        $cart = new Cart();
+        $order = $cart->getOrder();
+        $product = $this->getProduct('product_1');
+        $variant = $product->getDefaultVariant();
+        $item = $cart->addItem($variant);
+
+        $this->assertTrue($order->containsItem($item));
+
+        /*
+        $item = $this->getOrderItem('order_item_1');
+
+        $item->setOrder($order);
+
+        $this->assertTrue($order->containsItem($item));*/
+    }
+
     private function getProduct($id)
     {
         $data = $this->loader->getData();
         
-        $mapping = include __DIR__ . '/../../data_mapping.conf.php';
-        $hydrator = new \Hydrator('Larium\\Store\\Product', $mapping);
-        return $hydrator->hydrate($data[$id]);
+        $hydrator = new \Hydrator('Larium\\Store\\Product');
+        return $hydrator->hydrate($data[$id], $id);
+    }
+
+    private function getOrderItem($id)
+    {
+        $data = $this->loader->getData();
+        
+        $hydrator = new \Hydrator('Larium\\Sale\\OrderItem');
+        return $hydrator->hydrate($data[$id], $id);
     }
 }

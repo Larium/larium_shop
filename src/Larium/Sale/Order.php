@@ -12,13 +12,20 @@ class Order implements OrderInterface
 
     protected $items;
 
+    protected $adjustments;
+    
+    protected $adjustments_total;
+
+    protected $items_total;
+
     protected $total_amount;
     
-    protected $items_total;
+    protected $total_payment;
 
     public function __construct()
     {
         $this->items = new \SplObjectStorage();
+        $this->adjustments = new \SplObjectStorage();
     }
 
     /**
@@ -35,8 +42,10 @@ class Order implements OrderInterface
     public function addItem(OrderItemInterface $item)
     {
         $item->calculateTotalPrice();
+        
+        $item->generateIdentifier();
 
-        $this->addAdjustment($item);
+        $this->items->attach($item);
         
         $this->calculateTotalAmount();
 
@@ -48,7 +57,7 @@ class Order implements OrderInterface
      */
     public function removeItem(OrderItemInterface $item)
     {
-        $this->removeAdjustment($item);
+        $this->items->detach($item);
         
         $this->calculateTotalAmount();    
     }
@@ -58,7 +67,7 @@ class Order implements OrderInterface
      */
     public function containsItem(OrderItemInterface $item)
     {
-        return $this->containsAdjustment($item);
+        return $this->items->contains($item);
     }
     
     /**
@@ -66,35 +75,7 @@ class Order implements OrderInterface
      */
     public function getItems()
     {
-        return $this->getAdjustments();
-    }
-
-
-    /**
-     * Gets only adjustments that have the type of Product. 
-     * 
-     * @access public
-     * @return Iterator
-     */
-    public function getProductItems()
-    {
-        return $this->filter_by_type(OrderItemInterface::TYPE_PRODUCT);
-    }
-
-
-    public function getCreditItems()
-    {
-        return $this->filter_by_type(OrderItemInterface::TYPE_DISCOUNT);
-    }
-
-    public function getShippingItems()
-    {
-        return $this->filter_by_type(OrderItemInterface::TYPE_SHIPPING);
-    }
-
-    public function getBillingItems()
-    {
-        return $this->filter_by_type(OrderItemInterface::TYPE_BILLING);
+        return $this->items;
     }
 
     /**
@@ -110,10 +91,10 @@ class Order implements OrderInterface
     /**
      * {@inheritdoc}
      */
-    public function calculateProductsTotal()
+    public function calculateItemsTotal()
     {
         $total = 0;
-        foreach ( $this->getProductItems() as $item) {
+        foreach ( $this->getItems() as $item) {
             $total += $item->getTotalPrice();
         }
 
@@ -123,7 +104,7 @@ class Order implements OrderInterface
     /**
      * {@inheritdoc}
      */
-    public function getProductsTotal()
+    public function getItemsTotal()
     {
         return $this->items_total;
     }
@@ -133,9 +114,11 @@ class Order implements OrderInterface
      */
     public function calculateTotalAmount()
     {
-        $this->calculateProductsTotal();
+        $this->calculateItemsTotal();
         
         $this->calculateAdjustmentsTotal();
+
+        $this->total_amount = $this->items_total + $this->adjustments_total;
         
     }
 
@@ -144,7 +127,9 @@ class Order implements OrderInterface
      */   
     public function getTotalAmount()
     {
-        return $this->getAdjustmentsTotal();
+        $this->calculateTotalAmount();
+
+        return $this->total_amount;
     }
 
 
@@ -156,6 +141,11 @@ class Order implements OrderInterface
         }
 
         return $quantity;
+    }
+
+    public function getBalance()
+    {
+        return $total_amount - $total_payment;
     }
     
     /* -(  AdjustableInterface  ) ------------------------------------------ */
@@ -169,6 +159,7 @@ class Order implements OrderInterface
             ? AdjustmentInterface::CHARGE
             : AdjustmentInterface::CREDIT;
 
+        $adjustment->setAdjustable($this);
         $this->items->attach($adjustment, $type);
     }
 
@@ -177,7 +168,7 @@ class Order implements OrderInterface
      */ 
     public function removeAdjustment(AdjustmentInterface $adjustment)
     {
-        $this->items->detach($adjustment); 
+        $this->adjustments->detach($adjustment); 
     }
 
     /**
@@ -185,7 +176,13 @@ class Order implements OrderInterface
      */ 
     public function containsAdjustment(AdjustmentInterface $adjustment)
     {
-        return $this->items->contains($adjustment);
+        foreach ($this->adjustments as $item) {
+            if ($item->getIdentify() == $adjustment->getIdentify()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -193,7 +190,7 @@ class Order implements OrderInterface
      */ 
     public function getAdjustments()
     {
-        return $this->items; 
+        return $this->adjustments; 
     }
 
     /**
@@ -203,10 +200,10 @@ class Order implements OrderInterface
     {
         $total = 0;
         foreach ( $this->getAdjustments() as $item) {
-            $total += $item->getTotalPrice();
+            $total += $item->getAmount();
         }
 
-        $this->total_amount = $total;
+        $this->adjustments_total = $total;
     }
     
     /**
@@ -217,7 +214,7 @@ class Order implements OrderInterface
 
         $this->calculateAdjustmentsTotal();
 
-        return $this->total_amount;   
+        return $this->adjustments_total;   
     }
 
 

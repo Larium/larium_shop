@@ -4,13 +4,18 @@
 
 namespace Larium\Sale;
 
-interface OrderItemInterface extends AdjustmentInterface
+interface OrderItemInterface
 {
-    const TYPE_PRODUCT  = 1;
-    const TYPE_SHIPPING = 2;
-    const TYPE_BILLING  = 3;
-    const TYPE_DISCOUNT = 4;
-
+    /**
+     * Sets the price of a unit.
+     * 
+     * Total price of item will be calculated from this price and the 
+     * quantity.
+     * 
+     * @param number $price 
+     * @access public
+     * @return void
+     */
     public function setUnitPrice($price);
 
     public function getUnitPrice();
@@ -49,27 +54,6 @@ interface OrderItemInterface extends AdjustmentInterface
     public function getOrder();
 
     /**
-     * Gets the type of an item in order.
-     * 
-     * @access public
-     * @return integer
-     */
-    public function getType();
-    
-    /**
-     * Sets the type of this item.
-     * Can be one of 
-     *  self::TYPE_PRODUCT
-     *  self::TYPE_SHIPPING
-     *  self::TYPE_BILLING
-     *  self::TYPE_DISCOUNT
-     * 
-     * @access public
-     * @return void
-     */
-    public function setType($type);
-
-    /**
      * Returns the total amount of item based on price per quantity and on 
      * Adjustments total amount.
      * 
@@ -81,4 +65,8 @@ interface OrderItemInterface extends AdjustmentInterface
     public function getDescription();
 
     public function setDescription($description);
+
+    public function getIdentifier();
+    
+    public function generateIdentifier();
 }
