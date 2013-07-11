@@ -44,11 +44,14 @@ interface OrderInterface extends AdjustableInterface
     public function removeItem(OrderItemInterface $item);
     
     /**
-     * Checks if OrderItem collection contains the specific item. 
+     * Checks if the collection of order items contains the specific item with 
+     * the same identifier.
+     *
+     * Returns the item found in collection or false.
      * 
      * @param  OrderItemInterface $item 
      * @access public
-     * @return boolean
+     * @return boolean|OrderItemInterface
      */
     public function containsItem(OrderItemInterface $item);
 

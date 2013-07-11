@@ -70,22 +70,6 @@ class OrderItem implements OrderItemInterface
         return $this->order;
     }
 
-    /**
-     * {@inheritdoc}
-     */ 
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */ 
-    public function getType()
-    {
-        return $this->type;
-    }
-
     public function calculateTotalPrice()
     {
         $this->total_price = $this->getQuantity() * $this->getUnitPrice();
@@ -118,12 +102,12 @@ class OrderItem implements OrderItemInterface
 
     public function setSku($sku)
     {
-        $this->setIdentify($sku);
+        $this->setIdentifier($sku);
     }
 
     public function getSku()
     {
-        return $this->getIdentify();
+        return $this->getIdentifier();
     }
 
     /**
@@ -153,12 +137,14 @@ class OrderItem implements OrderItemInterface
             throw new \Exception("You must add an Orderable object before adding this item in Order");
         }
         
-        $this->identifier = md5($this->getOrderable()->getSku());
+        $this->identifier = $this->getOrderable()->getSku();
     }
 
     public function setOrderable(OrderableInterface $orderable)
     {
         $this->orderable = $orderable;
+        
+        $this->generateIdentifier();
     }
 
     public function getOrderable()

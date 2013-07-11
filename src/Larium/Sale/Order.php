@@ -4,7 +4,7 @@
 
 namespace Larium\Sale;
 
-use Larium\CallbackFilterIterator;
+use Larium\Payment\Payment;
 
 class Order implements OrderInterface 
 {
@@ -13,6 +13,8 @@ class Order implements OrderInterface
     protected $items;
 
     protected $adjustments;
+    
+    protected $payments;
     
     protected $adjustments_total;
 
@@ -24,8 +26,9 @@ class Order implements OrderInterface
 
     public function __construct()
     {
-        $this->items = new \SplObjectStorage();
-        $this->adjustments = new \SplObjectStorage();
+        $this->items        = new \SplObjectStorage();
+        $this->adjustments  = new \SplObjectStorage();
+        $this->payments     = new \SplObjectStorage();
     }
 
     /**
@@ -65,9 +68,15 @@ class Order implements OrderInterface
     /**
      * {@inheritdoc}
      */
-    public function containsItem(OrderItemInterface $item)
+    public function containsItem(OrderItemInterface $order_item)
     {
-        return $this->items->contains($item);
+        foreach ($this->items as $item) {
+            if ($item->getIdentifier() == $order_item->getIdentifier()) {
+                return $item;
+            }
+        }
+
+        return false;
     }
     
     /**
@@ -118,8 +127,7 @@ class Order implements OrderInterface
         
         $this->calculateAdjustmentsTotal();
 
-        $this->total_amount = $this->items_total + $this->adjustments_total;
-        
+        $this->total_amount = $this->items_total + $this->adjustments_total; 
     }
 
     /**
@@ -132,6 +140,15 @@ class Order implements OrderInterface
         return $this->total_amount;
     }
 
+    public function addPayment(PaymentInterface $payment)
+    {
+        $this->payments->attach($payment);
+    }
+
+    public function getPayments()
+    {
+        return $this->payments;
+    }
 
     public function getTotalQuantity()
     {
@@ -215,16 +232,5 @@ class Order implements OrderInterface
         $this->calculateAdjustmentsTotal();
 
         return $this->adjustments_total;   
-    }
-
-
-    protected function filter_by_type($type)
-    {
-        return new CallbackFilterIterator(
-            $this->getAdjustments(),
-            function ($current, $key, $iterator) use ($type) {
-                return $current->getType() == $type; 
-            }
-        );        
     }
 }
