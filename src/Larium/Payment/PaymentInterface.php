@@ -14,7 +14,7 @@ namespace Larium\Payment;
  * given amount. The amount to send to a Transaction can be the total amount that 
  * fullfill the Order or a part of it.
  * Also the amount of Payment could be part or all of the amount of Order.
- * Order can use multiple Payment object to fullfill the required amount.
+ * Order can use multiple Payment objects to fullfill the required amount.
  * 
  * 
  * @package Larium\Payment 
