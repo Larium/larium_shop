@@ -29,17 +29,15 @@ class Cart
         $item = $this->item_from_orderable($orderable, $quantity);
 
         // Checks for duplicated item an increase quantity instead of adding.
-        foreach ($this->getOrder()->getItems() as $order_item) {
-            if ($item->getIdentifier() == $order_item->getIdentifier()) {
+        if ($order_item = $this->getOrder()->containsItem($item)) {
                 
-                $order_item->setQuantity(
-                    $order_item->getQuantity() + $item->getQuantity()
-                );
+            $order_item->setQuantity(
+                $order_item->getQuantity() + $item->getQuantity()
+            );
 
-                $order_item->calculateTotalPrice();
-                
-                return $order_item;
-            }
+            $order_item->calculateTotalPrice();
+
+            return $order_item;
         }
 
         $this->getOrder()->addItem($item);
