@@ -25,6 +25,5 @@ order_item_1:
   unit_price: 12
   quantity: 1
   total_price: 12
-  type: 1
   sku: 'PRD-01-0001'
   description: 'T-Shirt LongSleeve'

@@ -61,14 +61,13 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $variant = $product->getDefaultVariant();
         $item = $cart->addItem($variant);
 
-        $this->assertTrue($order->containsItem($item));
+        $this->assertTrue(false !== $order->containsItem($item));
 
-        /*
         $item = $this->getOrderItem('order_item_1');
 
         $item->setOrder($order);
 
-        $this->assertTrue($order->containsItem($item));*/
+        $this->assertTrue(false !== $order->containsItem($item));
     }
 
     private function getProduct($id)
@@ -76,6 +75,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $data = $this->loader->getData();
         
         $hydrator = new \Hydrator('Larium\\Store\\Product');
+        
         return $hydrator->hydrate($data[$id], $id);
     }
 
@@ -84,6 +84,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $data = $this->loader->getData();
         
         $hydrator = new \Hydrator('Larium\\Sale\\OrderItem');
+        
         return $hydrator->hydrate($data[$id], $id);
     }
 }
