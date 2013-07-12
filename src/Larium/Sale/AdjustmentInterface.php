@@ -16,10 +16,6 @@ namespace Larium\Sale;
  */
 interface AdjustmentInterface
 {
-    const CHARGE = 1;
-    
-    const CREDIT = 2;
-
     /**
      * Sets the amount to adjust the adjustable object.
      *
@@ -72,20 +68,7 @@ interface AdjustmentInterface
      */
     public function getAdjustable();
 
-    /**
-     * Sets the identify variable for Adjustment 
-     * 
-     * @param  string $id
-     * @access public
-     * @return void
-     */
-    public function setIdentify($id);
+    public function getSource();
 
-    /**
-     * Gets the identify variable for Adjustment 
-     * 
-     * @access public
-     * @return string
-     */
-    public function getIdentify();
+    public function setSource($source);
 }

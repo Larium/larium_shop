@@ -46,7 +46,7 @@ interface AdjustableInterface
      * Gets all Adjustments for Adjustable object.
      * 
      * @access public
-     * @return array|mixed
+     * @return array|Traversable
      */
     public function getAdjustments();
 

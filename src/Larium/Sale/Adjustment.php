@@ -23,13 +23,11 @@ class Adjustment implements AdjustmentIterface
     protected $adjustable;
 
     /**
-     * Is adjustment a charge or a credit?
-     * Allow values AdjustmentInterface::CHARGE or AdjustmentInterface::CREDIT.
      *
-     * @var    int 
+     * @var    mixed 
      * @access protected
      */
-    protected $action;
+    protected $source;
 
     /**
      * {@inheritdoc}
@@ -68,7 +66,7 @@ class Adjustment implements AdjustmentIterface
      */
     public function isCharge() 
     {
-        return  $this->action ===  AdjustableInterface::CHARGE;
+        return $this->getAmount() >= 0;
     }
 
     /**
@@ -76,6 +74,22 @@ class Adjustment implements AdjustmentIterface
      */
     public function isCredit() 
     {
-        return  $this->action ===  AdjustableInterface::CREDIT;
+        return $this->getAmount() < 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    /**
+     * {@inheritdoc}
+     */   
+    public function setSource($source)
+    {
+        $this->source = $source;
     }
 }
