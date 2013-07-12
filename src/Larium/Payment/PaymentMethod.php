@@ -4,7 +4,7 @@
 
 namespace Larium\Payment;
 
-class BillingMethod
+class PaymentMethod
 {
     protected $id;
 

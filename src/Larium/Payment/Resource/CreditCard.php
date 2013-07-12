@@ -2,13 +2,15 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-namespace Larium\Payment;
+namespace Larium\Payment\Resource;
+
+use Larium\Payment\PaymentResourceInterface;
 
 class CreditCard implements PaymentResourceInterface
 {
     protected $number;
 
-    protected $description = "Credit Card Payment";
+    protected $description = "Credit Card";
 
     public function getBalance()
     {
