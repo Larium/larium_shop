@@ -60,7 +60,7 @@ interface OrderInterface extends AdjustableInterface
      * products
      * 
      * @access public
-     * @return array|mixed
+     * @return array|Traversable
      */
     public function getItems();
 
@@ -96,4 +96,13 @@ interface OrderInterface extends AdjustableInterface
      * @return number
      */
     public function getTotalAmount();
+
+    /**
+     * Gets the balance amount of this order.
+     * Can be a positive or negative number.
+     * 
+     * @access public
+     * @return number
+     */
+    public function getBalance();
 }
