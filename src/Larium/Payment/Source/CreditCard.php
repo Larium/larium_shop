@@ -2,15 +2,22 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-namespace Larium\Payment\Resource;
+namespace Larium\Payment\Source;
 
-use Larium\Payment\PaymentResourceInterface;
+use Larium\Payment\PaymentSourceInterface;
 
-class CreditCard implements PaymentResourceInterface
+class CreditCard implements PaymentSourceInterface
 {
     protected $number;
 
     protected $description = "Credit Card";
+
+    public function setOptions(array $options=array())
+    {
+        $this->number = isset($options['number'])
+            ? $options['number']
+            : null;
+    }
 
     public function getBalance()
     {
@@ -25,11 +32,6 @@ class CreditCard implements PaymentResourceInterface
     public function isExpired()
     {
         return false;
-    }
-
-    public function getCost()
-    {
-        return 0;
     }
 
     public function getDescription()

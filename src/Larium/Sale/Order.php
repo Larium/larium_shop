@@ -4,7 +4,7 @@
 
 namespace Larium\Sale;
 
-use Larium\Payment\Payment;
+use Larium\Payment\PaymentInterface;
 
 class Order implements OrderInterface 
 {
@@ -22,7 +22,7 @@ class Order implements OrderInterface
 
     protected $total_amount;
     
-    protected $total_payment;
+    protected $total_payment_amount;
 
     public function __construct()
     {
@@ -61,7 +61,7 @@ class Order implements OrderInterface
     public function removeItem(OrderItemInterface $item)
     {
         $this->items->detach($item);
-        
+
         $this->calculateTotalAmount();    
     }
 
@@ -143,6 +143,10 @@ class Order implements OrderInterface
     public function addPayment(PaymentInterface $payment)
     {
         $this->payments->attach($payment);
+        
+        $payment->setOrder($this);
+
+        $this->calculateTotalPaymentAmount();
     }
 
     public function getPayments()
@@ -160,9 +164,32 @@ class Order implements OrderInterface
         return $quantity;
     }
 
+    public function calculateTotalPaymentAmount()
+    {
+        $total = 0;
+
+        foreach ($this->getPayments() as $payment) {
+            $total += $payment->getAmount();
+        }
+
+        $this->total_payment_amount = $total;
+    }
+
+    public function getTotalPaymentAmount()
+    {
+        $this->calculateTotalPaymentAmount();
+
+        return $this->total_payment_amount;
+    }
+
+    public function needsPayment()
+    {
+        return $this->getTotalAmount() > 0;
+    }
+
     public function getBalance()
     {
-        return $total_amount - $total_payment;
+        return $this->getTotalAmount() - $this->getTotalPaymentAmount();
     }
     
     /* -(  AdjustableInterface  ) ------------------------------------------ */

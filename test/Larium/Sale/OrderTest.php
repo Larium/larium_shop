@@ -5,6 +5,7 @@
 namespace Larium\Sale;
 
 use Larium\Payment\Payment;
+use Larium\Payment\PaymentMethod;
 use Larium\Payment\CreditCard;
 
 require_once 'init.php';
@@ -70,6 +71,30 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(false !== $order->containsItem($item));
     }
 
+
+    public function testOrderPayment()
+    {
+        $cart = new Cart();
+        $product = $this->getProduct('product_1');
+        $variant = $product->getDefaultVariant();
+        $item = $cart->addItem($variant);
+
+        $method = $this->getPaymentMethod('creditcard_payment_method');
+        $method->setSourceOptions(array('number'=>'4111111111111111'));
+        
+        $payment = new Payment();       
+        $cart->getOrder()->addPayment($payment);
+        $payment->setPaymentMethod($method);
+
+        $payment->process();
+
+        $this->assertEquals('4111111111111111', $method->getPaymentSource()->getNumber());
+        $this->assertEquals($cart->getOrder()->getTotalAmount(), $payment->getAmount());
+
+        $this->assertEquals(0, $cart->getOrder()->getBalance());
+
+    }
+
     private function getProduct($id)
     {
         $data = $this->loader->getData();
@@ -84,6 +109,15 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $data = $this->loader->getData();
         
         $hydrator = new \Hydrator('Larium\\Sale\\OrderItem');
+        
+        return $hydrator->hydrate($data[$id], $id);
+    }
+
+    private function getPaymentMethod($id)
+    {
+        $data = $this->loader->getData();
+        
+        $hydrator = new \Hydrator('Larium\\Payment\\PaymentMethod');
         
         return $hydrator->hydrate($data[$id], $id);
     }

@@ -27,3 +27,16 @@ order_item_1:
   total_price: 12
   sku: 'PRD-01-0001'
   description: 'T-Shirt LongSleeve'
+creditcard_payment_method:
+  source_class: 'Larium\Payment\Source\CreditCard'
+  provider_class: 'Larium\Payment\Provider\LocalProvider'
+  title: 'Credit card payment'
+  cost: 0
+  id: 1
+  description: 'Some description'
+preferences:
+  some_gateway:
+    login: 'x'
+    password: 'x'
+    currency: 'EUR'
+    

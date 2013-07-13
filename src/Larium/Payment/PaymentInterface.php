@@ -4,13 +4,15 @@
 
 namespace Larium\Payment;
 
+use Larium\Sale\OrderInterface;
+
 /**
  * PaymentInterface allows the payoff of an Order.
  *
- * Each Payment object must have a PaymentResource which indicate the medium 
+ * Each Payment object must have a PaymentSource which indicate the medium 
  * from where the Order will be fullfilled.
  *
- * Payment should use PaymentResource to create one or more transactions for a 
+ * Payment should use PaymentSource to create one or more transactions for a 
  * given amount. The amount to send to a Transaction can be the total amount that 
  * fullfill the Order or a part of it.
  * Also the amount of Payment could be part or all of the amount of Order.
@@ -23,10 +25,32 @@ namespace Larium\Payment;
  */
 interface PaymentInterface
 {
+    /**
+     * getTransactions 
+     * 
+     * @access public
+     * @return array|Traversable
+     */
     public function getTransactions();
 
+    /**
+     * Adds a new Transaction to Payment
+     * 
+     * @param TransactionInterface $transaction 
+     *
+     * @access public
+     * @return void
+     */
     public function addTransaction(TransactionInterface $transaction);
 
+    /**
+     * Removes a Transaction from Payment
+     * 
+     * @param TransactionInterface $transaction 
+     *
+     * @access public
+     * @return void
+     */
     public function removeTransaction(TransactionInterface $transaction);
     
     public function containsTransaction(TransactionInterface $transaction);
@@ -38,22 +62,19 @@ interface PaymentInterface
     public function getAmount();
 
     /**
-     * Gets the payment resource for this payment.
-     *
-     * Payment resources are objects that satisfy the Payment amount.
-     * Can be Creditcards, Giftcards, Cash, Checks etc.
+     * Gets the PAymentMethod for this Payment. 
      * 
      * @access public
-     * @return PaymentResourceInterface
+     * @return PaymentMethod
      */
-    public function getResource();
+    public function getPaymentMethod();
 
-    public function setResource(PaymentResourceInterface $resource);
-
-    public function getIdentify();
+    public function getIdentifier();
     
     /**
-     * Gets the cost of this payment according to PaymentResource
+     * Delegate
+     *
+     * Gets the cost of this payment according to PaymentSource
      * 
      * @access public
      * @return number
@@ -61,10 +82,20 @@ interface PaymentInterface
     public function getCost();
     
     /**
-     * Gets the descriptions of this payment according to PaymentResource
+     * Delegate
+     *
+     * Gets the descriptions of this payment according to PaymentSource
      * 
      * @access public
      * @return string
      */
     public function getDescription();
+
+    public function getOrder();
+
+    public function setOrder(OrderInterface $order);
+
+    public function detachOrder();
+
+    public function process();
 }

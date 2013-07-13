@@ -4,15 +4,13 @@
 
 namespace Larium\Payment;
 
-interface PaymentResourceInterface
+interface PaymentSourceInterface
 {
     public function getBalance();
 
     public function getNumber();
 
     public function isExpired();
-
-    public function getCost();
 
     public function getDescription();
 }

@@ -5,8 +5,7 @@
 namespace Larium\Payment;
 
 use Larium\Sale\AdjustableInterface;
-use Larium\Sale\Order;
-use Larium\Sale\OrderItemInterface;
+use Larium\Sale\OrderInterface;
 
 class Payment implements PaymentInterface
 {
@@ -15,9 +14,11 @@ class Payment implements PaymentInterface
 
     protected $amount;
 
-    protected $resource;
+    protected $source;
 
     protected $tag;
+
+    protected $order;
 
     public function __construct()
     {
@@ -34,7 +35,7 @@ class Payment implements PaymentInterface
         $this->tag = $tag;
     }
 
-    public function getIdentify()
+    public function getIdentifier()
     {
         return $this->getTag();
     }
@@ -77,14 +78,14 @@ class Payment implements PaymentInterface
         return $amount;
     }
 
-    public function getResource()
+    public function getPaymentMethod()
     {
-        return $this->resource;
+        return $this->payment_method;
     }
 
-    public function setResource(PaymentResourceInterface $resource)
+    public function setPaymentMethod(PaymentMethod $payment_method)
     {
-        $this->resource = $resource;
+        $this->payment_method = $payment_method;
     }
 
     public function setAmount($amount)
@@ -99,11 +100,71 @@ class Payment implements PaymentInterface
 
     public function getDescription()
     {
-        return $this->getResource()->getDescription();
+        return $this->getSource()->getDescription();
     }
 
     public function getCost()
     {
-        return $this->getResource()->getCost();
+        return $this->getSource()->getCost();
+    }
+
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    public function setOrder(OrderInterface $order)
+    {
+        $this->order = $order;
+    }
+
+    public function detachOrder()
+    {
+        $this->order = null;
+    }
+
+    public function process()
+    {
+        if (null === $this->getOrder()) {
+            throw new \Exception("You must set an Order for this Payment");
+        }
+
+        if (!$this->getOrder()->needsPayment()) {
+
+            return;
+        }
+        
+        $provider = $this->getPaymentMethod()->getProvider();
+
+        if ($provider instanceof PaymentProviderInterface) {
+
+            $amount = null === $this->amount 
+                ? $this->getOrder()->getTotalAmount()
+                : $this->amount;
+
+            $response = $provider->purchase(
+                $amount, 
+                $this->getPaymentMethod()->getPaymentSource(),
+                $this->options()
+            );
+
+            if (true === $response) {
+                if (null === $this->amount) {
+                    $this->setAmount($amount);
+                }
+            }
+
+         } else {
+             
+             throw new Exception('Provider must implements Larium\Payment\PaymentProviderInterface');
+         }
+    }
+
+    protected function options()
+    {
+        $options = array();
+
+        
+        return $options;
     }
 }

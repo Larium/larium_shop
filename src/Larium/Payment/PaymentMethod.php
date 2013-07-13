@@ -14,6 +14,14 @@ class PaymentMethod
 
     protected $cost;
 
+    protected $source_class;
+    
+    protected $provider_class;
+    
+    protected $provider;
+    
+    protected $payment_source;
+
     public function getId()
     {
         return $this->id;
@@ -82,5 +90,68 @@ class PaymentMethod
     public function setCost($cost)
     {
         $this->cost = $cost;
+    }
+
+    public function getSourceClass()
+    {
+        return $this->source_class; 
+    }
+
+    public function setSourceClass($source_class)
+    {
+        $this->source_class = $source_class;
+    }
+
+    public function getProviderClass()
+    {
+        return $this->provider_class;
+    }
+
+    public function setProviderClass($provider_class)
+    {
+        $this->provider_class = $provider_class;
+    }
+
+    /**
+     * Gets the PaymentSource for this Payment.
+     *
+     * Payment sources are objects that satisfy the Payment amount.
+     * Can be Creditcards, Giftcards, Cash, Checks etc.
+     * 
+     * @access public
+     * @return PaymentSourceInterface
+     */
+    public function getPaymentSource()
+    {
+        if (null === $this->payment_source) {
+            $source_class = $this->getSourceClass();
+
+            $this->payment_source = new $source_class();
+
+            $this->payment_source->setOptions($this->getSourceOptions());
+        }
+
+        return $this->payment_source;
+    }
+
+    public function getProvider()
+    {
+        if (null === $this->provider) {
+            $provider_class = $this->provider_class;
+
+            $this->provider = new $provider_class;
+        }
+
+        return $this->provider;
+    }
+
+    public function getSourceOptions()
+    {
+        return $this->source_options;
+    }
+
+    public function setSourceOptions(array $options=array())
+    {
+        $this->source_options = $options;
     }
 }
