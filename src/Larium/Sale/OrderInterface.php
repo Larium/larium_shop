@@ -18,12 +18,22 @@ namespace Larium\Sale;
 interface OrderInterface extends AdjustableInterface
 {
     /**
-     * Return the current status of the Order.
+     * Return the current state of the Order.
      * 
      * @access public
      * @return string|mixed
      */
-    public function getStatus();
+    public function getState();
+    
+    /**
+     * Sets the state of the Order. 
+     * 
+     * @param mixed $state
+     *
+     * @access public
+     * @return void
+     */
+    public function setState($state);
 
     /**
      * Adds an item to OrderItem collection.

@@ -8,7 +8,7 @@ use Larium\Payment\PaymentInterface;
 
 class Order implements OrderInterface 
 {
-    protected $status;
+    protected $state;
 
     protected $items;
 
@@ -34,9 +34,14 @@ class Order implements OrderInterface
     /**
      * {@inheritdoc}
      */   
-    public function getStatus()
+    public function getState()
     {
-        return $this->status;
+        return $this->state;
+    }
+
+    public function setState($state)
+    {
+        $this->state = $state;
     }
 
     /**
