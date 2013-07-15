@@ -123,6 +123,16 @@ class Payment implements PaymentInterface
         $this->order = null;
     }
 
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
     public function process()
     {
         if (null === $this->getOrder()) {
@@ -148,7 +158,7 @@ class Payment implements PaymentInterface
                 $this->options()
             );
 
-            if (true === $response) {
+            if ($response->isSuccess()) {
                 if (null === $this->amount) {
                     $this->setAmount($amount);
                 }

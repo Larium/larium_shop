@@ -61,8 +61,27 @@ interface PaymentInterface
 
     public function getAmount();
 
+
     /**
-     * Gets the PAymentMethod for this Payment. 
+     * Gets teh current state o Payment. 
+     * 
+     * @access public
+     * @return string
+     */
+    public function getState();
+
+    /**
+     * Sets the current state for Payment.
+     * 
+     * @param string $state
+     *
+     * @access public
+     * @return void
+     */
+    public function setState($state);
+
+    /**
+     * Gets the PaymentMethod for this Payment. 
      * 
      * @access public
      * @return PaymentMethod

@@ -17,7 +17,10 @@ class LocalProvider implements PaymentProviderInterface
     
     public function purchase($amount, PaymentSourceInterface $source, array $options=array())
     {
-        return true;
+        $response = new Response();
+        $response->setSuccess(true);
+        
+        return $response;
     }
 
     public function capture($amount, $authorization, array $options=array())
