@@ -27,15 +27,15 @@ class Transition extends FiniteTransition
     protected function invoke_callback($stateMachine)
     {
         $callable = $this->callback;
-        
+
         if (is_array($callable) && 2 == count($callable)) {
-            
+
             $method = new \ReflectionMethod($callable[0], $callable[1]);
 
             return $method->invokeArgs($callable[0], array($stateMachine, $this));
 
         } elseif (is_callable($callable)) {
-            
+
             $function = new \ReflectionFunction($callable);
 
             return $function->invokeArgs(array($stateMachine, $this));

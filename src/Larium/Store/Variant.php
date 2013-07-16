@@ -17,7 +17,7 @@ class Variant implements OrderableInterface
     protected $is_default;
 
     protected $product;
-    
+
     /**
      * Get is_default.
      *
@@ -27,7 +27,7 @@ class Variant implements OrderableInterface
     {
         return $this->is_default;
     }
-    
+
     /**
      * Set is_default.
      *
@@ -37,7 +37,7 @@ class Variant implements OrderableInterface
     {
         $this->is_default = $is_default;
     }
-    
+
     /**
      * Get sku.
      *
@@ -47,7 +47,7 @@ class Variant implements OrderableInterface
     {
         return $this->sku;
     }
-    
+
     /**
      * Set sku.
      *
@@ -57,7 +57,7 @@ class Variant implements OrderableInterface
     {
         $this->sku = $sku;
     }
-    
+
     /**
      * Get unit_price.
      *
@@ -67,7 +67,7 @@ class Variant implements OrderableInterface
     {
         return $this->unit_price;
     }
-    
+
     /**
      * Set unit_price.
      *
@@ -77,12 +77,12 @@ class Variant implements OrderableInterface
     {
         $this->unit_price = $unit_price;
     }
-    
+
     public function getDescription()
     {
         return $this->getProduct()->getTitle();
     }
-        
+
     /**
      * Get stock_units.
      *
@@ -92,7 +92,7 @@ class Variant implements OrderableInterface
     {
         return $this->stock_units;
     }
-    
+
     /**
      * Set stock_units.
      *
@@ -102,7 +102,7 @@ class Variant implements OrderableInterface
     {
         $this->stock_units = $stock_units;
     }
-    
+
     /**
      * Get product.
      *
@@ -112,7 +112,7 @@ class Variant implements OrderableInterface
     {
         return $this->product;
     }
-    
+
     /**
      * Set product.
      *

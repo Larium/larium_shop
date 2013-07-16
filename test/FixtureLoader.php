@@ -3,7 +3,7 @@
 class FixtureLoader
 {
     protected $file;
-    
+
     protected $data = array();
 
     public function __construct($file=null)
@@ -52,12 +52,12 @@ class FixtureLoader
 
     }
 
-    private function camelize($string) 
+    private function camelize($string)
     {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
     }
 
-    private function underscore($camelCasedWord) 
+    private function underscore($camelCasedWord)
     {
         return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
     }

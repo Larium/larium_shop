@@ -8,7 +8,7 @@ class Adjustment implements AdjustmentIterface
 {
     /**
      * The amount of Adjustement.
-     * 
+     *
      * @var    number
      * @access protected
      */
@@ -16,7 +16,7 @@ class Adjustment implements AdjustmentIterface
 
     /**
      * The Adjustable object
-     * 
+     *
      * @var    AdjustableInterface
      * @access protected
      */
@@ -24,7 +24,7 @@ class Adjustment implements AdjustmentIterface
 
     /**
      *
-     * @var    mixed 
+     * @var    mixed
      * @access protected
      */
     protected $source;
@@ -64,7 +64,7 @@ class Adjustment implements AdjustmentIterface
     /**
      * {@inheritdoc}
      */
-    public function isCharge() 
+    public function isCharge()
     {
         return $this->getAmount() >= 0;
     }
@@ -72,7 +72,7 @@ class Adjustment implements AdjustmentIterface
     /**
      * {@inheritdoc}
      */
-    public function isCredit() 
+    public function isCredit()
     {
         return $this->getAmount() < 0;
     }
@@ -87,7 +87,7 @@ class Adjustment implements AdjustmentIterface
 
     /**
      * {@inheritdoc}
-     */   
+     */
     public function setSource($source)
     {
         $this->source = $source;

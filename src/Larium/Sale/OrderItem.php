@@ -45,7 +45,7 @@ class OrderItem implements OrderItemInterface
     {
         $this->quantity = $quantity;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -77,7 +77,7 @@ class OrderItem implements OrderItemInterface
 
     /**
      * {@inheritdoc}
-     */ 
+     */
     public function getTotalPrice()
     {
         $this->calculateTotalPrice();
@@ -112,7 +112,7 @@ class OrderItem implements OrderItemInterface
 
     /**
      * {@inheritdoc}
-     */ 
+     */
     public function setIdentifier($id)
     {
         $this->identifier = $id;
@@ -120,7 +120,7 @@ class OrderItem implements OrderItemInterface
 
     /**
      * {@inheritdoc}
-     */ 
+     */
     public function getIdentifier()
     {
         if (null == $this->identifier) {
@@ -136,14 +136,14 @@ class OrderItem implements OrderItemInterface
         if (null === $this->getOrderable()) {
             throw new \Exception("You must add an Orderable object before adding this item in Order");
         }
-        
+
         $this->identifier = $this->getOrderable()->getSku();
     }
 
     public function setOrderable(OrderableInterface $orderable)
     {
         $this->orderable = $orderable;
-        
+
         $this->generateIdentifier();
     }
 

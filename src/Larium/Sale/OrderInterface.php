@@ -7,27 +7,27 @@ namespace Larium\Sale;
 /**
  * Describes the interface of an Order object.
  *
- * The total amount of an Order can be adjusted from various adjustments like 
+ * The total amount of an Order can be adjusted from various adjustments like
  * Shipping or Billing methods, Discounts etc.
  *
  * @uses    AdjustableInterface
- * @package Larium\Sale 
- * @author  Andreas Kollaros <php@andreaskollaros.com> 
+ * @package Larium\Sale
+ * @author  Andreas Kollaros <php@andreaskollaros.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
 interface OrderInterface extends AdjustableInterface
 {
     /**
      * Return the current state of the Order.
-     * 
+     *
      * @access public
      * @return string|mixed
      */
     public function getState();
-    
+
     /**
-     * Sets the state of the Order. 
-     * 
+     * Sets the state of the Order.
+     *
      * @param mixed $state
      *
      * @access public
@@ -37,8 +37,8 @@ interface OrderInterface extends AdjustableInterface
 
     /**
      * Adds an item to OrderItem collection.
-     * 
-     * @param  OrderItemInterface $item 
+     *
+     * @param  OrderItemInterface $item
      * @access public
      * @return void
      */
@@ -46,46 +46,46 @@ interface OrderInterface extends AdjustableInterface
 
     /**
      * Removes an item form OrderItem collection.
-     * 
-     * @param  OrderItemInterface $item 
+     *
+     * @param  OrderItemInterface $item
      * @access public
      * @return void
      */
     public function removeItem(OrderItemInterface $item);
-    
+
     /**
-     * Checks if the collection of order items contains the specific item with 
+     * Checks if the collection of order items contains the specific item with
      * the same identifier.
      *
      * Returns the item found in collection or false.
-     * 
-     * @param  OrderItemInterface $item 
+     *
+     * @param  OrderItemInterface $item
      * @access public
      * @return boolean|OrderItemInterface
      */
     public function containsItem(OrderItemInterface $item);
 
     /**
-     * Returns a collection of items in order that are chargable 
+     * Returns a collection of items in order that are chargable
      * products
-     * 
+     *
      * @access public
      * @return array|Traversable
      */
     public function getItems();
 
     /**
-     * Calculates the total amount of items in order that are chargable 
+     * Calculates the total amount of items in order that are chargable
      * products.
-     * 
+     *
      * @access public
      * @return void
      */
     public function calculateItemsTotal();
-    
+
     /**
      * Gets the total amount of OrderItem collection.
-     * 
+     *
      * @access public
      * @return number
      */
@@ -93,15 +93,15 @@ interface OrderInterface extends AdjustableInterface
 
     /**
      * Calculates the total amount of Order including Adjustments.
-     * 
+     *
      * @access public
      * @return void
      */
     public function calculateTotalAmount();
-    
+
     /**
      * Returns the total amount of the Order.
-     * 
+     *
      * @access public
      * @return number
      */
@@ -110,7 +110,7 @@ interface OrderInterface extends AdjustableInterface
     /**
      * Gets the balance amount of this order.
      * Can be a positive or negative number.
-     * 
+     *
      * @access public
      * @return number
      */

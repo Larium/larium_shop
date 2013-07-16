@@ -18,7 +18,7 @@ interface OrderableInterface
      * Gets the unique sku number.
      *
      * @access public
-     * @return string 
+     * @return string
      */
     public function getSku();
 
@@ -26,9 +26,9 @@ interface OrderableInterface
     /**
      * Gets a description of Orderable.
      *
-     * Usefull when preview Order Items whithout the need to load Orderable 
+     * Usefull when preview Order Items whithout the need to load Orderable
      * resource.
-     * 
+     *
      * @access public
      * @return void
      */

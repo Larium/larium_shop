@@ -15,11 +15,11 @@ class PaymentMethod
     protected $cost;
 
     protected $source_class;
-    
+
     protected $provider_class;
-    
+
     protected $provider;
-    
+
     protected $payment_source;
 
     protected $source_options;
@@ -64,7 +64,7 @@ class PaymentMethod
     {
         return $this->title;
     }
-    
+
     /**
      * Set title.
      *
@@ -74,7 +74,7 @@ class PaymentMethod
     {
         $this->title = $title;
     }
-    
+
     /**
      * Get description.
      *
@@ -84,7 +84,7 @@ class PaymentMethod
     {
         return $this->description;
     }
-    
+
     /**
      * Set description.
      *
@@ -94,7 +94,7 @@ class PaymentMethod
     {
         $this->description = $description;
     }
-    
+
     /**
      * Get cost.
      *
@@ -104,7 +104,7 @@ class PaymentMethod
     {
         return $this->cost;
     }
-    
+
     /**
      * Set cost.
      *
@@ -117,7 +117,7 @@ class PaymentMethod
 
     public function getSourceClass()
     {
-        return $this->source_class; 
+        return $this->source_class;
     }
 
     public function setSourceClass($source_class)
@@ -140,7 +140,7 @@ class PaymentMethod
      *
      * Payment sources are objects that satisfy the Payment amount.
      * Can be Creditcards, Giftcards, Cash, Checks etc.
-     * 
+     *
      * @access public
      * @return PaymentSourceInterface
      */

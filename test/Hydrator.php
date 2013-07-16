@@ -2,7 +2,7 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-class Hydrator 
+class Hydrator
 {
     protected $class_name;
     protected $mapping;
@@ -22,21 +22,21 @@ class Hydrator
                 return $item;
             }
         }
-        
+
         $class_name = $class_name ?: $this->class_name;
-        
+
         $maps = isset($this->mappings[$this->class_name])
             ? $this->mappings[$this->class_name]
             : array();
-        
+
         $class = new $class_name();
-        
+
         foreach ($data as $key => $value) {
 
             $mutator = 'set' . $this->camelize($key);
-            
+
             if (is_array($value)) {
-                
+
                 if (array_key_exists($key, $maps)) {
                     $storage = new SplObjectStorage();
                     foreach ($value as $k=>$v) {
@@ -51,20 +51,20 @@ class Hydrator
                 }
             } else {
                 $class->$mutator($value);
-            } 
+            }
         }
-        
+
         $this->storage->attach($class, $key);
 
         return $class;
     }
 
-    private function camelize($string) 
+    private function camelize($string)
     {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
     }
 
-    private function underscore($camelCasedWord) 
+    private function underscore($camelCasedWord)
     {
         return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
     }

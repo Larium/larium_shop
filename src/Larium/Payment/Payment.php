@@ -34,15 +34,15 @@ class Payment implements PaymentInterface, StatefulInterface
         ),
         'authorized' => array(
             'type' => 'normal',
-            'properties' => array()           
+            'properties' => array()
         ),
         'paid' => array(
             'type' => 'final',
-            'properties' => array()           
+            'properties' => array()
         ),
         'refunded' => array(
             'type' => 'final',
-            'properties' => array()           
+            'properties' => array()
         )
     );
 
@@ -85,20 +85,20 @@ class Payment implements PaymentInterface, StatefulInterface
     {
         foreach ($this->getTransactions() as $trx) {
             if ($trx->getTransactionId() == $transaction->getTransactionId()) {
-                
+
                 return true;
             }
         }
 
         return false;
-    }   
+    }
 
     public function getTotalTransactionsAmount()
     {
         $amount = 0;
 
         foreach ($this->getTransactions() as $trx) {
-            $amount += $trx->getAmount();    
+            $amount += $trx->getAmount();
         }
 
         return $amount;
@@ -158,7 +158,7 @@ class Payment implements PaymentInterface, StatefulInterface
     {
         $this->state = $state;
     }
-    
+
     /* -(  StateMachine  ) ------------------------------------------------- */
 
     public function getFiniteState()
@@ -183,11 +183,11 @@ class Payment implements PaymentInterface, StatefulInterface
                 'class' => __CLASS__,
                 'states' => $this->states,
             );
-            
+
             $loader = new ArrayLoader($data);
             $this->state_machine = new StateMachine();
             $loader->load($this->state_machine);
-            
+
             $this->transitions($this->state_machine);
 
             $this->state_machine->setObject($this);
@@ -221,12 +221,12 @@ class Payment implements PaymentInterface, StatefulInterface
 
         if ($provider instanceof PaymentProviderInterface) {
 
-            $amount = null === $this->amount 
+            $amount = null === $this->amount
                 ? $this->getOrder()->getTotalAmount()
                 : $this->amount;
 
             $response = $provider->purchase(
-                $amount, 
+                $amount,
                 $this->getPaymentMethod()->getPaymentSource(),
                 $this->options()
             );
@@ -245,7 +245,7 @@ class Payment implements PaymentInterface, StatefulInterface
 
     public function toAuthorized()
     {
-    
+
     }
 
     public function toRefunded()
@@ -257,7 +257,6 @@ class Payment implements PaymentInterface, StatefulInterface
     {
         $options = array();
 
-        
         return $options;
     }
 }

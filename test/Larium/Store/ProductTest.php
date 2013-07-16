@@ -27,11 +27,9 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     {
         //$product = $this->loader->instanceFor('Larium\\Store\\Product', $id);
         $data = $this->loader->getData();
-        
+
         $mapping = include __DIR__ . '/../../data_mapping.conf.php';
         $hydrator = new \Hydrator('Larium\\Store\\Product', $mapping);
         return $hydrator->hydrate($data['product_1']);
     }
 }
-
-

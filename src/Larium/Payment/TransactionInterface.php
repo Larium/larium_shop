@@ -8,7 +8,7 @@ interface TransactionInterface
 {
     /**
      * Gets the Payment object for this transaction.
-     * 
+     *
      * @access public
      * @return PaymentInerface
      */
@@ -16,8 +16,8 @@ interface TransactionInterface
 
     /**
      * Sets the Payment object for this transaction.
-     * 
-     * @param PaymentInterface $payment 
+     *
+     * @param PaymentInterface $payment
      * @access public
      * @return void
      */
@@ -28,6 +28,6 @@ interface TransactionInterface
     public function setAmount($amount);
 
     public function getTransactionId();
-    
+
     public function setTransactionId($id);
 }

@@ -15,21 +15,21 @@ class Order implements OrderInterface, StatefulInterface
     protected $items;
 
     protected $adjustments;
-    
+
     protected $payments;
-    
+
     protected $adjustments_total;
 
     protected $items_total;
 
     protected $total_amount;
-    
+
     protected $total_payment_amount;
 
     protected $state;
 
     protected $state_machine;
-    
+
     protected $states = array(
         'cart' => array(
             'type' => 'initial',
@@ -69,8 +69,8 @@ class Order implements OrderInterface, StatefulInterface
     {
         $this->initialize();
     }
-        
-    
+
+
     public function initialize()
     {
         $this->items        = new \SplObjectStorage();
@@ -80,7 +80,7 @@ class Order implements OrderInterface, StatefulInterface
 
     /**
      * {@inheritdoc}
-     */   
+     */
     public function getState()
     {
         return $this->state;
@@ -97,11 +97,11 @@ class Order implements OrderInterface, StatefulInterface
     public function addItem(OrderItemInterface $item)
     {
         $item->calculateTotalPrice();
-        
+
         $item->generateIdentifier();
 
         $this->items->attach($item);
-        
+
         $this->calculateTotalAmount();
 
         $item->setOrder($this);
@@ -114,7 +114,7 @@ class Order implements OrderInterface, StatefulInterface
     {
         $this->items->detach($item);
 
-        $this->calculateTotalAmount();    
+        $this->calculateTotalAmount();
     }
 
     /**
@@ -130,7 +130,7 @@ class Order implements OrderInterface, StatefulInterface
 
         return false;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -176,15 +176,15 @@ class Order implements OrderInterface, StatefulInterface
     public function calculateTotalAmount()
     {
         $this->calculateItemsTotal();
-        
+
         $this->calculateAdjustmentsTotal();
 
-        $this->total_amount = $this->items_total + $this->adjustments_total; 
+        $this->total_amount = $this->items_total + $this->adjustments_total;
     }
 
     /**
      * {@inheritdoc}
-     */   
+     */
     public function getTotalAmount()
     {
         $this->calculateTotalAmount();
@@ -195,7 +195,7 @@ class Order implements OrderInterface, StatefulInterface
     public function addPayment(PaymentInterface $payment)
     {
         $this->payments->attach($payment);
-        
+
         $payment->setOrder($this);
 
         $this->calculateTotalPaymentAmount();
@@ -250,7 +250,7 @@ class Order implements OrderInterface, StatefulInterface
     {
         return $this->getStateMachine()->nextTransition();
     }
-    
+
     public function getStateMachine()
     {
         if (null === $this->state_machine) {
@@ -258,11 +258,11 @@ class Order implements OrderInterface, StatefulInterface
                 'class' => __CLASS__,
                 'states' => $this->states,
             );
-            
+
             $loader = new ArrayLoader($data);
             $this->state_machine = new StateMachine();
             $loader->load($this->state_machine);
-            
+
             $this->transitions($this->state_machine);
 
             $this->state_machine->setObject($this);
@@ -305,10 +305,10 @@ class Order implements OrderInterface, StatefulInterface
 
     /**
      * {@inheritdoc}
-     */ 
+     */
     public function addAdjustment(AdjustmentInterface $adjustment)
     {
-        $type = $adjustment->isCharge() 
+        $type = $adjustment->isCharge()
             ? AdjustmentInterface::CHARGE
             : AdjustmentInterface::CREDIT;
 
@@ -318,15 +318,15 @@ class Order implements OrderInterface, StatefulInterface
 
     /**
      * {@inheritdoc}
-     */ 
+     */
     public function removeAdjustment(AdjustmentInterface $adjustment)
     {
-        $this->adjustments->detach($adjustment); 
+        $this->adjustments->detach($adjustment);
     }
 
     /**
      * {@inheritdoc}
-     */ 
+     */
     public function containsAdjustment(AdjustmentInterface $adjustment)
     {
         foreach ($this->adjustments as $item) {
@@ -340,15 +340,15 @@ class Order implements OrderInterface, StatefulInterface
 
     /**
      * {@inheritdoc}
-     */ 
+     */
     public function getAdjustments()
     {
-        return $this->adjustments; 
+        return $this->adjustments;
     }
 
     /**
      * {@inheritdoc}
-     */ 
+     */
     public function calculateAdjustmentsTotal()
     {
         $total = 0;
@@ -358,15 +358,15 @@ class Order implements OrderInterface, StatefulInterface
 
         $this->adjustments_total = $total;
     }
-    
+
     /**
      * {@inheritdoc}
-     */ 
+     */
     public function getAdjustmentsTotal()
     {
 
         $this->calculateAdjustmentsTotal();
 
-        return $this->adjustments_total;   
+        return $this->adjustments_total;
     }
 }

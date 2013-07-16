@@ -18,10 +18,10 @@ class Cart
     protected $order;
 
     /**
-     * Add an Orderable class to the Order. 
-     * 
-     * @param  OrderableInterface $orderable 
-     * @param  int                $quantity 
+     * Add an Orderable class to the Order.
+     *
+     * @param  OrderableInterface $orderable
+     * @param  int                $quantity
      * @access public
      * @return OrderItem
      */
@@ -31,7 +31,7 @@ class Cart
 
         // Checks for duplicated item an increase quantity instead of adding.
         if ($order_item = $this->getOrder()->containsItem($item)) {
-                
+
             $order_item->setQuantity(
                 $order_item->getQuantity() + $item->getQuantity()
             );
@@ -48,8 +48,8 @@ class Cart
 
     /**
      * Removes an Orderitem from Order
-     * 
-     * @param  OrderItem $item 
+     *
+     * @param  OrderItem $item
      * @access public
      * @return void
      */
@@ -63,7 +63,7 @@ class Cart
     /**
      * Gets the Order that handle the Cart.
      * Creates new if does not exist.
-     * 
+     *
      * @access public
      * @return Order
      */
@@ -72,13 +72,13 @@ class Cart
         if (null === $this->order) {
             $this->order = new Order();
         }
-        
+
         return $this->order;
     }
 
     /**
-     * Sets an Order to handle. 
-     * 
+     * Sets an Order to handle.
+     *
      * @param  Order $order
      * @access public
      * @return void
@@ -102,7 +102,7 @@ class Cart
         } else {
             return $items->count();
         }
-    } 
+    }
 
     public function getTotalQuantity()
     {
@@ -126,22 +126,22 @@ class Cart
     public function process()
     {
         $this->getOrder()->process();
-    } 
+    }
 
     /**
-     * Creates an OrderItem from a given Product. 
-     * 
-     * @param  OrderableInterface $orderable 
-     * @param  int                $quantity 
+     * Creates an OrderItem from a given Product.
+     *
+     * @param  OrderableInterface $orderable
+     * @param  int                $quantity
      * @access protected
      * @return void
      */
     protected function item_from_orderable(
-        OrderableInterface $orderable, 
+        OrderableInterface $orderable,
         $quantity=1
     ) {
         $item = new OrderItem();
-        $item->setOrderable($orderable); 
+        $item->setOrderable($orderable);
         $item->setUnitPrice($orderable->getUnitPrice());
         $item->setQuantity($quantity);
         $item->setDescription($orderable->getDescription());

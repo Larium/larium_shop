@@ -16,9 +16,9 @@ class CallbackFilterIterator extends \FilterIterator
 
     public function accept() {
         return call_user_func(
-            $this->callback, 
-            $this->current(), 
-            $this->key(), 
+            $this->callback,
+            $this->current(),
+            $this->key(),
             $this->getInnerIterator()
         );
     }

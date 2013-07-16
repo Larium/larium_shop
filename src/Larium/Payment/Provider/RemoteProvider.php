@@ -8,5 +8,5 @@ use Larium\Payment\PaymentProviderInterface;
 
 class RemoteProvider implements PaymentProviderInterface
 {
-    
+
 }

@@ -8,11 +8,11 @@ interface OrderItemInterface
 {
     /**
      * Sets the price of a unit.
-     * 
-     * Total price of item will be calculated from this price and the 
+     *
+     * Total price of item will be calculated from this price and the
      * quantity.
-     * 
-     * @param number $price 
+     *
+     * @param number $price
      * @access public
      * @return void
      */
@@ -21,16 +21,16 @@ interface OrderItemInterface
     public function getUnitPrice();
 
     /**
-     * Sets the quantity of item to be ordered. 
-     * 
+     * Sets the quantity of item to be ordered.
+     *
      * @access public
      * @return void
      */
     public function setQuantity($quantity);
-    
+
     /**
-     * Gets the quantity of item to be ordered. 
-     * 
+     * Gets the quantity of item to be ordered.
+     *
      * @access public
      * @return integer
      */
@@ -38,25 +38,25 @@ interface OrderItemInterface
 
     /**
      * Sets the order object to this item.
-     * 
-     * @param  OrderInterface $order 
+     *
+     * @param  OrderInterface $order
      * @access public
      * @return void
      */
     public function setOrder(OrderInterface $order);
-    
+
     /**
      * Gets the order object of this item.
-     * 
+     *
      * @access public
      * @return OrderInterface
      */
     public function getOrder();
 
     /**
-     * Returns the total amount of item based on price per quantity and on 
+     * Returns the total amount of item based on price per quantity and on
      * Adjustments total amount.
-     * 
+     *
      * @access public
      * @return number
      */
@@ -68,19 +68,19 @@ interface OrderItemInterface
 
     /**
      * Returns the unique identifier for thjis object.
-     * 
+     *
      * @access public
      * @return void
      */
     public function getIdentifier();
-    
+
     /**
-     * Used to generate a uniq identifier for this OrderItem when an Orderable 
+     * Used to generate a uniq identifier for this OrderItem when an Orderable
      * object is set.
-     * 
-     * Identifier is a unique value that helps Order class compares 2 
+     *
+     * Identifier is a unique value that helps Order class compares 2
      * OrderItems.
-     * 
+     *
      * @access public
      * @return void
      */

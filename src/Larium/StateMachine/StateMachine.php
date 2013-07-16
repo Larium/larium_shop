@@ -18,7 +18,7 @@ class StateMachine extends FiniteStateMachine
         }
 
         $next = null;
-        
+
         foreach ($this->transitions as $name => $transition) {
 
             if (in_array($state->getName(), $transition->getInitialStates())) {
