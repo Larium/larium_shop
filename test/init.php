@@ -5,3 +5,5 @@ require_once __DIR__ . '/Hydrator.php';
 
 $l = new SplClassLoader('Larium', __DIR__ . '/../src');
 $l->register();
+
+require_once __DIR__ . '/../vendor/autoload.php';

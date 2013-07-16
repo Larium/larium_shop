@@ -8,8 +8,6 @@ use Larium\Payment\Payment;
 use Larium\Payment\PaymentMethod;
 use Larium\Payment\CreditCard;
 
-require_once 'init.php';
-
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -79,20 +77,16 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $variant = $product->getDefaultVariant();
         $item = $cart->addItem($variant);
 
+        $cart->process(); //-> Move to Checkout state
+        
         $method = $this->getPaymentMethod('creditcard_payment_method');
         $method->setSourceOptions(array('number'=>'4111111111111111'));
         
-        $payment = new Payment();       
-        $cart->getOrder()->addPayment($payment);
-        $payment->setPaymentMethod($method);
+        $cart->applyPaymentMethod($method);
 
-        $payment->process();
+        $cart->process(); //-> Try to pay the order
 
-        $this->assertEquals('4111111111111111', $method->getPaymentSource()->getNumber());
-        $this->assertEquals($cart->getOrder()->getTotalAmount(), $payment->getAmount());
-
-        $this->assertEquals(0, $cart->getOrder()->getBalance());
-
+        $this->assertEquals('paid', $cart->getOrder()->getState());
     }
 
     private function getProduct($id)

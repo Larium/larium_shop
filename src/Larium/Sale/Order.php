@@ -5,11 +5,13 @@
 namespace Larium\Sale;
 
 use Larium\Payment\PaymentInterface;
+use Finite\StatefulInterface;
+use Finite\Loader\ArrayLoader;
+use Larium\StateMachine\Transition;
+use Larium\StateMachine\StateMachine;
 
-class Order implements OrderInterface 
+class Order implements OrderInterface, StatefulInterface
 {
-    protected $state;
-
     protected $items;
 
     protected $adjustments;
@@ -24,7 +26,52 @@ class Order implements OrderInterface
     
     protected $total_payment_amount;
 
+    protected $state;
+
+    protected $state_machine;
+    
+    protected $states = array(
+        'cart' => array(
+            'type' => 'initial',
+            'properties' => array()
+        ),
+        'checkout' => array(
+            'type'  => 'normal',
+            'properties' => array()
+        ),
+        'paid' => array(
+            'type' => 'normal',
+            'properties' => array()
+        ),
+        'processing' => array(
+            'type'  => 'normal',
+            'properties' => array()
+        ),
+        'sent' => array(
+            'type' => 'normal',
+            'properties' => array()
+        ),
+        'cancelled' => array(
+            'type' => 'final',
+            'properties' => array()
+        ),
+        'delivered' => array(
+            'type' => 'final',
+            'properties' => array()
+        ),
+        'returned' => array(
+            'type' => 'final',
+            'properties' => array()
+        ),
+    );
+
     public function __construct()
+    {
+        $this->initialize();
+    }
+        
+    
+    public function initialize()
     {
         $this->items        = new \SplObjectStorage();
         $this->adjustments  = new \SplObjectStorage();
@@ -196,7 +243,64 @@ class Order implements OrderInterface
     {
         return $this->getTotalAmount() - $this->getTotalPaymentAmount();
     }
+
+    /* -(  StateMachine  ) ------------------------------------------------- */
+
+    public function process()
+    {
+        return $this->getStateMachine()->nextTransition();
+    }
     
+    public function getStateMachine()
+    {
+        if (null === $this->state_machine) {
+            $data  = array(
+                'class' => __CLASS__,
+                'states' => $this->states,
+            );
+            
+            $loader = new ArrayLoader($data);
+            $this->state_machine = new StateMachine();
+            $loader->load($this->state_machine);
+            
+            $this->transitions($this->state_machine);
+
+            $this->state_machine->setObject($this);
+            $this->state_machine->initialize();
+        }
+
+        return $this->state_machine;
+    }
+
+    protected function transitions($sm)
+    {
+        $sm->addTransition(new Transition('checkout', array('cart'), 'checkout'));
+        $sm->addTransition(new Transition('pay', array('checkout'), 'paid', array($this, 'toPaid')));
+        $sm->addTransition(new Transition('process', array('paid'), 'processing'));
+        $sm->addTransition(new Transition('send', array('processing'), 'sent'));
+        $sm->addTransition(new Transition('deliver', array('sent'), 'delivered'));
+        $sm->addTransition(new Transition('return', array('sent'), 'returned'));
+        $sm->addTransition(new Transition('cancel', array('paid', 'processing'), 'cancelled'));
+        $sm->addTransition(new Transition('retry', array('cancelled'), 'checkout'));
+    }
+
+    public function toPaid($state_machine)
+    {
+        foreach ($this->getPayments() as $payment) {
+            $payment->processTo('pay');
+        }
+    }
+
+    public function getFiniteState()
+    {
+        return $this->getState();
+    }
+
+    public function setFiniteState($state)
+    {
+        $this->setState($state);
+    }
+
     /* -(  AdjustableInterface  ) ------------------------------------------ */
 
     /**

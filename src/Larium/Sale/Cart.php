@@ -4,7 +4,8 @@
 namespace Larium\Sale;
 
 use Larium\Store\Product;
-use Larium\Payment\PaymentInterface;
+use Larium\Payment\Payment;
+use Larium\Payment\PaymentMethod;
 
 class Cart
 {
@@ -75,7 +76,6 @@ class Cart
         return $this->order;
     }
 
-
     /**
      * Sets an Order to handle. 
      * 
@@ -107,7 +107,26 @@ class Cart
     public function getTotalQuantity()
     {
         return $this->getOrder()->getTotalQuantity();
-    }   
+    }
+
+    public function applyPaymentMethod(PaymentMethod $method)
+    {
+        $payment = new Payment();
+        $payment->setPaymentMethod($method);
+        $this->getOrder()->addPayment($payment);
+
+        return $payment;
+    }
+
+    public function processTo($state)
+    {
+        return $this->getOrder()->getStateMachine()->apply($state);
+    }
+
+    public function process()
+    {
+        $this->getOrder()->process();
+    } 
 
     /**
      * Creates an OrderItem from a given Product. 

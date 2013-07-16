@@ -22,6 +22,29 @@ class PaymentMethod
     
     protected $payment_source;
 
+    protected $source_options;
+
+    public function initialize(array $options=array())
+    {
+        $default = array(
+            'source_class' => '',
+            'provider_class' => '',
+            'title' => '',
+            'cost' => 0,
+            'id' => null,
+            'description' => ''
+        );
+
+        $options = array_merge($default, $options);
+
+        $this->source_class = $options['source_class'];
+        $this->provider_class = $options['provider_class'];
+        $this->title = $options['title'];
+        $this->cost = $options['cost'];
+        $this->id = $options['id'];
+        $this->description = $options['description'];
+    }
+
     public function getId()
     {
         return $this->id;

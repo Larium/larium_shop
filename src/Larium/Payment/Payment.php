@@ -6,10 +6,13 @@ namespace Larium\Payment;
 
 use Larium\Sale\AdjustableInterface;
 use Larium\Sale\OrderInterface;
+use Finite\StatefulInterface;
+use Finite\Loader\ArrayLoader;
+use Larium\StateMachine\Transition;
+use Larium\StateMachine\StateMachine;
 
-class Payment implements PaymentInterface
+class Payment implements PaymentInterface, StatefulInterface
 {
-
     protected $transactions;
 
     protected $amount;
@@ -19,6 +22,29 @@ class Payment implements PaymentInterface
     protected $tag;
 
     protected $order;
+
+    protected $state = 'unpaid';
+
+    protected $state_machine;
+
+    protected $states = array(
+        'unpaid' => array(
+            'type' => 'initial',
+            'properties' => array()
+        ),
+        'authorized' => array(
+            'type' => 'normal',
+            'properties' => array()           
+        ),
+        'paid' => array(
+            'type' => 'final',
+            'properties' => array()           
+        ),
+        'refunded' => array(
+            'type' => 'final',
+            'properties' => array()           
+        )
+    );
 
     public function __construct()
     {
@@ -132,8 +158,55 @@ class Payment implements PaymentInterface
     {
         $this->state = $state;
     }
+    
+    /* -(  StateMachine  ) ------------------------------------------------- */
 
-    public function process()
+    public function getFiniteState()
+    {
+        return $this->getState();
+    }
+
+    public function setFiniteState($state)
+    {
+        $this->setState($state);
+    }
+
+    public function processTo($state)
+    {
+        $this->getStateMachine()->apply($state);
+    }
+
+    public function getStateMachine()
+    {
+        if (null === $this->state_machine) {
+            $data  = array(
+                'class' => __CLASS__,
+                'states' => $this->states,
+            );
+            
+            $loader = new ArrayLoader($data);
+            $this->state_machine = new StateMachine();
+            $loader->load($this->state_machine);
+            
+            $this->transitions($this->state_machine);
+
+            $this->state_machine->setObject($this);
+            $this->state_machine->initialize();
+        }
+
+        return $this->state_machine;
+    }
+
+    protected function transitions($sm)
+    {
+        $sm->addTransition(new Transition('pay', array('unpaid'), 'paid', array($this, 'toPaid')));
+        $sm->addTransition(new Transition('authorize', array('unpaid'), 'authorized', array($this, 'toAuthorized')));
+        $sm->addTransition(new Transition('capture', array('authorized'), 'paid', array($this, 'toPaid')));
+        $sm->addTransition(new Transition('void', array('authorized'), 'refunded', array($this, 'toRefunded')));
+        $sm->addTransition(new Transition('credit', array('paid'), 'refunded', array($this, 'toRefunded')));
+    }
+
+    public function toPaid()
     {
         if (null === $this->getOrder()) {
             throw new \Exception("You must set an Order for this Payment");
@@ -143,7 +216,7 @@ class Payment implements PaymentInterface
 
             return;
         }
-        
+
         $provider = $this->getPaymentMethod()->getProvider();
 
         if ($provider instanceof PaymentProviderInterface) {
@@ -164,10 +237,20 @@ class Payment implements PaymentInterface
                 }
             }
 
-         } else {
-             
-             throw new Exception('Provider must implements Larium\Payment\PaymentProviderInterface');
-         }
+        } else {
+
+            throw new Exception('Provider must implements Larium\Payment\PaymentProviderInterface');
+        }
+    }
+
+    public function toAuthorized()
+    {
+    
+    }
+
+    public function toRefunded()
+    {
+
     }
 
     protected function options()

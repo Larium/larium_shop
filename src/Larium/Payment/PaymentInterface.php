@@ -115,6 +115,4 @@ interface PaymentInterface
     public function setOrder(OrderInterface $order);
 
     public function detachOrder();
-
-    public function process();
 }
