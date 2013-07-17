@@ -23,6 +23,8 @@ class Payment implements PaymentInterface, StatefulInterface
 
     protected $order;
 
+    protected $payment_method;
+
     protected $state = 'unpaid';
 
     protected $state_machine;
