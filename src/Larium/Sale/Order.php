@@ -112,9 +112,12 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function removeItem(OrderItemInterface $item)
     {
-        $this->items->detach($item);
+        if ($remove = $this->contains($item)) {
 
-        $this->calculateTotalAmount();
+            $this->items->detach($remove);
+
+            $this->calculateTotalAmount();
+        }
     }
 
     /**

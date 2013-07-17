@@ -61,7 +61,7 @@ interface OrderInterface extends AdjustableInterface
      *
      * @param  OrderItemInterface $item
      * @access public
-     * @return boolean|OrderItemInterface
+     * @return false|OrderItemInterface
      */
     public function containsItem(OrderItemInterface $item);
 
