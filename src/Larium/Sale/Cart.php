@@ -55,7 +55,7 @@ class Cart
      */
     public function removeItem(OrderItem $item)
     {
-        if ( $this->getOrder()->getOrderItems()->contains($item)) {
+        if ($this->getOrder()->getOrderItems()->contains($item)) {
             $this->getOrder()->removeItem($item);
         }
     }
