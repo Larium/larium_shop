@@ -5,7 +5,7 @@ namespace Larium\Sale;
 
 use Larium\Store\Product;
 use Larium\Payment\Payment;
-use Larium\Payment\PaymentMethod;
+use Larium\Payment\PaymentMethodInterace;
 
 class Cart
 {
@@ -86,11 +86,23 @@ class Cart
         $this->order = $order;
     }
 
+    /**
+     * Gets a collection of order items
+     *
+     * @access public
+     * @return array|Traversable
+     */
     public function getItems()
     {
         return $this->getOrder()->getItems();
     }
 
+    /**
+     * Gets the total number of items in order.
+     *
+     * @access public
+     * @return integer
+     */
     public function getItemsCount()
     {
         $items = $this->getItems();
@@ -102,12 +114,28 @@ class Cart
         }
     }
 
+    /**
+     * Delegate to Order.
+     * Gets the total quantity of order items.
+     *
+     * @access public
+     * @return integer
+     */
     public function getTotalQuantity()
     {
         return $this->getOrder()->getTotalQuantity();
     }
 
-    public function applyPaymentMethod(PaymentMethod $method)
+    /**
+     * Creates and adds a Payment to order based on PaymentMethod.
+     *
+     * Returns the Payment instance.
+     *
+     * @param PaymentMethodInterface $method
+     * @access public
+     * @return Larium\Payment\PaymentInterface
+     */
+    public function applyPaymentMethod(PaymentMethodInterface $method)
     {
         $payment = new Payment();
         $payment->setPaymentMethod($method);
@@ -116,14 +144,27 @@ class Cart
         return $payment;
     }
 
+    /**
+     * Applies the given state to Order.
+     *
+     * @param string $state
+     * @access public
+     * @return mixed
+     */
     public function processTo($state)
     {
         return $this->getOrder()->getStateMachine()->apply($state);
     }
 
+    /**
+     * Process Order to the next valid state.
+     *
+     * @access public
+     * @return mixed
+     */
     public function process()
     {
-        $this->getOrder()->process();
+        return $this->getOrder()->process();
     }
 
     /**
