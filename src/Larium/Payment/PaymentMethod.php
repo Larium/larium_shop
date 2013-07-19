@@ -22,7 +22,7 @@ class PaymentMethod implements PaymentMethodInterface
 
     protected $payment_source;
 
-    protected $source_options;
+    protected $source_options = array();
 
     public function initialize(array $options=array())
     {
@@ -56,9 +56,7 @@ class PaymentMethod implements PaymentMethodInterface
     }
 
     /**
-     * Get title.
-     *
-     * @return string.
+     * {@inheritdoc}
      */
     public function getTitle()
     {
@@ -96,9 +94,7 @@ class PaymentMethod implements PaymentMethodInterface
     }
 
     /**
-     * Get cost.
-     *
-     * @return number
+     * {@inheritdoc}
      */
     public function getCost()
     {
@@ -115,34 +111,54 @@ class PaymentMethod implements PaymentMethodInterface
         $this->cost = $cost;
     }
 
+    /**
+     * getSourceClass
+     *
+     * @access public
+     * @return string
+     */
     public function getSourceClass()
     {
         return $this->source_class;
     }
 
+    /**
+     * setSourceClass
+     *
+     * @param string $source_class
+     * @access public
+     * @return void
+     */
     public function setSourceClass($source_class)
     {
         $this->source_class = $source_class;
     }
 
+    /**
+     * getProviderClass
+     *
+     * @access public
+     * @return string
+     */
     public function getProviderClass()
     {
         return $this->provider_class;
     }
 
+    /**
+     * setProviderClass
+     *
+     * @param string $provider_class
+     * @access public
+     * @return void
+     */
     public function setProviderClass($provider_class)
     {
         $this->provider_class = $provider_class;
     }
 
     /**
-     * Gets the PaymentSource for this Payment.
-     *
-     * Payment sources are objects that satisfy the Payment amount.
-     * Can be Creditcards, Giftcards, Cash, Checks etc.
-     *
-     * @access public
-     * @return PaymentSourceInterface
+     * {@inheritdoc}
      */
     public function getPaymentSource()
     {
@@ -157,6 +173,9 @@ class PaymentMethod implements PaymentMethodInterface
         return $this->payment_source;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getProvider()
     {
         if (null === $this->provider) {
@@ -168,11 +187,17 @@ class PaymentMethod implements PaymentMethodInterface
         return $this->provider;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSourceOptions()
     {
         return $this->source_options;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setSourceOptions(array $options=array())
     {
         $this->source_options = $options;
