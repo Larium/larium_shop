@@ -13,4 +13,6 @@ interface PaymentSourceInterface
     public function isExpired();
 
     public function getDescription();
+
+    public function setOptions(array $options=array());
 }
