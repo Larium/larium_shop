@@ -5,7 +5,7 @@ namespace Larium\Sale;
 
 use Larium\Store\Product;
 use Larium\Payment\Payment;
-use Larium\Payment\PaymentMethodInterace;
+use Larium\Payment\PaymentMethodInterface;
 
 class Cart
 {
@@ -129,6 +129,10 @@ class Cart
     /**
      * Creates and adds a Payment to order based on PaymentMethod.
      *
+     * Cart object is responsible to add only 1 Payment to Order.
+     * If Order already has a Payment then Cart will assign given PaymentMethod
+     * to that Payment.
+     *
      * Returns the Payment instance.
      *
      * @param PaymentMethodInterface $method
@@ -137,7 +141,8 @@ class Cart
      */
     public function applyPaymentMethod(PaymentMethodInterface $method)
     {
-        $payment = new Payment();
+        $payment = $this->getOrder()->hasPayments() ?: new Payment();
+
         $payment->setPaymentMethod($method);
         $this->getOrder()->addPayment($payment);
 

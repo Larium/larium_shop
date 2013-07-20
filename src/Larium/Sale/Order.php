@@ -204,6 +204,27 @@ class Order implements OrderInterface, StatefulInterface
         $this->calculateTotalPaymentAmount();
     }
 
+    /**
+     * Checks if Order has Payment objects and returns the first.
+     *
+     * @access public
+     * @return false|Larium\Payment\PaymentInterface
+     */
+    public function hasPayments()
+    {
+        if ($this->payments->count() > 0) {
+
+            return $this->payments->current();
+        }
+
+        return false;
+    }
+
+    public function removePayment(PaymentInterface $payment)
+    {
+
+    }
+
     public function getPayments()
     {
         return $this->payments;
@@ -290,7 +311,7 @@ class Order implements OrderInterface, StatefulInterface
     public function toPaid($state_machine)
     {
         foreach ($this->getPayments() as $payment) {
-            $payment->processTo('pay');
+            $payment->processTo('purchase');
         }
     }
 
@@ -316,7 +337,6 @@ class Order implements OrderInterface, StatefulInterface
             : AdjustmentInterface::CREDIT;
 
         $adjustment->setAdjustable($this);
-        $this->items->attach($adjustment, $type);
     }
 
     /**
