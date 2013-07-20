@@ -175,7 +175,7 @@ class Payment implements PaymentInterface, StatefulInterface
 
     public function processTo($state)
     {
-        $this->getStateMachine()->apply($state);
+        return $this->getStateMachine()->apply($state);
     }
 
     public function getStateMachine()
@@ -220,12 +220,19 @@ class Payment implements PaymentInterface, StatefulInterface
 
         if (!$this->getOrder()->needsPayment()) {
 
-            return;
+            return false;
         }
 
         $provider = $this->getPaymentMethod()->getProvider();
 
         if ($provider instanceof PaymentProviderInterface) {
+
+            if ($cost = $this->getPaymentMethod()->getCost()) {
+                $adj = new \Larium\Sale\Adjustment();
+                $adj->setAmount($cost);
+                $adj->setLabel($this->getPaymentMethod()->getTitle());
+                $this->getOrder()->addAdjustment($adj);
+            }
 
             // The amount to charge for this payment.
             $amount = null === $this->amount
@@ -241,6 +248,8 @@ class Payment implements PaymentInterface, StatefulInterface
                 if (null === $this->amount) {
                     $this->setAmount($amount);
                 }
+
+                return $response;
             }
 
         } else {
