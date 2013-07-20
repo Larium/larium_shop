@@ -29,10 +29,19 @@ order_item_1:
   description: 'T-Shirt LongSleeve'
 creditcard_payment_method:
   source_class: 'Larium\Payment\Source\CreditCard'
-  provider_class: 'Larium\Payment\Provider\LocalProvider'
+  provider_class: 'Larium\Payment\Provider\GatewayProvider'
+  gateway_class: 'AktiveMerchant\Billing\Gateways\Bogus'
+  gateway_options: {login: 'x', password: 'y'}
   title: 'Credit card payment'
   cost: 0
-  id: 1
+  id: 1 # Optional value assigned probably from storage engine
+  description: 'Some description' # Optional value used for inform end user.
+cash_on_delivery_payment_method:
+  source_class: 'Larium\Payment\Source\CashOnDelivery'
+  provider_class: 'Larium\Payment\Provider\LocalProvider'
+  title: 'Cash On Delivery payment'
+  cost: 4
+  id: 2
   description: 'Some description'
 preferences:
   some_gateway:

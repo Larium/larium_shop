@@ -80,13 +80,26 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $cart->process(); //-> Move to Checkout state
 
         $method = $this->getPaymentMethod('creditcard_payment_method');
-        $method->setSourceOptions(array('number'=>'4111111111111111'));
+        //$method = $this->getPaymentMethod('cash_on_delivery_payment_method');
+        $method->setSourceOptions(
+            array(
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'month' => '2',
+                'year' => date('Y') + 5,
+                'number'=>'1'
+            )
+        );
 
-        $cart->applyPaymentMethod($method);
+        $payment = $cart->applyPaymentMethod($method);
 
         $cart->process(); //-> Try to pay the order
 
         $this->assertEquals('paid', $cart->getOrder()->getState());
+
+        $this->assertEquals('purchased', $payment->getState());
+
+        $this->assertEquals('1', $method->getPaymentSource()->getNumber());
     }
 
     private function getProduct($id)

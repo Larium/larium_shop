@@ -12,7 +12,8 @@
         }
     ],
     "require": {
-        "yohang/finite": "1.0.*"
+        "yohang/finite": "1.0.*",
+        "aktive_merchant/aktive_merchant": "1.0.*"
     },
     "minimum-stability": "dev" 
 }
