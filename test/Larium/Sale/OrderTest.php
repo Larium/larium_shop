@@ -70,7 +70,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testOrderPayment()
+    public function testOrderPaymentWithCreditCard()
     {
         $cart = $this->getCartWithOneItem();
 
@@ -88,6 +88,23 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('paid', $payment->getState());
 
         $this->assertEquals('1', $method->getPaymentSource()->getNumber());
+    }
+
+    public function testOrderPaymentWithCashOnDelivery()
+    {
+        $cart = $this->getCartWithOneItem();
+
+        $total_amount = $cart->getOrder()->getTotalAmount();
+
+        $cart->process(); //-> Move to Checkout state
+
+        $method = $this->getPaymentMethod('cash_on_delivery_payment_method');
+
+        $payment = $cart->setPaymentMethod($method);
+
+        $cart->process(); //-> Try to pay the order
+
+        $this->assertTrue($cart->getOrder()->getTotalAmount() > $total_amount);
     }
 
     private function getCartWithOneItem()
