@@ -142,7 +142,7 @@ class Cart
      * @access public
      * @return Larium\Payment\PaymentInterface
      */
-    public function applyPaymentMethod(PaymentMethodInterface $method)
+    public function setPaymentMethod(PaymentMethodInterface $method)
     {
         $payment = $this->getOrder()->hasPayments() ?: new Payment();
 

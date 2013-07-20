@@ -72,10 +72,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
     public function testOrderPayment()
     {
-        $cart = new Cart();
-        $product = $this->getProduct('product_1');
-        $variant = $product->getDefaultVariant();
-        $item = $cart->addItem($variant);
+        $cart = $this->getCartWithOneItem();
 
         $cart->process(); //-> Move to Checkout state
 
@@ -91,7 +88,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $payment = $cart->applyPaymentMethod($method);
+        $payment = $cart->setPaymentMethod($method);
 
         $cart->process(); //-> Try to pay the order
 
@@ -100,6 +97,16 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('purchased', $payment->getState());
 
         $this->assertEquals('1', $method->getPaymentSource()->getNumber());
+    }
+
+    private function getCartWithOneItem()
+    {
+        $cart = new Cart();
+        $product = $this->getProduct('product_1');
+        $variant = $product->getDefaultVariant();
+        $item = $cart->addItem($variant);
+
+        return $cart;
     }
 
     private function getProduct($id)
