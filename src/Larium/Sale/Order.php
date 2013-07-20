@@ -289,7 +289,7 @@ class Order implements OrderInterface, StatefulInterface
             $this->state_machine = new StateMachine();
             $loader->load($this->state_machine);
 
-            $this->transitions($this->state_machine);
+            $this->transitions();
 
             $this->state_machine->setObject($this);
             $this->state_machine->initialize();
@@ -298,8 +298,10 @@ class Order implements OrderInterface, StatefulInterface
         return $this->state_machine;
     }
 
-    protected function transitions($sm)
+    protected function transitions()
     {
+        $sm = $this->state_machine;
+
         $sm->addTransition(new Transition('checkout', array('cart'), 'checkout'));
         $sm->addTransition(new Transition('pay', array('checkout'), 'paid', array($this, 'toPaid')));
         $sm->addTransition(new Transition('process', array('paid'), 'processing'));
@@ -310,10 +312,19 @@ class Order implements OrderInterface, StatefulInterface
         $sm->addTransition(new Transition('retry', array('cancelled'), 'checkout'));
     }
 
-    public function toPaid($state_machine)
+    public function toPaid(StateMachine $stateMachine, Transition $transition)
     {
+        $responses = array();
+
         foreach ($this->getPayments() as $payment) {
-            $payment->processTo('purchase');
+            $responses[] = $payment->processTo('purchase');
+        }
+        if (1 == count($responses)) {
+
+            return current($responses);
+        } else {
+
+            return $responses;
         }
     }
 
@@ -334,9 +345,7 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function addAdjustment(AdjustmentInterface $adjustment)
     {
-        $type = $adjustment->isCharge()
-            ? AdjustmentInterface::CHARGE
-            : AdjustmentInterface::CREDIT;
+        $this->adjustments->attach($adjustment);
 
         $adjustment->setAdjustable($this);
     }
@@ -347,6 +356,8 @@ class Order implements OrderInterface, StatefulInterface
     public function removeAdjustment(AdjustmentInterface $adjustment)
     {
         $this->adjustments->detach($adjustment);
+
+        $adjustment->detachAdjustable();
     }
 
     /**
