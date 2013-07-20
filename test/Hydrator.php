@@ -48,6 +48,9 @@ class Hydrator
                         }
                     }
                     $class->$mutator($storage);
+                } else {
+
+                    $class->$mutator($value);
                 }
             } else {
                 $class->$mutator($value);
