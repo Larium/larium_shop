@@ -190,7 +190,7 @@ class Payment implements PaymentInterface, StatefulInterface
             $this->state_machine = new StateMachine();
             $loader->load($this->state_machine);
 
-            $this->transitions($this->state_machine);
+            $this->transitions();
 
             $this->state_machine->setObject($this);
             $this->state_machine->initialize();
@@ -199,19 +199,23 @@ class Payment implements PaymentInterface, StatefulInterface
         return $this->state_machine;
     }
 
-    protected function transitions($sm)
+    private function transitions()
     {
-        $sm->addTransition(new Transition('pay', array('unpaid'), 'paid', array($this, 'toPaid')));
+        $sm = $this->state_machine;
+
+        $sm->addTransition(new Transition('purchase', array('unpaid'), 'purchased', array($this, 'toPurchase')));
         $sm->addTransition(new Transition('authorize', array('unpaid'), 'authorized', array($this, 'toAuthorized')));
         $sm->addTransition(new Transition('capture', array('authorized'), 'paid', array($this, 'toPaid')));
         $sm->addTransition(new Transition('void', array('authorized'), 'refunded', array($this, 'toRefunded')));
         $sm->addTransition(new Transition('credit', array('paid'), 'refunded', array($this, 'toRefunded')));
     }
 
-    public function toPaid()
+    public function toPurchase(StateMachine $stateMachine, Transition $transition)
     {
+        $action = $transition->getName();
+
         if (null === $this->getOrder()) {
-            throw new \Exception("You must set an Order for this Payment");
+            throw new \Exception("You must add this Payment to an Order.");
         }
 
         if (!$this->getOrder()->needsPayment()) {
@@ -223,15 +227,19 @@ class Payment implements PaymentInterface, StatefulInterface
 
         if ($provider instanceof PaymentProviderInterface) {
 
+            // The amount to charge for this payment.
             $amount = null === $this->amount
                 ? $this->getOrder()->getTotalAmount()
                 : $this->amount;
 
-            $response = $provider->purchase(
+            // Invoke the method of Provider based on Transition name.
+            $providerMethod = new \ReflectionMethod($provider, $action);
+            $params = array(
                 $amount,
                 $this->getPaymentMethod()->getPaymentSource(),
                 $this->options()
             );
+            $response = $providerMethod->invokeArgs($provider, $params);
 
             if ($response->isSuccess()) {
                 if (null === $this->amount) {
