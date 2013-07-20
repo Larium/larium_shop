@@ -197,6 +197,8 @@ class PaymentMethod implements PaymentMethodInterface
                 $this->provider->setGatewayClass($this->getGatewayClass());
                 $this->provider->setGatewayOptions($this->getGatewayOptions());
             }
+
+            $this->provider->setPaymentSource($this->getPaymentSource());
         }
 
         return $this->provider;

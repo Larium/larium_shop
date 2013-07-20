@@ -234,11 +234,7 @@ class Payment implements PaymentInterface, StatefulInterface
 
             // Invoke the method of Provider based on Transition name.
             $providerMethod = new \ReflectionMethod($provider, $action);
-            $params = array(
-                $amount,
-                $this->getPaymentMethod()->getPaymentSource(),
-                $this->options()
-            );
+            $params = array($amount, $this->options());
             $response = $providerMethod->invokeArgs($provider, $params);
 
             if ($response->isSuccess()) {

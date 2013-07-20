@@ -6,5 +6,7 @@ namespace Larium\Payment;
 
 interface PaymentProviderInterface
 {
-    public function purchase($amount, PaymentSourceInterface $source, array $options=array());
+    public function purchase($amount, array $options=array());
+
+    public function setPaymentSource(PaymentSourceInterface $payment_source);
 }

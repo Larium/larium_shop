@@ -9,11 +9,18 @@ use Larium\Payment\PaymentSourceInterface;
 
 class LocalProvider implements PaymentProviderInterface
 {
+    protected $payment_source;
+
     public function purchase($amount, PaymentSourceInterface $source=null, array $options=array())
     {
         $response = new Response();
         $response->setSuccess(true);
 
         return $response;
+    }
+
+    public function setPaymentSource(PaymentSourceInterface $payment_source)
+    {
+        $this->payment_source = $payment_source;
     }
 }

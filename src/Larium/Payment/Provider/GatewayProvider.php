@@ -16,16 +16,18 @@ class GatewayProvider implements PaymentProviderInterface
 
     protected $gateway;
 
-    public function authorize($amount, PaymentSourceInterface $source, array $options=array())
+    protected $payment_source;
+
+    public function authorize($amount, array $options=array())
     {
 
     }
 
-    public function purchase($amount, PaymentSourceInterface $source=null, array $options=array())
+    public function purchase($amount, array $options=array())
     {
         $response = new Response();
 
-        $cc = new CreditCard($source->getOptions());
+        $cc = new CreditCard($this->payment_source->getOptions());
 
         $r = $this->getGateway()->purchase($amount, $cc, $options);
         $response->setSuccess($r->success());
@@ -77,5 +79,10 @@ class GatewayProvider implements PaymentProviderInterface
     public function setGatewayOptions(array $gateway_options=array())
     {
         $this->gateway_options = $gateway_options;
+    }
+
+    public function setPaymentSource(PaymentSourceInterface $payment_source)
+    {
+        $this->payment_source = $payment_source;
     }
 }
