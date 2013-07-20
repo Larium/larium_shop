@@ -10,13 +10,20 @@ class CreditCard implements PaymentSourceInterface
 {
     protected $number;
 
-    protected $description = "Credit Card";
+    protected $options;
 
     public function setOptions(array $options=array())
     {
+        $this->options = $options;
+
         $this->number = isset($options['number'])
             ? $options['number']
             : null;
+    }
+
+    public function getOptions()
+    {
+        return $this->options;
     }
 
     public function getBalance()
@@ -32,11 +39,6 @@ class CreditCard implements PaymentSourceInterface
     public function isExpired()
     {
         return false;
-    }
-
-    public function getDescription()
-    {
-        return $this->description;
     }
 }
 
