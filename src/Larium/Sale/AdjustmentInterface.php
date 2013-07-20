@@ -68,9 +68,28 @@ interface AdjustmentInterface
      */
     public function getAdjustable();
 
+    /**
+     * Detach the adjustable from adjustment.
+     *
+     * @access public
+     * @return void
+     */
     public function detachAdjustable();
 
-    public function getSource();
+    /**
+     * Gets label.
+     *
+     * @access public
+     * @return string
+     */
+    public function getLabel();
 
-    public function setSource($source);
+    /**
+     * Sets label.
+     *
+     * @param string $label the value to set.
+     * @access public
+     * @return void
+     */
+    public function setLabel($label);
 }

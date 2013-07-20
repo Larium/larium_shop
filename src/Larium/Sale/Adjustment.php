@@ -23,11 +23,12 @@ class Adjustment implements AdjustmentInterface
     protected $adjustable;
 
     /**
+     * The display label.
      *
-     * @var    mixed
+     * @var string
      * @access protected
      */
-    protected $source;
+    protected $label;
 
     /**
      * {@inheritdoc}
@@ -88,16 +89,16 @@ class Adjustment implements AdjustmentInterface
     /**
      * {@inheritdoc}
      */
-    public function getSource()
+    public function getLabel()
     {
-        return $this->source;
+        return $this->label;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setSource($source)
+    public function setLabel($label)
     {
-        $this->source = $source;
+        $this->label = $label;
     }
 }
