@@ -24,6 +24,10 @@ class PaymentMethod implements PaymentMethodInterface
 
     protected $source_options = array();
 
+    protected $gateway_class;
+
+    protected $gateway_options = array();
+
     public function initialize(array $options=array())
     {
         $default = array(
@@ -163,6 +167,12 @@ class PaymentMethod implements PaymentMethodInterface
     public function getPaymentSource()
     {
         if (null === $this->payment_source) {
+
+            if (null === $this->getSourceClass()) {
+
+                return null;
+            }
+
             $source_class = $this->getSourceClass();
 
             $this->payment_source = new $source_class();
@@ -182,6 +192,11 @@ class PaymentMethod implements PaymentMethodInterface
             $provider_class = $this->provider_class;
 
             $this->provider = new $provider_class;
+
+            if ($this->provider instanceof \Larium\Payment\Provider\GatewayProvider) {
+                $this->provider->setGatewayClass($this->getGatewayClass());
+                $this->provider->setGatewayOptions($this->getGatewayOptions());
+            }
         }
 
         return $this->provider;
@@ -201,5 +216,56 @@ class PaymentMethod implements PaymentMethodInterface
     public function setSourceOptions(array $options=array())
     {
         $this->source_options = $options;
+    }
+
+    /**
+     * Optional
+     * Gets gateway_class to use in Provider.
+     *
+     * @access public
+     * @return mixed
+     */
+    public function getGatewayClass()
+    {
+        return $this->gateway_class;
+    }
+
+    /**
+     * Optional
+     * Sets gateway_class to use in Provider.
+     *
+     * @param string $gateway_class
+     * @access public
+     * @return void
+     */
+    public function setGatewayClass($gateway_class)
+    {
+        $this->gateway_class = $gateway_class;
+    }
+
+
+    /**
+     * Optional
+     * Gets gateway options.
+     *
+     * @access public
+     * @return mixed
+     */
+    public function getGatewayOptions()
+    {
+        return $this->gateway_options;
+    }
+
+    /**
+     * Optional
+     * Sets gateway options to pass to provider if gateway class exists.
+     *
+     * @param array $gateway_options
+     * @access public
+     * @return void
+     */
+    public function setGatewayOptions(array $gateway_options=array())
+    {
+        $this->gateway_options = $gateway_options;
     }
 }
