@@ -133,6 +133,9 @@ class Cart
      * If Order already has a Payment then Cart will assign given PaymentMethod
      * to that Payment.
      *
+     * Note: Cart cannot apply different PaymentMethd once the Payment is
+     * set to purchased state.
+     *
      * Returns the Payment instance.
      *
      * @param PaymentMethodInterface $method
@@ -142,6 +145,10 @@ class Cart
     public function applyPaymentMethod(PaymentMethodInterface $method)
     {
         $payment = $this->getOrder()->hasPayments() ?: new Payment();
+
+        if ('purchased' == $payment->getState()) {
+            throw new \Exception("Can not change payment method. Payment has been completed.");
+        }
 
         $payment->setPaymentMethod($method);
         $this->getOrder()->addPayment($payment);
