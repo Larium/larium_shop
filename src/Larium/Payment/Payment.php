@@ -203,14 +203,14 @@ class Payment implements PaymentInterface, StatefulInterface
     {
         $sm = $this->state_machine;
 
-        $sm->addTransition(new Transition('purchase', array('unpaid'), 'purchased', array($this, 'toPurchase')));
+        $sm->addTransition(new Transition('purchase', array('unpaid'), 'paid', array($this, 'toPaid')));
         $sm->addTransition(new Transition('authorize', array('unpaid'), 'authorized', array($this, 'toAuthorized')));
         $sm->addTransition(new Transition('capture', array('authorized'), 'paid', array($this, 'toPaid')));
         $sm->addTransition(new Transition('void', array('authorized'), 'refunded', array($this, 'toRefunded')));
         $sm->addTransition(new Transition('credit', array('paid'), 'refunded', array($this, 'toRefunded')));
     }
 
-    public function toPurchase(StateMachine $stateMachine, Transition $transition)
+    public function toPaid(StateMachine $stateMachine, Transition $transition)
     {
         $action = $transition->getName();
 

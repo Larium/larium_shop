@@ -77,16 +77,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $cart->process(); //-> Move to Checkout state
 
         $method = $this->getPaymentMethod('creditcard_payment_method');
-        //$method = $this->getPaymentMethod('cash_on_delivery_payment_method');
-        $method->setSourceOptions(
-            array(
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-                'month' => '2',
-                'year' => date('Y') + 5,
-                'number'=>'1'
-            )
-        );
+        $method->setSourceOptions($this->getValidCreditCardOptions());
 
         $payment = $cart->setPaymentMethod($method);
 
@@ -94,7 +85,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('paid', $cart->getOrder()->getState());
 
-        $this->assertEquals('purchased', $payment->getState());
+        $this->assertEquals('paid', $payment->getState());
 
         $this->assertEquals('1', $method->getPaymentSource()->getNumber());
     }
@@ -134,5 +125,16 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $hydrator = new \Hydrator('Larium\\Payment\\PaymentMethod');
 
         return $hydrator->hydrate($data[$id], $id);
+    }
+
+    private function getValidCreditCardOptions()
+    {
+        return array(
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'month' => '2',
+            'year' => date('Y') + 5,
+            'number'=>'1'
+        );
     }
 }

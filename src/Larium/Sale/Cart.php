@@ -146,7 +146,7 @@ class Cart
     {
         $payment = $this->getOrder()->hasPayments() ?: new Payment();
 
-        if ('purchased' == $payment->getState()) {
+        if ('paid' == $payment->getState()) {
             throw new \Exception("Can not change payment method. Payment has been completed.");
         }
 
