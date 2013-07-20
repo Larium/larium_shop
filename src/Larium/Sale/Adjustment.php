@@ -4,7 +4,7 @@
 
 namespace Larium\Sale;
 
-class Adjustment implements AdjustmentIterface
+class Adjustment implements AdjustmentInterface
 {
     /**
      * The amount of Adjustement.
@@ -34,7 +34,7 @@ class Adjustment implements AdjustmentIterface
      */
     public function setAmount($amount)
     {
-        $this->amount = $amount
+        $this->amount = $amount;
     }
 
     /**
@@ -59,6 +59,14 @@ class Adjustment implements AdjustmentIterface
     public function getAdjustable()
     {
         return $this->adjustable;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function detachAdjustable()
+    {
+        $this->adjustable = null;
     }
 
     /**

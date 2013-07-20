@@ -68,6 +68,8 @@ interface AdjustmentInterface
      */
     public function getAdjustable();
 
+    public function detachAdjustable();
+
     public function getSource();
 
     public function setSource($source);
