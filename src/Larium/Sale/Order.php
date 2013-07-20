@@ -214,6 +214,8 @@ class Order implements OrderInterface, StatefulInterface
     {
         if ($this->payments->count() > 0) {
 
+            $this->payments->rewind();
+
             return $this->payments->current();
         }
 
