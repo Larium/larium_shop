@@ -9,6 +9,7 @@ use Finite\StatefulInterface;
 use Finite\Loader\ArrayLoader;
 use Larium\StateMachine\Transition;
 use Larium\StateMachine\StateMachine;
+use Larium\Shipment\ShippingInterface;
 
 class Order implements OrderInterface, StatefulInterface
 {
@@ -17,6 +18,8 @@ class Order implements OrderInterface, StatefulInterface
     protected $adjustments;
 
     protected $payments;
+
+    protected $shipping_method;
 
     protected $adjustments_total;
 
@@ -304,6 +307,7 @@ class Order implements OrderInterface, StatefulInterface
 
         $sm->addTransition(new Transition('checkout', array('cart'), 'checkout'));
         $sm->addTransition(new Transition('pay', array('checkout'), 'paid', array($this, 'toPaid')));
+        $sm->addTransition(new Transition('authorize', array('checkout'), 'authorized', array($this, 'toAuthorized')));
         $sm->addTransition(new Transition('process', array('paid'), 'processing'));
         $sm->addTransition(new Transition('send', array('processing'), 'sent'));
         $sm->addTransition(new Transition('deliver', array('sent'), 'delivered'));
@@ -319,6 +323,7 @@ class Order implements OrderInterface, StatefulInterface
         foreach ($this->getPayments() as $payment) {
             $responses[] = $payment->processTo('purchase');
         }
+
         if (1 == count($responses)) {
 
             return current($responses);
@@ -404,5 +409,28 @@ class Order implements OrderInterface, StatefulInterface
         $this->calculateAdjustmentsTotal();
 
         return $this->adjustments_total;
+    }
+
+    /**
+     * Gets shipping_method.
+     *
+     * @access public
+     * @return mixed
+     */
+    public function getShippingMethod()
+    {
+        return $this->shipping_method;
+    }
+
+    /**
+     * Sets shipping_method.
+     *
+     * @param mixed $shipping_method the value to set.
+     * @access public
+     * @return void
+     */
+    public function setShippingMethod(ShippingInterface $shipping_method)
+    {
+        $this->shipping_method = $shipping_method;
     }
 }
