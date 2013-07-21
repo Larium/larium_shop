@@ -212,10 +212,12 @@ class Payment implements PaymentInterface, StatefulInterface
 
     public function toPaid(StateMachine $stateMachine, Transition $transition)
     {
-        $action = $transition->getName();
-
         if (null === $this->getOrder()) {
-            throw new \Exception("You must add this Payment to an Order.");
+            throw new \InvalidArgumentException("You must add this Payment to an Order.");
+        }
+
+        if (null === $this->getPaymentMethod()) {
+            throw new \InvalidArgumentException("You must set a PaymentMethod for this Payment.");
         }
 
         if (!$this->getOrder()->needsPayment()) {
@@ -223,39 +225,21 @@ class Payment implements PaymentInterface, StatefulInterface
             return false;
         }
 
-        $provider = $this->getPaymentMethod()->getProvider();
+        // The amount to charge for this payment.
+        $amount = $this->payment_amount();
 
-        if ($provider instanceof PaymentProviderInterface) {
+        $response = $this->invoke_provider($amount, $transition->getName());
 
-            if ($cost = $this->getPaymentMethod()->getCost()) {
-                $adj = new \Larium\Sale\Adjustment();
-                $adj->setAmount($cost);
-                $adj->setLabel($this->getPaymentMethod()->getTitle());
-                $this->getOrder()->addAdjustment($adj);
+        if ($response->isSuccess()) {
+            if (null === $this->amount) {
+                $this->setAmount($amount);
             }
 
-            // The amount to charge for this payment.
-            $amount = null === $this->amount
-                ? $this->getOrder()->getTotalAmount()
-                : $this->amount;
-
-            // Invoke the method of Provider based on Transition name.
-            $providerMethod = new \ReflectionMethod($provider, $action);
-            $params = array($amount, $this->options());
-            $response = $providerMethod->invokeArgs($provider, $params);
-
-            if ($response->isSuccess()) {
-                if (null === $this->amount) {
-                    $this->setAmount($amount);
-                }
-
-                return $response;
-            }
-
-        } else {
-
-            throw new Exception('Provider must implements Larium\Payment\PaymentProviderInterface');
+            return $response;
         }
+
+        return false;
+
     }
 
     public function toAuthorized()
@@ -268,6 +252,64 @@ class Payment implements PaymentInterface, StatefulInterface
 
     }
 
+    /**
+     * Creates an adjustment for payment cost if needed and calculate the
+     * amount for this payment.
+     *
+     * If Payment has received an amount then this amount will be used alse
+     * will use the TotalAmount from Order.
+     *
+     * @access protected
+     * @return void
+     */
+    protected function payment_amount()
+    {
+        $this->create_payment_method_adjustment();
+
+        return null === $this->amount
+            ? $this->getOrder()->getTotalAmount()
+            : $this->amount;
+    }
+
+    protected function create_payment_method_adjustment()
+    {
+
+        if (null === $this->getPaymentMethod()) {
+
+            return;
+        }
+
+        if ($cost = $this->getPaymentMethod()->getCost()) {
+            $adj = new \Larium\Sale\Adjustment();
+            $adj->setAmount($cost);
+            $adj->setLabel($this->getPaymentMethod()->getTitle());
+            $this->getOrder()->addAdjustment($adj);
+        }
+    }
+
+    protected function invoke_provider($amount, $action)
+    {
+        $provider = $this->getPaymentMethod()->getProvider();
+
+        if ($provider instanceof PaymentProviderInterface) {
+
+            // Invoke the method of Provider based on Transition name.
+            $providerMethod = new \ReflectionMethod($provider, $action);
+            $params = array($amount, $this->options());
+        } else {
+
+            throw new Exception('Provider must implements Larium\Payment\PaymentProviderInterface');
+        }
+        return $providerMethod->invokeArgs($provider, $params);
+    }
+
+    /**
+     * Additional options to pass to provider like billing / shipping address,
+     * customer info, order number etc.
+     *
+     * @access protected
+     * @return array
+     */
     protected function options()
     {
         $options = array();
