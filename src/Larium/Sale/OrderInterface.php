@@ -4,6 +4,8 @@
 
 namespace Larium\Sale;
 
+use Larium\Shipment\ShippingInterface;
+
 /**
  * Describes the interface of an Order object.
  *
@@ -115,4 +117,8 @@ interface OrderInterface extends AdjustableInterface
      * @return number
      */
     public function getBalance();
+
+    public function setShippingMethod(ShippingInterface $shipping_method);
+
+    public function getShippingMethod();
 }
