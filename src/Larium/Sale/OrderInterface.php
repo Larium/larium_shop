@@ -5,6 +5,7 @@
 namespace Larium\Sale;
 
 use Larium\Shipment\ShippingInterface;
+use Larium\Payment\PaymentInterface;
 
 /**
  * Describes the interface of an Order object.
@@ -102,12 +103,20 @@ interface OrderInterface extends AdjustableInterface
     public function calculateTotalAmount();
 
     /**
-     * Returns the total amount of the Order.
+     * Returns the total amount of the Order including amount from Adjustments.
      *
      * @access public
      * @return number
      */
     public function getTotalAmount();
+
+    /**
+     * Gets the total quantity of OrderItems in order.
+     *
+     * @access public
+     * @return void
+     */
+    public function getTotalQuantity();
 
     /**
      * Gets the balance amount of this order.
@@ -117,6 +126,41 @@ interface OrderInterface extends AdjustableInterface
      * @return number
      */
     public function getBalance();
+
+    /**
+     * Adds a new Payment for this ORder.
+     *
+     * @param PaymentInterface $payment
+     * @access public
+     * @return void
+     */
+    public function addPayment(PaymentInterface $payment);
+
+    /**
+     * Removes a Payment from ORder.
+     *
+     * @param PaymentInterface $payment
+     * @access public
+     * @return void
+     */
+    public function removePayment(PaymentInterface $payment);
+
+    /**
+     * Sets the current Payment.
+     *
+     * @param PaymentInterface $payment
+     * @access public
+     * @return void
+     */
+    public function setCurrentPayment(PaymentInterface $current_payment);
+
+    /**
+     * Returns the current payment to process.
+     *
+     * @access public
+     * @return PaymentInterfacce
+     */
+    public function getCurrentPayment();
 
     public function setShippingMethod(ShippingInterface $shipping_method);
 

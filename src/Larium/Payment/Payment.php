@@ -50,7 +50,13 @@ class Payment implements PaymentInterface, StatefulInterface
 
     public function __construct()
     {
+        $this->initialize();
+    }
+
+    public function initialize()
+    {
         $this->transactions = new \SplObjectStorage();
+        $this->tag = uniqid();
     }
 
     public function getTag()

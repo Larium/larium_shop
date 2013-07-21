@@ -19,6 +19,8 @@ class Order implements OrderInterface, StatefulInterface
 
     protected $payments;
 
+    protected $current_payment;
+
     protected $shipping_method;
 
     protected $adjustments_total;
@@ -198,6 +200,22 @@ class Order implements OrderInterface, StatefulInterface
         return $this->total_amount;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getTotalQuantity()
+    {
+        $quantity = 0;
+        foreach ($this->getItems() as $item) {
+            $quantity += $item->getQuantity();
+        }
+
+        return $quantity;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function addPayment(PaymentInterface $payment)
     {
         $this->payments->attach($payment);
@@ -208,26 +226,16 @@ class Order implements OrderInterface, StatefulInterface
     }
 
     /**
-     * Checks if Order has Payment objects and returns the first.
-     *
-     * @access public
-     * @return false|Larium\Payment\PaymentInterface
+     * {@inheritdoc}
      */
-    public function hasPayments()
-    {
-        if ($this->payments->count() > 0) {
-
-            $this->payments->rewind();
-
-            return $this->payments->current();
-        }
-
-        return false;
-    }
-
     public function removePayment(PaymentInterface $payment)
     {
-
+        foreach ($this->payments as $p) {
+            if ($payment->getIdentifier() === $p->getIdentifier()) {
+                $this->payment->detach($payment);
+                $payment->detachOrder($this);
+            }
+        }
     }
 
     public function getPayments()
@@ -235,14 +243,20 @@ class Order implements OrderInterface, StatefulInterface
         return $this->payments;
     }
 
-    public function getTotalQuantity()
+    /**
+     * {@inheritdoc}
+     */
+    public function setCurrentPayment(PaymentInterface $current_payment)
     {
-        $quantity = 0;
-        foreach ($this->getItems() as $item) {
-            $quantity += $item->getQuantity();
-        }
+        $this->current_payment = $current_payment;
+    }
 
-        return $quantity;
+    /**
+     * {@inheritdoc}
+     */
+    public function getCurrentPayment()
+    {
+        return $this->current_payment;
     }
 
     public function calculateTotalPaymentAmount()
@@ -318,19 +332,13 @@ class Order implements OrderInterface, StatefulInterface
 
     public function toPaid(StateMachine $stateMachine, Transition $transition)
     {
-        $responses = array();
+        $payment = $this->getCurrentPayment();
 
-        foreach ($this->getPayments() as $payment) {
-            $responses[] = $payment->processTo('purchase');
+        if (null === $payment) {
+            throw new \InvalidArgumentException("Can not proceed Order for payment. No Payment object found!");
         }
 
-        if (1 == count($responses)) {
-
-            return current($responses);
-        } else {
-
-            return $responses;
-        }
+        return $payment->processTo('purchase');
     }
 
     public function getFiniteState()

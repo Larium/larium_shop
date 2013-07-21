@@ -134,7 +134,7 @@ class Cart
      * to that Payment.
      *
      * Note: Cart cannot apply different PaymentMethd once the Payment is
-     * set to purchased state.
+     * set to paid state.
      *
      * Returns the Payment instance.
      *
@@ -144,7 +144,7 @@ class Cart
      */
     public function setPaymentMethod(PaymentMethodInterface $method)
     {
-        $payment = $this->getOrder()->hasPayments() ?: new Payment();
+        $payment = $this->getOrder()->getCurrentPayment() ?: new Payment();
 
         if ('paid' == $payment->getState()) {
             throw new \Exception("Can not change payment method. Payment has been completed.");
@@ -152,6 +152,7 @@ class Cart
 
         $payment->setPaymentMethod($method);
         $this->getOrder()->addPayment($payment);
+        $this->getOrder()->setCurrentPayment($payment);
 
         return $payment;
     }
