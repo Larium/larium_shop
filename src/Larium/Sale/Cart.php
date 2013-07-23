@@ -129,30 +129,19 @@ class Cart
     /**
      * Creates and adds a Payment to order based on PaymentMethod.
      *
-     * Cart object is responsible to add only 1 Payment to Order.
-     * If Order already has a Payment then Cart will assign given PaymentMethod
-     * to that Payment.
-     *
-     * Note: Cart cannot apply different PaymentMethd once the Payment is
-     * set to paid state.
-     *
      * Returns the Payment instance.
      *
      * @param PaymentMethodInterface $method
      * @access public
      * @return Larium\Payment\PaymentInterface
      */
-    public function setPaymentMethod(PaymentMethodInterface $method)
+    public function addPaymentMethod(PaymentMethodInterface $method, $amount=null)
     {
-        $payment = $this->getOrder()->getCurrentPayment() ?: new Payment();
-
-        if ('paid' == $payment->getState()) {
-            throw new \Exception("Can not change payment method. Payment has been completed.");
-        }
+        $payment = new Payment();
 
         $payment->setPaymentMethod($method);
+        $payment->setAmount($amount);
         $this->getOrder()->addPayment($payment);
-        $this->getOrder()->setCurrentPayment($payment);
 
         return $payment;
     }
@@ -167,17 +156,6 @@ class Cart
     public function processTo($state)
     {
         return $this->getOrder()->getStateMachine()->apply($state);
-    }
-
-    /**
-     * Process Order to the next valid state.
-     *
-     * @access public
-     * @return mixed
-     */
-    public function process()
-    {
-        return $this->getOrder()->process();
     }
 
     /**

@@ -145,23 +145,6 @@ interface OrderInterface extends AdjustableInterface
      */
     public function removePayment(PaymentInterface $payment);
 
-    /**
-     * Sets the current Payment.
-     *
-     * @param PaymentInterface $payment
-     * @access public
-     * @return void
-     */
-    public function setCurrentPayment(PaymentInterface $current_payment);
-
-    /**
-     * Returns the current payment to process.
-     *
-     * @access public
-     * @return PaymentInterfacce
-     */
-    public function getCurrentPayment();
-
     public function setShippingMethod(ShippingInterface $shipping_method);
 
     public function getShippingMethod();

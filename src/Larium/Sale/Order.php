@@ -6,13 +6,16 @@ namespace Larium\Sale;
 
 use Larium\Payment\PaymentInterface;
 use Finite\StatefulInterface;
-use Finite\Loader\ArrayLoader;
-use Larium\StateMachine\Transition;
-use Larium\StateMachine\StateMachine;
+use Finite\Event\StateMachineEvent;
+use Larium\StateMachine\EventTransition;
+use Larium\StateMachine\StateMachineAwareInterface;
+use Larium\StateMachine\StateMachineAwareTrait;
 use Larium\Shipment\ShippingInterface;
 
-class Order implements OrderInterface, StatefulInterface
+class Order implements OrderInterface, StatefulInterface, StateMachineAwareInterface
 {
+    use StateMachineAwareTrait;
+
     protected $items;
 
     protected $adjustments;
@@ -32,43 +35,6 @@ class Order implements OrderInterface, StatefulInterface
     protected $total_payment_amount;
 
     protected $state;
-
-    protected $state_machine;
-
-    protected $states = array(
-        'cart' => array(
-            'type' => 'initial',
-            'properties' => array()
-        ),
-        'checkout' => array(
-            'type'  => 'normal',
-            'properties' => array()
-        ),
-        'paid' => array(
-            'type' => 'normal',
-            'properties' => array()
-        ),
-        'processing' => array(
-            'type'  => 'normal',
-            'properties' => array()
-        ),
-        'sent' => array(
-            'type' => 'normal',
-            'properties' => array()
-        ),
-        'cancelled' => array(
-            'type' => 'final',
-            'properties' => array()
-        ),
-        'delivered' => array(
-            'type' => 'final',
-            'properties' => array()
-        ),
-        'returned' => array(
-            'type' => 'final',
-            'properties' => array()
-        ),
-    );
 
     public function __construct()
     {
@@ -243,28 +209,14 @@ class Order implements OrderInterface, StatefulInterface
         return $this->payments;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCurrentPayment(PaymentInterface $current_payment)
-    {
-        $this->current_payment = $current_payment;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCurrentPayment()
-    {
-        return $this->current_payment;
-    }
-
     public function calculateTotalPaymentAmount()
     {
         $total = 0;
 
         foreach ($this->getPayments() as $payment) {
-            $total += $payment->getAmount();
+            if ($payment->getState() == 'paid') {
+                $total += $payment->getAmount();
+            }
         }
 
         $this->total_payment_amount = $total;
@@ -289,56 +241,62 @@ class Order implements OrderInterface, StatefulInterface
 
     /* -(  StateMachine  ) ------------------------------------------------- */
 
-    public function process()
+    public function getStates()
     {
-        return $this->getStateMachine()->nextTransition();
+        return array(
+            'cart' => array('type' => 'initial', 'properties' => array()),
+            'checkout' => array('type' => 'normal', 'properties' => array()),
+            'paid' => array('type' => 'normal', 'properties' => array()),
+            'processing' => array('type' => 'normal', 'properties' => array()),
+            'sent' => array('type' => 'normal', 'properties' => array()),
+            'cancelled' => array('type' => 'final', 'properties' => array()),
+            'delivered' => array('type' => 'final', 'properties' => array()),
+            'returned' => array('type' => 'final', 'properties' => array()),
+        );
     }
 
-    public function getStateMachine()
+    public function getTransitions()
     {
-        if (null === $this->state_machine) {
-            $data  = array(
-                'class' => __CLASS__,
-                'states' => $this->states,
-            );
+        return array(
+            'checkout' => array('from'=>['cart'], 'to'=>'checkout'),
+            'pay' => array('from'=>['checkout'], 'to'=>'paid'),
+            'process' => array('from'=>['paid'], 'to'=>'processing'),
+            'send' => array('from'=>['processing'], 'to'=>'sent'),
+            'deliver' => array('from'=>['sent'],'to'=>'delivered'),
+            'return' => array('from'=>['sent'], 'to'=>'returned'),
+            'cancel' => array('from'=>array('paid', 'processing'), 'to'=>'cancelled'),
+            'retry' => array('from'=>['cancelled'], 'to'=>'checkout'),
+        );
+    }
 
-            $loader = new ArrayLoader($data);
-            $this->state_machine = new StateMachine();
-            $loader->load($this->state_machine);
-
-            $this->transitions();
-
-            $this->state_machine->setObject($this);
-            $this->state_machine->initialize();
+    public function setupEvents()
+    {
+        if ($this->needsPayment()) {
+            $this->event->beforeTransition('pay', array($this, 'processPayments'));
         }
 
-        return $this->state_machine;
+        $this->event->afterTransition('pay', array($this, 'rollbackPayment'));
+
     }
 
-    protected function transitions()
+    public function processPayments(StateMachineEvent $event)
     {
-        $sm = $this->state_machine;
 
-        $sm->addTransition(new Transition('checkout', array('cart'), 'checkout'));
-        $sm->addTransition(new Transition('pay', array('checkout'), 'paid', array($this, 'toPaid')));
-        $sm->addTransition(new Transition('authorize', array('checkout'), 'authorized', array($this, 'toAuthorized')));
-        $sm->addTransition(new Transition('process', array('paid'), 'processing'));
-        $sm->addTransition(new Transition('send', array('processing'), 'sent'));
-        $sm->addTransition(new Transition('deliver', array('sent'), 'delivered'));
-        $sm->addTransition(new Transition('return', array('sent'), 'returned'));
-        $sm->addTransition(new Transition('cancel', array('paid', 'processing'), 'cancelled'));
-        $sm->addTransition(new Transition('retry', array('cancelled'), 'checkout'));
-    }
+        foreach ($this->payments as $payment) {
+            if (   'unpaid' === $payment->getState()
+                && $this->getBalance() > 0
+            ) {
 
-    public function toPaid(StateMachine $stateMachine, Transition $transition)
-    {
-        $payment = $this->getCurrentPayment();
-
-        if (null === $payment) {
-            throw new \InvalidArgumentException("Can not proceed Order for payment. No Payment object found!");
+                $payment->processTo('purchase');
+            }
         }
+    }
 
-        return $payment->processTo('purchase');
+    public function rollbackPayment()
+    {
+        if ($this->getBalance() > 0) {
+            $this->state = 'checkout';
+        }
     }
 
     public function getFiniteState()

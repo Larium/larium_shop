@@ -7,12 +7,15 @@ namespace Larium\Payment;
 use Larium\Sale\AdjustableInterface;
 use Larium\Sale\OrderInterface;
 use Finite\StatefulInterface;
-use Finite\Loader\ArrayLoader;
-use Larium\StateMachine\Transition;
-use Larium\StateMachine\StateMachine;
+use Finite\Event\StateMachineEvent;
+use Larium\StateMachine\EventTransition;
+use Larium\StateMachine\StateMachineAwareInterface;
+use Larium\StateMachine\StateMachineAwareTrait;
 
-class Payment implements PaymentInterface, StatefulInterface
+class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareInterface
 {
+    use StateMachineAwareTrait;
+
     protected $transactions;
 
     protected $amount;
@@ -26,27 +29,6 @@ class Payment implements PaymentInterface, StatefulInterface
     protected $payment_method;
 
     protected $state = 'unpaid';
-
-    protected $state_machine;
-
-    protected $states = array(
-        'unpaid' => array(
-            'type' => 'initial',
-            'properties' => array()
-        ),
-        'authorized' => array(
-            'type' => 'normal',
-            'properties' => array()
-        ),
-        'paid' => array(
-            'type' => 'final',
-            'properties' => array()
-        ),
-        'refunded' => array(
-            'type' => 'final',
-            'properties' => array()
-        )
-    );
 
     public function __construct()
     {
@@ -184,39 +166,34 @@ class Payment implements PaymentInterface, StatefulInterface
         return $this->getStateMachine()->apply($state);
     }
 
-    public function getStateMachine()
+    public function getStates()
     {
-        if (null === $this->state_machine) {
-            $data  = array(
-                'class' => __CLASS__,
-                'states' => $this->states,
-            );
-
-            $loader = new ArrayLoader($data);
-            $this->state_machine = new StateMachine();
-            $loader->load($this->state_machine);
-
-            $this->transitions();
-
-            $this->state_machine->setObject($this);
-            $this->state_machine->initialize();
-        }
-
-        return $this->state_machine;
+        return array(
+            'unpaid' => array( 'type' => 'initial', 'properties' => array()),
+            'authorized' => array('type' => 'normal','properties' => array()),
+            'paid' => array('type' => 'final', 'properties' => array()),
+            'refunded' => array('type' => 'final', 'properties' => array())
+        );
     }
 
-    private function transitions()
+    public function getTransitions()
     {
-        $sm = $this->state_machine;
-
-        $sm->addTransition(new Transition('purchase', array('unpaid'), 'paid', array($this, 'toPaid')));
-        $sm->addTransition(new Transition('authorize', array('unpaid'), 'authorized', array($this, 'toAuthorized')));
-        $sm->addTransition(new Transition('capture', array('authorized'), 'paid', array($this, 'toPaid')));
-        $sm->addTransition(new Transition('void', array('authorized'), 'refunded', array($this, 'toRefunded')));
-        $sm->addTransition(new Transition('credit', array('paid'), 'refunded', array($this, 'toRefunded')));
+        return array(
+            'purchase' => array('from'=>array('unpaid'), 'to'=>'paid'),
+            'authorize' => array('from'=>array('unpaid'), 'to'=>'authorized'),
+            'capture' => array('from'=>array('authorized'), 'to'=>'paid'),
+            'void' => array('from'=>array('authorized'), 'to'=>'refunded'),
+            'credit' => array('from'=>array('paid'), 'to'=>'refunded'),
+        );
     }
 
-    public function toPaid(StateMachine $stateMachine, Transition $transition)
+    public function setupEvents()
+    {
+        $this->event->beforeTransition('purchase', array($this, 'toPaid'));
+
+    }
+
+    public function toPaid(StateMachineEvent $event)
     {
         if (null === $this->getOrder()) {
             throw new \InvalidArgumentException("You must add this Payment to an Order.");
@@ -226,15 +203,12 @@ class Payment implements PaymentInterface, StatefulInterface
             throw new \InvalidArgumentException("You must set a PaymentMethod for this Payment.");
         }
 
-        if (!$this->getOrder()->needsPayment()) {
-
-            return false;
-        }
-
         // The amount to charge for this payment.
         $amount = $this->payment_amount();
 
-        $response = $this->invoke_provider($amount, $transition->getName());
+        $response = $this->invoke_provider($amount, $event->getTransition()->getName());
+
+        $this->create_transaction_from_response($response);
 
         if ($response->isSuccess()) {
             if (null === $this->amount) {
@@ -245,16 +219,6 @@ class Payment implements PaymentInterface, StatefulInterface
         }
 
         return false;
-
-    }
-
-    public function toAuthorized()
-    {
-
-    }
-
-    public function toRefunded()
-    {
 
     }
 
@@ -321,5 +285,10 @@ class Payment implements PaymentInterface, StatefulInterface
         $options = array();
 
         return $options;
+    }
+
+    protected function create_transaction_from_response(Provider\Response $response)
+    {
+
     }
 }
