@@ -161,11 +161,6 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
         $this->setState($state);
     }
 
-    public function processTo($state)
-    {
-        return $this->getStateMachine()->apply($state);
-    }
-
     public function getStates()
     {
         return array(

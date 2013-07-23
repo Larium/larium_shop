@@ -287,7 +287,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
                 && $this->getBalance() > 0
             ) {
 
-                $payment->processTo('purchase');
+                $payment->getStateMachine()->apply('purchase');
             }
         }
     }
