@@ -10,6 +10,8 @@ class Response
 
     protected $message;
 
+    protected $transaction_id;
+
     public function isSuccess()
     {
         return $this->success;
@@ -28,5 +30,28 @@ class Response
     public function setSuccess($success)
     {
         $this->success = $success;
+    }
+
+    /**
+     * Gets transaction_id.
+     *
+     * @access public
+     * @return mixed
+     */
+    public function getTransactionId()
+    {
+        return $this->transaction_id;
+    }
+
+    /**
+     * Sets transaction_id.
+     *
+     * @param mixed $transaction_id the value to set.
+     * @access public
+     * @return void
+     */
+    public function setTransactionId($transaction_id)
+    {
+        $this->transaction_id = $transaction_id;
     }
 }

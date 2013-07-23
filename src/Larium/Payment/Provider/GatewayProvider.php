@@ -30,7 +30,9 @@ class GatewayProvider implements PaymentProviderInterface
         $cc = new CreditCard($this->payment_source->getOptions());
 
         $r = $this->getGateway()->purchase($amount, $cc, $options);
+
         $response->setSuccess($r->success());
+        $response->setTransactionId($r->authorization());
 
         return $response;
     }
