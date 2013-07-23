@@ -74,20 +74,19 @@ class OrderTest extends \PHPUnit_Framework_TestCase
     {
         $cart = $this->getCartWithOneItem();
 
-        $cart->process(); //-> Move to Checkout state
+        $cart->processTo('checkout');
 
         $method = $this->getPaymentMethod('creditcard_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
 
-        $payment = $cart->setPaymentMethod($method);
+        $payment = $cart->addPaymentMethod($method);
 
-        $cart->process(); //-> Try to pay the order
+        $cart->processTo('pay');
 
         $this->assertEquals('paid', $cart->getOrder()->getState());
-
         $this->assertEquals('paid', $payment->getState());
-
         $this->assertEquals('1', $method->getPaymentSource()->getNumber());
+        $this->assertEquals(0, $cart->getOrder()->getBalance());
     }
 
     public function testOrderPaymentWithCashOnDelivery()
@@ -96,15 +95,19 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
         $total_amount = $cart->getOrder()->getTotalAmount();
 
-        $cart->process(); //-> Move to Checkout state
+        $cart->processTo('checkout');
 
         $method = $this->getPaymentMethod('cash_on_delivery_payment_method');
 
-        $payment = $cart->setPaymentMethod($method);
+        $payment = $cart->addPaymentMethod($method);
 
-        $cart->process(); //-> Try to pay the order
+        $cart->processTo('pay');
 
         $this->assertTrue($cart->getOrder()->getTotalAmount() > $total_amount);
+        $this->assertEquals('paid', $cart->getOrder()->getState());
+        $this->assertEquals('paid', $payment->getState());
+        $this->assertEquals(0, $cart->getOrder()->getBalance());
+
     }
 
     private function getCartWithOneItem()
