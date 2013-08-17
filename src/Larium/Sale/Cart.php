@@ -18,7 +18,7 @@ class Cart
     protected $order;
 
     /**
-     * Add an Orderable class to the Order.
+     * Add an Orderable object to the Order.
      *
      * @param  OrderableInterface $orderable
      * @param  int                $quantity
