@@ -7,6 +7,8 @@ namespace Larium\Sale;
 use Larium\Payment\Payment;
 use Larium\Payment\PaymentMethod;
 use Larium\Payment\CreditCard;
+use Finite\Event\TransitionEvent;
+use Larium\Payment\Provider\RedirectResponse;
 
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
@@ -96,9 +98,10 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $total_amount = $cart->getOrder()->getTotalAmount();
 
         $cart->processTo('checkout');
+        //In checkout state you can add payment / shipment methods, billing /
+        //shipping addresses etc.
 
         $method = $this->getPaymentMethod('cash_on_delivery_payment_method');
-
         $payment = $cart->addPaymentMethod($method);
 
         $cart->processTo('pay');
@@ -108,6 +111,23 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('paid', $payment->getState());
         $this->assertEquals(0, $cart->getOrder()->getBalance());
 
+    }
+
+    public function testRedirectPayment()
+    {
+        $cart = $this->getCartWithOneItem();
+
+        $cart->processTo('checkout');
+
+        $method = $this->getPaymentMethod('redirect_payment_method');
+        $method->setSourceOptions($this->getValidCreditCardOptions());
+
+        $payment = $cart->addPaymentMethod($method);
+
+        $res = $cart->processTo('pay');
+
+        $this->assertInstanceOf('Larium\Payment\Provider\RedirectResponse', $res);
+        $this->assertEquals('unpaid', $payment->getState());
     }
 
     private function getCartWithOneItem()
