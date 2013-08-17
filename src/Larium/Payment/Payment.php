@@ -8,9 +8,11 @@ use Larium\Sale\AdjustableInterface;
 use Larium\Sale\OrderInterface;
 use Finite\StatefulInterface;
 use Finite\Event\StateMachineEvent;
-use Larium\StateMachine\EventTransition;
+use Finite\StateMachine\StateMachine;
 use Larium\StateMachine\StateMachineAwareInterface;
 use Larium\StateMachine\StateMachineAwareTrait;
+use Larium\StateMachine\Transition;
+use Larium\Payment\Provider\RedirectResponse;
 
 class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareInterface
 {
@@ -164,31 +166,29 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
     public function getStates()
     {
         return array(
-            'unpaid' => array( 'type' => 'initial', 'properties' => array()),
-            'authorized' => array('type' => 'normal','properties' => array()),
-            'paid' => array('type' => 'final', 'properties' => array()),
-            'refunded' => array('type' => 'final', 'properties' => array())
+            'unpaid'     => ['type' => 'initial', 'properties' => []],
+            'authorized' => ['type' => 'normal','properties' => []],
+            'paid'       => ['type' => 'final', 'properties' => []],
+            'refunded'   => ['type' => 'final', 'properties' => []]
         );
     }
 
     public function getTransitions()
     {
         return array(
-            'purchase' => array('from'=>array('unpaid'), 'to'=>'paid'),
-            'authorize' => array('from'=>array('unpaid'), 'to'=>'authorized'),
-            'capture' => array('from'=>array('authorized'), 'to'=>'paid'),
-            'void' => array('from'=>array('authorized'), 'to'=>'refunded'),
-            'credit' => array('from'=>array('paid'), 'to'=>'refunded'),
+            'purchase'  => ['from'=>['unpaid'], 'to'=>'paid', 'do'=>[$this, 'toPaid']],
+            'authorize' => ['from'=>['unpaid'], 'to'=>'authorized'],
+            'capture'   => ['from'=>['authorized'], 'to'=>'paid'],
+            'void'      => ['from'=>['authorized'], 'to'=>'refunded'],
+            'credit'    => ['from'=>['paid'], 'to'=>'refunded'],
         );
     }
 
     public function setupEvents()
     {
-        $this->event->beforeTransition('purchase', array($this, 'toPaid'));
-
     }
 
-    public function toPaid(StateMachineEvent $event)
+    public function toPaid(StateMachine $sm, Transition $transition)
     {
         if (null === $this->getOrder()) {
             throw new \InvalidArgumentException("You must add this Payment to an Order.");
@@ -201,13 +201,19 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
         // The amount to charge for this payment.
         $amount = $this->payment_amount();
 
-        $response = $this->invoke_provider($amount, $event->getTransition()->getName());
+        $response = $this->invoke_provider($amount, $transition->getName());
 
         $this->create_transaction_from_response($response);
 
         if ($response->isSuccess()) {
             if (null === $this->amount) {
                 $this->setAmount($amount);
+            }
+
+            if ($response instanceof RedirectResponse) {
+                $this->event->afterTransition('purchase', function(){
+                    $this->state = 'unpaid';
+                });
             }
 
             return $response;

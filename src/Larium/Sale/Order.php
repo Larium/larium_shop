@@ -7,9 +7,10 @@ namespace Larium\Sale;
 use Larium\Payment\PaymentInterface;
 use Finite\StatefulInterface;
 use Finite\Event\StateMachineEvent;
-use Larium\StateMachine\EventTransition;
+use Finite\StateMachine\StateMachine;
 use Larium\StateMachine\StateMachineAwareInterface;
 use Larium\StateMachine\StateMachineAwareTrait;
+use Larium\StateMachine\Transition;
 use Larium\Shipment\ShippingInterface;
 
 class Order implements OrderInterface, StatefulInterface, StateMachineAwareInterface
@@ -209,6 +210,40 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
         return $this->payments;
     }
 
+    /**
+     * Sets the Payment that currently is processed.
+     *
+     * @param PaymentInterface $payment
+     * @access public
+     * @return void
+     */
+    public function setCurrentPayment(PaymentInterface $current_payment)
+    {
+        $this->current_payment = $current_payment;
+    }
+
+    /**
+     * Returns the payment that currently is processed.
+     *
+     * @access public
+     * @return PaymentInterfacce
+     */
+    public function getCurrentPayment()
+    {
+        return $this->current_payment;
+    }
+
+    /**
+     * Unsets the current Payment.
+     *
+     * @access public
+     * @return void
+     */
+    public function unsetCurrentPayment()
+    {
+        $this->current_payment = null;
+    }
+
     public function calculateTotalPaymentAmount()
     {
         $total = 0;
@@ -244,42 +279,37 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
     public function getStates()
     {
         return array(
-            'cart' => array('type' => 'initial', 'properties' => array()),
-            'checkout' => array('type' => 'normal', 'properties' => array()),
-            'paid' => array('type' => 'normal', 'properties' => array()),
-            'processing' => array('type' => 'normal', 'properties' => array()),
-            'sent' => array('type' => 'normal', 'properties' => array()),
-            'cancelled' => array('type' => 'final', 'properties' => array()),
-            'delivered' => array('type' => 'final', 'properties' => array()),
-            'returned' => array('type' => 'final', 'properties' => array()),
+            'cart'       => ['type' => 'initial', 'properties' => []],
+            'checkout'   => ['type' => 'normal', 'properties' => []],
+            'paid'       => ['type' => 'normal', 'properties' => []],
+            'processing' => ['type' => 'normal', 'properties' => []],
+            'sent'       => ['type' => 'normal', 'properties' => []],
+            'cancelled'  => ['type' => 'final', 'properties' => []],
+            'delivered'  => ['type' => 'final', 'properties' => []],
+            'returned'   => ['type' => 'final', 'properties' => []],
         );
     }
 
     public function getTransitions()
     {
-        return array(
-            'checkout' => array('from'=>['cart'], 'to'=>'checkout'),
-            'pay' => array('from'=>['checkout'], 'to'=>'paid'),
-            'process' => array('from'=>['paid'], 'to'=>'processing'),
-            'send' => array('from'=>['processing'], 'to'=>'sent'),
-            'deliver' => array('from'=>['sent'],'to'=>'delivered'),
-            'return' => array('from'=>['sent'], 'to'=>'returned'),
-            'cancel' => array('from'=>array('paid', 'processing'), 'to'=>'cancelled'),
-            'retry' => array('from'=>['cancelled'], 'to'=>'checkout'),
-        );
+        return [
+            'checkout'  => ['from'=>['cart'], 'to'=>'checkout'],
+            'pay'       => ['from'=>['checkout'], 'to'=>'paid', 'do'=>[$this, 'processPayments'], 'if'=>$this->needsPayment()],
+            'process'   => ['from'=>['paid'], 'to'=>'processing'],
+            'send'      => ['from'=>['processing'], 'to'=>'sent'],
+            'deliver'   => ['from'=>['sent'],'to'=>'delivered'],
+            'return'    => ['from'=>['sent'], 'to'=>'returned'],
+            'cancel'    => ['from'=>['paid', 'processing'], 'to'=>'cancelled'],
+            'retry'     => ['from'=>['cancelled'], 'to'=>'checkout'],
+        ];
     }
 
     public function setupEvents()
     {
-        if ($this->needsPayment()) {
-            $this->event->beforeTransition('pay', array($this, 'processPayments'));
-        }
-
         $this->event->afterTransition('pay', array($this, 'rollbackPayment'));
-
     }
 
-    public function processPayments(StateMachineEvent $event)
+    public function processPayments(StateMachine $sm, Transition $transition)
     {
 
         foreach ($this->payments as $payment) {
@@ -287,7 +317,11 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
                 && $this->getBalance() > 0
             ) {
 
-                $payment->getStateMachine()->apply('purchase');
+                $this->setCurrentPayment($payment);
+
+                $response = $payment->getStateMachine()->apply('purchase');
+
+                return $response;
             }
         }
     }

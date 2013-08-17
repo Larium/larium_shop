@@ -4,7 +4,7 @@
 
 namespace Larium\StateMachine;
 
-use Finite\Loader\ArrayLoader;
+use Larium\StateMachine\ArrayLoader;
 use Finite\StateMachine\ListenableStateMachine;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
