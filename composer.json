@@ -12,6 +12,7 @@
         }
     ],
     "require": {
+        "php": ">=5.4",
         "yohang/finite": "1.0.*",
         "aktive_merchant/aktive_merchant": "1.0.*",
         "symfony/event-dispatcher": "2.3.1"
