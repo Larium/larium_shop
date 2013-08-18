@@ -14,6 +14,32 @@ use Larium\StateMachine\StateMachineAwareTrait;
 use Larium\StateMachine\Transition;
 use Larium\Payment\Provider\RedirectResponse;
 
+/**
+ * Payment class implements PaymentInterface and allows the payoff of an Order.
+ *
+ * It acts as Stateful object and uses StateMachine to control its different
+ * states.
+ *
+ * Available states of a Payment are:
+ * - unpaid (initial)
+ * - authorized
+ * - paid
+ * - refunded (final)
+ *
+ * Available transitions from states are:
+ * - purchase
+ * - authorize
+ * - capture
+ * - void
+ * - credit
+ *
+ * @uses PaymentInterface
+ * @uses StatefulInterface
+ * @uses StateMachineAwareInterface
+ * @package Larium\Payment
+ * @author Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareInterface
 {
     use StateMachineAwareTrait;
@@ -32,6 +58,8 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
 
     protected $state = 'unpaid';
 
+    protected $identifier;
+
     public function __construct()
     {
         $this->initialize();
@@ -40,39 +68,45 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
     public function initialize()
     {
         $this->transactions = new \SplObjectStorage();
-        $this->tag = uniqid();
+
+        $this->generate_identifier();
     }
 
-    public function getTag()
-    {
-        return $this->tag;
-    }
-
-    public function setTag($tag)
-    {
-        $this->tag = $tag;
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function getIdentifier()
     {
-        return $this->getTag();
+        return $this->identifier;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTransactions()
     {
         return $this->transactions;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function addTransaction(TransactionInterface $transaction)
     {
         $this->getTransactions()->attach($transaction);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function removeTransaction(TransactionInterface $transaction)
     {
         $this->getTransactions()->detach($transaction);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function containsTransaction(TransactionInterface $transaction)
     {
         foreach ($this->getTransactions() as $trx) {
@@ -85,6 +119,9 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTotalTransactionsAmount()
     {
         $amount = 0;
@@ -96,56 +133,89 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
         return $amount;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPaymentMethod()
     {
         return $this->payment_method;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setPaymentMethod(PaymentMethod $payment_method)
     {
         $this->payment_method = $payment_method;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setAmount($amount)
     {
         $this->amount = $amount;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAmount()
     {
         return $this->amount;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDescription()
     {
         return $this->getSource()->getDescription();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getCost()
     {
         return $this->getSource()->getCost();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getOrder()
     {
         return $this->order;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setOrder(OrderInterface $order)
     {
         $this->order = $order;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function detachOrder()
     {
         $this->order = null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getState()
     {
         return $this->state;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setState($state)
     {
         $this->state = $state;
@@ -188,6 +258,17 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
     {
     }
 
+    /**
+     * Tries to set the payment state as paid.
+     *
+     * @param StateMachine $sm
+     * @param Transition $transition
+     *
+     * @throws InvalidArgumentException If Order or PaymentMethod objects are
+     *                                  missing.
+     * @access public
+     * @return false|Larium\Payment\Provider\Response
+     */
     public function toPaid(StateMachine $sm, Transition $transition)
     {
         if (null === $this->getOrder()) {
@@ -291,5 +372,16 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
     protected function create_transaction_from_response(Provider\Response $response)
     {
 
+    }
+
+    /**
+     * Generates a unique identifier for this payment.
+     *
+     * @access protected
+     * @return string
+     */
+    protected function generate_identifier()
+    {
+        $this->identifier = uniqid();
     }
 }

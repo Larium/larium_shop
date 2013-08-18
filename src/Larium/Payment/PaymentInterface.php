@@ -53,17 +53,39 @@ interface PaymentInterface
      */
     public function removeTransaction(TransactionInterface $transaction);
 
+    /**
+     * Checks if given Transaction object exists.
+     *
+     * @param TransactionInterface $transaction
+     *
+     * @access public
+     * @return void
+     */
     public function containsTransaction(TransactionInterface $transaction);
 
     public function getTotalTransactionsAmount();
 
+    /**
+     * Sets the amount of money to pay.
+     *
+     * @param number $amount
+     *
+     * @access public
+     * @return void
+     */
     public function setAmount($amount);
 
+    /**
+     * Gets the amount to pay.
+     *
+     * @access public
+     * @return number
+     */
     public function getAmount();
 
 
     /**
-     * Gets teh current state o Payment.
+     * Gets the current state of Payment.
      *
      * @access public
      * @return string
@@ -88,6 +110,20 @@ interface PaymentInterface
      */
     public function getPaymentMethod();
 
+    /**
+     * Sets the PaymentMethod for this Payment.
+     *
+     * @access public
+     * @return void
+     */
+    public function setPaymentMethod(PaymentMethod $payment_method);
+
+    /**
+     * Gets the unique identifier for this payment.
+     *
+     * @access public
+     * @return string
+     */
     public function getIdentifier();
 
     /**
@@ -110,9 +146,29 @@ interface PaymentInterface
      */
     public function getDescription();
 
+    /**
+     * Gets the Order object associated with this Payment.
+     *
+     * @access public
+     * @return Larium\Sale\OrderInterface
+     */
     public function getOrder();
 
+    /**
+     * Sets associated Order object.
+     *
+     * @param Larium\Sale\OrderInterface $order
+     *
+     * @access public
+     * @return void
+     */
     public function setOrder(OrderInterface $order);
 
+    /**
+     * Detach the Order object from Payment.
+     *
+     * @access public
+     * @return void
+     */
     public function detachOrder();
 }
