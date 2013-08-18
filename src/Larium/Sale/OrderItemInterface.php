@@ -73,16 +73,4 @@ interface OrderItemInterface
      * @return void
      */
     public function getIdentifier();
-
-    /**
-     * Used to generate a uniq identifier for this OrderItem when an Orderable
-     * object is set.
-     *
-     * Identifier is a unique value that helps Order class compares 2
-     * OrderItems.
-     *
-     * @access public
-     * @return void
-     */
-    public function generateIdentifier();
 }

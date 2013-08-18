@@ -70,8 +70,6 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
     {
         $item->calculateTotalPrice();
 
-        $item->generateIdentifier();
-
         $this->items->attach($item);
 
         $this->calculateTotalAmount();
