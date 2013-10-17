@@ -27,6 +27,14 @@ class RedirectResponse extends Response
         return $this->redirect_url;
     }
 
+    /**
+     * Sets the url to redirect
+     *
+     * @param string $redirect_url
+     *
+     * @access public
+     * @return void
+     */
     public function setRedirectUrl($redirect_url)
     {
         $this->redirect_url = $redirect_url;
