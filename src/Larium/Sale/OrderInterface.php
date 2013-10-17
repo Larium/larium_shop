@@ -128,7 +128,7 @@ interface OrderInterface extends AdjustableInterface
     public function getBalance();
 
     /**
-     * Adds a new Payment for this ORder.
+     * Adds a new Payment for this Order.
      *
      * @param PaymentInterface $payment
      * @access public
@@ -137,7 +137,7 @@ interface OrderInterface extends AdjustableInterface
     public function addPayment(PaymentInterface $payment);
 
     /**
-     * Removes a Payment from ORder.
+     * Removes a Payment from Order.
      *
      * @param PaymentInterface $payment
      * @access public
