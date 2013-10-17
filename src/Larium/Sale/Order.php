@@ -17,8 +17,20 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
 {
     use StateMachineAwareTrait;
 
+    /**
+     * Order items.
+     *
+     * @var array|Traversable
+     * @access protected
+     */
     protected $items;
 
+    /**
+     * Order adjustments
+     *
+     * @var mixed
+     * @access protected
+     */
     protected $adjustments;
 
     protected $payments;
@@ -262,11 +274,20 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
         return $this->total_payment_amount;
     }
 
+    /**
+     * Checks if Order needs payment.
+     *
+     * @access public
+     * @return boolean
+     */
     public function needsPayment()
     {
-        return $this->getTotalAmount() > 0;
+        return $this->getBalance() > 0;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getBalance()
     {
         return $this->getTotalAmount() - $this->getTotalPaymentAmount();
@@ -311,9 +332,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
     {
 
         foreach ($this->payments as $payment) {
-            if (   'unpaid' === $payment->getState()
-                && $this->getBalance() > 0
-            ) {
+            if ('unpaid' === $payment->getState()) {
 
                 $this->setCurrentPayment($payment);
 
@@ -324,6 +343,14 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
         }
     }
 
+    /**
+     * Checks the balance of Order after a `pay` transition.
+     * If balance is greter than zero then rollback to `checkout` state to
+     * fullfil the payment of the Order.
+     *
+     * @access public
+     * @return void
+     */
     public function rollbackPayment()
     {
         if ($this->getBalance() > 0) {
@@ -331,11 +358,17 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFiniteState()
     {
         return $this->getState();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setFiniteState($state)
     {
         $this->setState($state);
