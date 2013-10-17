@@ -35,9 +35,8 @@ class Hydrator
 
             $mutator = 'set' . $this->camelize($key);
 
-            if (is_array($value)) {
+            if (is_array($value) && array_key_exists($key, $maps)) {
 
-                if (array_key_exists($key, $maps)) {
                     $storage = new SplObjectStorage();
                     foreach ($value as $k=>$v) {
                         $nest = $this->hydrate($v, null, $maps[$key]['class']);
@@ -48,10 +47,7 @@ class Hydrator
                         }
                     }
                     $class->$mutator($storage);
-                } else {
 
-                    $class->$mutator($value);
-                }
             } else {
                 $class->$mutator($value);
             }
