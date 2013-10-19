@@ -110,4 +110,20 @@ interface ShipmentInterface
      * @return false|OrderItemInterface
      */
     public function containsOrderItem(OrderItemInterface $order_item);
+
+    /**
+     * Gets the unique identifier for this shipment.
+     *
+     * @access public
+     * @return string
+     */
+    public function getIdentifier();
+
+    /**
+     * Detach the Order object from Shipment.
+     *
+     * @access public
+     * @return void
+     */
+    public function detachOrder();
 }

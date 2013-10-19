@@ -35,7 +35,7 @@ creditcard_payment_method:
   title: 'Credit card payment'
   cost: 0
   id: 1 # Optional value assigned probably from storage engine
-  description: 'Some description' # Optional value used for inform end user.
+  description: 'Some description' # Optional value used to inform end user.
 cash_on_delivery_payment_method:
   source_class: 'Larium\Payment\Source\CashOnDelivery'
   provider_class: 'Larium\Payment\Provider\LocalProvider'
@@ -59,9 +59,12 @@ redirect_payment_method:
   cost: 0
   id: 4
   description: 'Some description'
+courier_shipping_method:
+  label: 'Local courier'
+  calculator_class: 'Larium\Calculator\FlatRate'
+  calculator_options: {amount: 5}
 preferences:
   some_gateway:
     login: 'x'
     password: 'x'
-    currency: 'EUR'
-    
+    currency: 'EUR'   

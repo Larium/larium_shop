@@ -4,7 +4,7 @@
 
 namespace Larium\Sale;
 
-use Larium\Shipment\ShippingInterface;
+use Larium\Shipment\ShipmentInterface;
 use Larium\Payment\PaymentInterface;
 
 /**
@@ -145,7 +145,7 @@ interface OrderInterface extends AdjustableInterface
      */
     public function removePayment(PaymentInterface $payment);
 
-    public function setShippingMethod(ShippingInterface $shipping_method);
+    public function addShipment(ShipmentInterface $shipment);
 
-    public function getShippingMethod();
+    public function removeShipment(ShipmentInterface $shipment);
 }

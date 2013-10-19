@@ -195,6 +195,7 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
     public function setOrder(OrderInterface $order)
     {
         $this->order = $order;
+        $this->create_payment_method_adjustment();
     }
 
     /**
@@ -202,6 +203,13 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
      */
     public function detachOrder()
     {
+        $label = $this->getIdentifier();
+
+        foreach ($this->order->getAdjustments() as $a) {
+            if ($label == $a->getLabel()) {
+                $this->order->removeAdjustment($a);
+            }
+        }
         $this->order = null;
     }
 
@@ -316,8 +324,6 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
      */
     protected function payment_amount()
     {
-        $this->create_payment_method_adjustment();
-
         return null === $this->amount
             ? $this->getOrder()->getTotalAmount()
             : $this->amount;
@@ -334,8 +340,10 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
         if ($cost = $this->getPaymentMethod()->getCost()) {
             $adj = new \Larium\Sale\Adjustment();
             $adj->setAmount($cost);
-            $adj->setLabel($this->getPaymentMethod()->getTitle());
+            $adj->setLabel($this->getIdentifier());
             $this->getOrder()->addAdjustment($adj);
+
+            $this->getOrder()->calculateTotalAmount();
         }
     }
 

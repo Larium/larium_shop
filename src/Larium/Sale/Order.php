@@ -11,7 +11,7 @@ use Finite\StateMachine\StateMachine;
 use Larium\StateMachine\StateMachineAwareInterface;
 use Larium\StateMachine\StateMachineAwareTrait;
 use Larium\StateMachine\Transition;
-use Larium\Shipment\ShippingInterface;
+use Larium\Shipment\ShipmentInterface;
 
 class Order implements OrderInterface, StatefulInterface, StateMachineAwareInterface
 {
@@ -37,7 +37,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
 
     protected $current_payment;
 
-    protected $shipping_method;
+    protected $shipments;
 
     protected $adjustments_total;
 
@@ -60,6 +60,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
         $this->items        = new \SplObjectStorage();
         $this->adjustments  = new \SplObjectStorage();
         $this->payments     = new \SplObjectStorage();
+        $this->shipments    = new \SplObjectStorage();
     }
 
     /**
@@ -193,6 +194,36 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
     /**
      * {@inheritdoc}
      */
+    public function addShipment(ShipmentInterface $shipment)
+    {
+        $this->shipments->attach($shipment);
+
+        $shipment->setOrder($this);
+    }
+
+    public function getShipments()
+    {
+        return $this->shipments;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeShipment(ShipmentInterface $shipment)
+    {
+        foreach ($this->shipments as $s) {
+            if ($shipment->getIdentifier() === $s->getIdentifier()) {
+                $this->shipments->detach($shipment);
+                $shipment->detachOrder($this);
+            }
+        }
+
+        $this->calculateTotalAmount();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function addPayment(PaymentInterface $payment)
     {
         $this->payments->attach($payment);
@@ -209,7 +240,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
     {
         foreach ($this->payments as $p) {
             if ($payment->getIdentifier() === $p->getIdentifier()) {
-                $this->payment->detach($payment);
+                $this->payments->detach($payment);
                 $payment->detachOrder($this);
             }
         }
@@ -440,28 +471,5 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
         $this->calculateAdjustmentsTotal();
 
         return $this->adjustments_total;
-    }
-
-    /**
-     * Gets shipping_method.
-     *
-     * @access public
-     * @return mixed
-     */
-    public function getShippingMethod()
-    {
-        return $this->shipping_method;
-    }
-
-    /**
-     * Sets shipping_method.
-     *
-     * @param mixed $shipping_method the value to set.
-     * @access public
-     * @return void
-     */
-    public function setShippingMethod(ShippingInterface $shipping_method)
-    {
-        $this->shipping_method = $shipping_method;
     }
 }

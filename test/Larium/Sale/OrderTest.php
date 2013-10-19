@@ -13,6 +13,8 @@ use Larium\Payment\Provider\RedirectResponse;
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
 
+    protected $loader;
+
     public function setUp()
     {
         $this->loader = new \FixtureLoader();
@@ -98,7 +100,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $total_amount = $cart->getOrder()->getTotalAmount();
 
         $cart->processTo('checkout');
-        //In checkout state you can add payment / shipment methods, billing /
+        //In checkout state you can add payment and shipment methods, billing and
         //shipping addresses etc.
 
         $method = $this->getPaymentMethod('cash_on_delivery_payment_method');
@@ -110,7 +112,6 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('paid', $cart->getOrder()->getState());
         $this->assertEquals('paid', $payment->getState());
         $this->assertEquals(0, $cart->getOrder()->getBalance());
-
     }
 
     public function testRedirectPayment()
@@ -124,10 +125,30 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
         $payment = $cart->addPaymentMethod($method);
 
-        $res = $cart->processTo('pay');
+        $response = $cart->processTo('pay');
 
-        $this->assertInstanceOf('Larium\Payment\Provider\RedirectResponse', $res);
+        $this->assertInstanceOf('Larium\Payment\Provider\RedirectResponse', $response);
         $this->assertEquals('unpaid', $payment->getState());
+    }
+
+    public function testOrderWithShippingMethod()
+    {
+        $cart = $this->getCartWithOneItem();
+
+        $cart->processTo('checkout');
+
+        $payment_method = $this->getPaymentMethod('cash_on_delivery_payment_method');
+        $payment = $cart->addPaymentMethod($payment_method);
+
+        $shipping_method = $this->getShippingMethod('courier_shipping_method');
+
+        $this->assertEquals(5, $shipping_method->calculateCost($cart->getOrder()));
+
+        $cart->setShippingMethod($shipping_method);
+
+        $response = $cart->processTo('pay');
+
+        $this->assertEquals(0, $cart->getOrder()->getBalance());
     }
 
     private function getCartWithOneItem()
@@ -176,5 +197,14 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             'year' => date('Y') + 5,
             'number'=>'1'
         );
+    }
+
+    private function getShippingMethod($id)
+    {
+        $data = $this->loader->getData();
+
+        $hydrator = new \Hydrator('Larium\\Shipment\\ShippingMethod');
+
+        return $hydrator->hydrate($data[$id], $id);
     }
 }

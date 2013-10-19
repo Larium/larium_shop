@@ -7,7 +7,7 @@ namespace Larium\Shipment;
 use Larium\Sale\OrderInterface;
 use Larium\Sale\OrderItemInterface;
 
-class Shipment
+class Shipment implements ShipmentInterface
 {
     protected $order;
 
@@ -19,6 +19,8 @@ class Shipment
 
     protected $cost;
 
+    protected $identifier;
+
     public function __construct()
     {
         $this->initialize();
@@ -27,6 +29,16 @@ class Shipment
     public function initialize()
     {
         $this->order_items = new \SplObjectStorage();
+
+        $this->generate_identifier();
+    }
+
+    /**
+     * {@inheritdoc }
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     /**
@@ -59,6 +71,15 @@ class Shipment
     public function setOrder(OrderInterface $order)
     {
         $this->order = $order;
+        if ($cost = $this->getShippingMethod()->calculateCost($order)) {
+            $adj = new \Larium\Sale\Adjustment();
+            $adj->setAmount($cost);
+            $adj->setLabel($this->getIdentifier());
+
+            $order->addAdjustment($adj);
+
+            $order->calculateTotalAmount();
+        }
     }
 
     /**
@@ -88,7 +109,7 @@ class Shipment
     /**
      * {@inheritdoc }
      */
-    public function setShippingMethod($shipping_method)
+    public function setShippingMethod(ShippingMethodInterface $shipping_method)
     {
         $this->shipping_method = $shipping_method;
     }
@@ -131,5 +152,32 @@ class Shipment
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function detachOrder()
+    {
+        $label = $this->getIdentifier();
+
+        foreach ($this->order->getAdjustments() as $a) {
+            if ($label == $a->getLabel()) {
+                $this->order->removeAdjustment($a);
+            }
+        }
+
+        $this->order = null;
+    }
+
+    /**
+     * Generates a unique identifier for this shipment.
+     *
+     * @access protected
+     * @return string
+     */
+    protected function generate_identifier()
+    {
+        $this->identifier = uniqid();
     }
 }

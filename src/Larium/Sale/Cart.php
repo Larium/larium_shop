@@ -6,6 +6,8 @@ namespace Larium\Sale;
 use Larium\Store\Product;
 use Larium\Payment\Payment;
 use Larium\Payment\PaymentMethodInterface;
+use Larium\Shipment\ShippingMethodInterface;
+use Larium\Shipment\Shipment;
 
 class Cart
 {
@@ -135,7 +137,7 @@ class Cart
      * @access public
      * @return Larium\Payment\PaymentInterface
      */
-    public function addPaymentMethod(PaymentMethodInterface $method, $amount=null)
+    public function addPaymentMethod(PaymentMethodInterface $method, $amount = null)
     {
         $payment = new Payment();
 
@@ -156,6 +158,28 @@ class Cart
     public function processTo($state)
     {
         return $this->getOrder()->getStateMachine()->apply($state);
+    }
+
+    /**
+     * Customer can choose a shipping method. Cart class will create a Shipment
+     * for all OrderItems.
+     *
+     * Order can have multiple shipments that can be set up in a different
+     * context.
+     *
+     * @param ShippingMethodInterface $shipping_method
+     * @access public
+     * @return void
+     */
+    public function setShippingMethod(ShippingMethodInterface $shipping_method)
+    {
+        $shipment = new Shipment();
+        $shipment->setShippingMethod($shipping_method);
+        $this->getOrder()->addShipment($shipment);
+
+        foreach ($this->getOrder()->getItems() as $item) {
+            $shipment->addOrderItem($item);
+        }
     }
 
     /**

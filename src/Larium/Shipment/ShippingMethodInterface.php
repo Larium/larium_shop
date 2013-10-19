@@ -4,10 +4,13 @@
 
 namespace Larium\Shipment;
 
+use Larium\Sale\OrderInterface;
+
 interface ShippingMethodInterface
 {
     /**
-     * Gets a the label value.
+     * Gets the label of ShippingMehod.
+     *
      * Label is a short description about ShippingMethod.
      *
      * @access public
@@ -16,12 +19,18 @@ interface ShippingMethodInterface
     public function getLabel();
 
     /**
-     * Calculate the total amount to charge based on Order.
+     * Calculate the total amount to charge.
      *
      * @access public
      * @return number
      */
-    public function calculateCost(OrderInterface $order);
+    public function calculateCost(OrderInterface $order = null);
 
+    /**
+     * Gets the Calculator instance for this ShippingMethod.
+     *
+     * @access public
+     * @return Larium\Calculator\CalculatorInterface
+     */
     public function getCalculator();
 }
