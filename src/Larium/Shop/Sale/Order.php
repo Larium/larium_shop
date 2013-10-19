@@ -1,0 +1,475 @@
+<?php
+
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+namespace Larium\Shop\Sale;
+
+use Larium\Shop\Payment\PaymentInterface;
+use Finite\StatefulInterface;
+use Finite\Event\StateMachineEvent;
+use Finite\StateMachine\StateMachine;
+use Larium\Shop\StateMachine\StateMachineAwareInterface;
+use Larium\Shop\StateMachine\StateMachineAwareTrait;
+use Larium\Shop\StateMachine\Transition;
+use Larium\Shop\Shipment\ShipmentInterface;
+
+class Order implements OrderInterface, StatefulInterface, StateMachineAwareInterface
+{
+    use StateMachineAwareTrait;
+
+    /**
+     * Order items.
+     *
+     * @var array|Traversable
+     * @access protected
+     */
+    protected $items;
+
+    /**
+     * Order adjustments
+     *
+     * @var mixed
+     * @access protected
+     */
+    protected $adjustments;
+
+    protected $payments;
+
+    protected $current_payment;
+
+    protected $shipments;
+
+    protected $adjustments_total;
+
+    protected $items_total;
+
+    protected $total_amount;
+
+    protected $total_payment_amount;
+
+    protected $state;
+
+    public function __construct()
+    {
+        $this->initialize();
+    }
+
+
+    public function initialize()
+    {
+        $this->items        = new \SplObjectStorage();
+        $this->adjustments  = new \SplObjectStorage();
+        $this->payments     = new \SplObjectStorage();
+        $this->shipments    = new \SplObjectStorage();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addItem(OrderItemInterface $item)
+    {
+        $item->calculateTotalPrice();
+
+        $this->items->attach($item);
+
+        $this->calculateTotalAmount();
+
+        $item->setOrder($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeItem(OrderItemInterface $item)
+    {
+        if ($remove = $this->contains($item)) {
+
+            $this->items->detach($remove);
+
+            $this->calculateTotalAmount();
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function containsItem(OrderItemInterface $order_item)
+    {
+        foreach ($this->items as $item) {
+            if ($item->getIdentifier() == $order_item->getIdentifier()) {
+                return $item;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setItems($items)
+    {
+        foreach ($this->items as $item) {
+            $this->addItem($item);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function calculateItemsTotal()
+    {
+        $total = 0;
+        foreach ( $this->getItems() as $item) {
+            $total += $item->getTotalPrice();
+        }
+
+        $this->items_total = $total;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItemsTotal()
+    {
+        return $this->items_total;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function calculateTotalAmount()
+    {
+        $this->calculateItemsTotal();
+
+        $this->calculateAdjustmentsTotal();
+
+        $this->total_amount = $this->items_total + $this->adjustments_total;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTotalAmount()
+    {
+        $this->calculateTotalAmount();
+
+        return $this->total_amount;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTotalQuantity()
+    {
+        $quantity = 0;
+        foreach ($this->getItems() as $item) {
+            $quantity += $item->getQuantity();
+        }
+
+        return $quantity;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addShipment(ShipmentInterface $shipment)
+    {
+        $this->shipments->attach($shipment);
+
+        $shipment->setOrder($this);
+    }
+
+    public function getShipments()
+    {
+        return $this->shipments;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeShipment(ShipmentInterface $shipment)
+    {
+        foreach ($this->shipments as $s) {
+            if ($shipment->getIdentifier() === $s->getIdentifier()) {
+                $this->shipments->detach($shipment);
+                $shipment->detachOrder($this);
+            }
+        }
+
+        $this->calculateTotalAmount();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addPayment(PaymentInterface $payment)
+    {
+        $this->payments->attach($payment);
+
+        $payment->setOrder($this);
+
+        $this->calculateTotalPaymentAmount();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removePayment(PaymentInterface $payment)
+    {
+        foreach ($this->payments as $p) {
+            if ($payment->getIdentifier() === $p->getIdentifier()) {
+                $this->payments->detach($payment);
+                $payment->detachOrder($this);
+            }
+        }
+    }
+
+    public function getPayments()
+    {
+        return $this->payments;
+    }
+
+    /**
+     * Sets the Payment that currently is processed.
+     *
+     * @param PaymentInterface $payment
+     * @access public
+     * @return void
+     */
+    public function setCurrentPayment(PaymentInterface $current_payment)
+    {
+        $this->current_payment = $current_payment;
+    }
+
+    /**
+     * Returns the payment that currently is processed.
+     *
+     * @access public
+     * @return PaymentInterfacce
+     */
+    public function getCurrentPayment()
+    {
+        return $this->current_payment;
+    }
+
+    /**
+     * Unsets the current Payment.
+     *
+     * @access public
+     * @return void
+     */
+    public function unsetCurrentPayment()
+    {
+        $this->current_payment = null;
+    }
+
+    public function calculateTotalPaymentAmount()
+    {
+        $total = 0;
+
+        foreach ($this->getPayments() as $payment) {
+            if ($payment->getState() == 'paid') {
+                $total += $payment->getAmount();
+            }
+        }
+
+        $this->total_payment_amount = $total;
+    }
+
+    public function getTotalPaymentAmount()
+    {
+        $this->calculateTotalPaymentAmount();
+
+        return $this->total_payment_amount;
+    }
+
+    /**
+     * Checks if Order needs payment.
+     *
+     * @access public
+     * @return boolean
+     */
+    public function needsPayment()
+    {
+        return $this->getBalance() > 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBalance()
+    {
+        return $this->getTotalAmount() - $this->getTotalPaymentAmount();
+    }
+
+    /* -(  StateMachine  ) ------------------------------------------------- */
+
+    public function getStates()
+    {
+        return array(
+            'cart'       => ['type' => 'initial', 'properties' => []],
+            'checkout'   => ['type' => 'normal', 'properties' => []],
+            'paid'       => ['type' => 'normal', 'properties' => []],
+            'processing' => ['type' => 'normal', 'properties' => []],
+            'sent'       => ['type' => 'normal', 'properties' => []],
+            'cancelled'  => ['type' => 'final', 'properties' => []],
+            'delivered'  => ['type' => 'final', 'properties' => []],
+            'returned'   => ['type' => 'final', 'properties' => []],
+        );
+    }
+
+    public function getTransitions()
+    {
+        return [
+            'checkout'  => ['from'=>['cart'], 'to'=>'checkout'],
+            'pay'       => ['from'=>['checkout'], 'to'=>'paid', 'do'=>[$this, 'processPayments'], 'if'=>$this->needsPayment()],
+            'process'   => ['from'=>['paid'], 'to'=>'processing'],
+            'send'      => ['from'=>['processing'], 'to'=>'sent'],
+            'deliver'   => ['from'=>['sent'],'to'=>'delivered'],
+            'return'    => ['from'=>['sent'], 'to'=>'returned'],
+            'cancel'    => ['from'=>['paid', 'processing'], 'to'=>'cancelled'],
+            'retry'     => ['from'=>['cancelled'], 'to'=>'checkout'],
+        ];
+    }
+
+    public function setupEvents()
+    {
+        $this->event->afterTransition('pay', array($this, 'rollbackPayment'));
+    }
+
+    public function processPayments(StateMachine $sm, Transition $transition)
+    {
+
+        foreach ($this->payments as $payment) {
+            if ('unpaid' === $payment->getState()) {
+
+                $this->setCurrentPayment($payment);
+
+                $response = $payment->getStateMachine()->apply('purchase');
+
+                return $response;
+            }
+        }
+    }
+
+    /**
+     * Checks the balance of Order after a `pay` transition.
+     * If balance is greter than zero then rollback to `checkout` state to
+     * fullfil the payment of the Order.
+     *
+     * @access public
+     * @return void
+     */
+    public function rollbackPayment()
+    {
+        if ($this->getBalance() > 0) {
+            $this->state = 'checkout';
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFiniteState()
+    {
+        return $this->getState();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFiniteState($state)
+    {
+        $this->setState($state);
+    }
+
+    /* -(  AdjustableInterface  ) ------------------------------------------ */
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addAdjustment(AdjustmentInterface $adjustment)
+    {
+        $this->adjustments->attach($adjustment);
+
+        $adjustment->setAdjustable($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeAdjustment(AdjustmentInterface $adjustment)
+    {
+        $this->adjustments->detach($adjustment);
+
+        $adjustment->detachAdjustable();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function containsAdjustment(AdjustmentInterface $adjustment)
+    {
+        foreach ($this->adjustments as $item) {
+            if ($item->getIdentify() == $adjustment->getIdentify()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdjustments()
+    {
+        return $this->adjustments;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function calculateAdjustmentsTotal()
+    {
+        $total = 0;
+        foreach ( $this->getAdjustments() as $item) {
+            $total += $item->getAmount();
+        }
+
+        $this->adjustments_total = $total;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdjustmentsTotal()
+    {
+
+        $this->calculateAdjustmentsTotal();
+
+        return $this->adjustments_total;
+    }
+}

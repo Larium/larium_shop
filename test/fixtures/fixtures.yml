@@ -28,8 +28,8 @@ order_item_1:
   sku: 'PRD-01-0001'
   description: 'T-Shirt LongSleeve'
 creditcard_payment_method:
-  source_class: 'Larium\Payment\Source\CreditCard'
-  provider_class: 'Larium\Payment\Provider\GatewayProvider'
+  source_class: 'Larium\Shop\Payment\Source\CreditCard'
+  provider_class: 'Larium\Shop\Payment\Provider\GatewayProvider'
   gateway_class: 'AktiveMerchant\Billing\Gateways\Bogus'
   gateway_options: {login: 'x', password: 'y'}
   title: 'Credit card payment'
@@ -37,22 +37,22 @@ creditcard_payment_method:
   id: 1 # Optional value assigned probably from storage engine
   description: 'Some description' # Optional value used to inform end user.
 cash_on_delivery_payment_method:
-  source_class: 'Larium\Payment\Source\CashOnDelivery'
-  provider_class: 'Larium\Payment\Provider\LocalProvider'
+  source_class: 'Larium\Shop\Payment\Source\CashOnDelivery'
+  provider_class: 'Larium\Shop\Payment\Provider\LocalProvider'
   title: 'Cash On Delivery payment'
   cost: 4
   id: 2
   description: 'Some description'
 giftcard_payment_method:
-  source_class: 'Larium\Payment\Source\Giftcard'
-  provider_class: 'Larium\Payment\Provider\LocalProvider'
+  source_class: 'Larium\Shop\Payment\Source\Giftcard'
+  provider_class: 'Larium\Shop\Payment\Provider\LocalProvider'
   title: 'Giftcard payment'
   cost: 0
   id: 3
   description: 'Some description'
 redirect_payment_method:
-  source_class: 'Larium\Payment\Source\CreditCard'
-  provider_class: 'Larium\Payment\Provider\RedirectProvider'
+  source_class: 'Larium\Shop\Payment\Source\CreditCard'
+  provider_class: 'Larium\Shop\Payment\Provider\RedirectProvider'
   gateway_class: 'AktiveMerchant\Billing\Gateways\Bogus'
   gateway_options: {login: 'x', password: 'y'}
   title: 'Redirect payment'
@@ -61,7 +61,7 @@ redirect_payment_method:
   description: 'Some description'
 courier_shipping_method:
   label: 'Local courier'
-  calculator_class: 'Larium\Calculator\FlatRate'
+  calculator_class: 'Larium\Shop\Calculator\FlatRate'
   calculator_options: {amount: 5}
 preferences:
   some_gateway:

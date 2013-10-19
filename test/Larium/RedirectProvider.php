@@ -2,10 +2,10 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-namespace Larium\Payment\Provider;
+namespace Larium\Shop\Payment\Provider;
 
-use Larium\Payment\PaymentProviderInterface;
-use Larium\Payment\PaymentSourceInterface;
+use Larium\Shop\Payment\PaymentProviderInterface;
+use Larium\Shop\Payment\PaymentSourceInterface;
 use AktiveMerchant\Billing\CreditCard;
 
 class RedirectProvider extends GatewayProvider implements PaymentProviderInterface

@@ -1,17 +1,17 @@
 <?php
 
 return array(
-    'Larium\\Store\\Product' => array(
+    'Larium\\Shop\\Store\\Product' => array(
         'variants' => array(
             'type'  => 'HasMany',
-            'class' => 'Larium\\Store\\Variant',
+            'class' => 'Larium\Shop\\Store\\Variant',
             'inverse' => 'product',
         )
     ),
-    'Larium\\Store\\Variant' => array(
+    'Larium\\Shop\\Store\\Variant' => array(
         'product' => array(
             'type'  => 'BelongsTo',
-            'class' => 'Larium\\Store\\Product'
+            'class' => 'Larium\Shop\\Store\\Product'
         )
     )
 );
