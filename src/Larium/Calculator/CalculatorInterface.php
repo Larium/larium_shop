@@ -4,7 +4,7 @@
 
 namespace Larium\Calculator;
 
-class CalculatorInterface
+interface CalculatorInterface
 {
     /**
      * Computes and returns a final value based on given object.
