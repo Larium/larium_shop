@@ -31,11 +31,13 @@ class Address implements AddressInterface
 
     protected $phone;
 
+    /**
+     * {@inheritdoc }
+     */
     public function getName()
     {
         return $this->getFirstName() . " " . $this->getLastName();
     }
-
 
     public function getFistName()
     {
@@ -58,9 +60,7 @@ class Address implements AddressInterface
     }
 
     /**
-     * Gets address1.
-     *
-     * @return mixed
+     * {@inheritdoc }
      */
     public function getAddress1()
     {
@@ -80,9 +80,7 @@ class Address implements AddressInterface
     }
 
     /**
-     * Gets address2.
-     *
-     * @return mixed
+     * {@inheritdoc }
      */
     public function getAddress2()
     {
@@ -102,9 +100,7 @@ class Address implements AddressInterface
     }
 
     /**
-     * Gets city.
-     *
-     * @return mixed
+     * {@inheritdoc }
      */
     public function getCity()
     {
@@ -124,9 +120,7 @@ class Address implements AddressInterface
     }
 
     /**
-     * Gets state.
-     *
-     * @return mixed
+     * {@inheritdoc }
      */
     public function getState()
     {
@@ -146,9 +140,7 @@ class Address implements AddressInterface
     }
 
     /**
-     * Gets country.
-     *
-     * @return mixed
+     * {@inheritdoc }
      */
     public function getCountry()
     {
@@ -168,9 +160,7 @@ class Address implements AddressInterface
     }
 
     /**
-     * Gets zip.
-     *
-     * @return mixed
+     * {@inheritdoc }
      */
     public function getZip()
     {
@@ -190,9 +180,7 @@ class Address implements AddressInterface
     }
 
     /**
-     * Gets phone.
-     *
-     * @return mixed
+     * {@inheritdoc }
      */
     public function getPhone()
     {
