@@ -71,9 +71,9 @@ class Shipment implements ShipmentInterface
     public function setOrder(OrderInterface $order)
     {
         $this->order = $order;
-        if ($cost = $this->getShippingMethod()->calculateCost($order)) {
+        if ($this->cost = $this->getShippingMethod()->calculateCost($order)) {
             $adj = new \Larium\Shop\Sale\Adjustment();
-            $adj->setAmount($cost);
+            $adj->setAmount($this->cost);
             $adj->setLabel($this->getIdentifier());
 
             $order->addAdjustment($adj);
