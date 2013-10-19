@@ -13,6 +13,15 @@ use Larium\Shop\StateMachine\StateMachineAwareTrait;
 use Larium\Shop\StateMachine\Transition;
 use Larium\Shop\Shipment\ShipmentInterface;
 
+/**
+ * Order class
+ *
+ * @uses OrderInterface
+ * @uses StatefulInterface
+ * @uses StateMachineAwareInterface
+ * @author Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 class Order implements OrderInterface, StatefulInterface, StateMachineAwareInterface
 {
     use StateMachineAwareTrait;
@@ -219,6 +228,19 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
         }
 
         $this->calculateTotalAmount();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getShippingCost()
+    {
+        $amount = 0;
+        foreach ($this->shipments as $shipment) {
+            $amount += $shipment->getCost();
+        }
+
+        return $amount;
     }
 
     /**

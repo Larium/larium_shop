@@ -148,4 +148,6 @@ interface OrderInterface extends AdjustableInterface
     public function addShipment(ShipmentInterface $shipment);
 
     public function removeShipment(ShipmentInterface $shipment);
+
+    public function getShippingCost();
 }
