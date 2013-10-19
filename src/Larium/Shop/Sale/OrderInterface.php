@@ -14,7 +14,6 @@ use Larium\Shop\Payment\PaymentInterface;
  * Shipping or Billing methods, Discounts etc.
  *
  * @uses    AdjustableInterface
- * @package Larium\Shop\Sale
  * @author  Andreas Kollaros <php@andreaskollaros.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */

@@ -4,6 +4,13 @@
 
 namespace Larium\Shop\Shipment;
 
+/**
+ * Address
+ *
+ * @uses AddressInterface
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 class Address implements AddressInterface
 {
     protected $first_name;

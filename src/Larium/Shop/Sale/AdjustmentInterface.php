@@ -10,7 +10,6 @@ namespace Larium\Shop\Sale;
  * An Adjustment can have a negative amount for credit or a positive amount for
  * charge.
  *
- * @package Larium\Shop\Sale
  * @author  Andreas Kollaros <php@andreaskollaros.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */

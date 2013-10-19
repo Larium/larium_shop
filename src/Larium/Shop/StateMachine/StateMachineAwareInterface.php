@@ -6,6 +6,12 @@ namespace Larium\Shop\StateMachine;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
+/**
+ * StateMachineAwareInterface
+ *
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 interface StateMachineAwareInterface
 {
     public function getStateMachine();

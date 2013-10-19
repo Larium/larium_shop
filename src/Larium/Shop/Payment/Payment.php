@@ -36,8 +36,7 @@ use Larium\Shop\Payment\Provider\RedirectResponse;
  * @uses PaymentInterface
  * @uses StatefulInterface
  * @uses StateMachineAwareInterface
- * @package Larium\Shop\Payment
- * @author Andreas Kollaros <andreaskollaros@ymail.com>
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
 class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareInterface

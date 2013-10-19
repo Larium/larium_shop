@@ -4,6 +4,13 @@
 
 namespace Larium\Shop\Calculator;
 
+/**
+ * PerItem
+ *
+ * @uses AbstractCalculator
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 class PerItem extends AbstractCalculator
 {
     protected $amount;

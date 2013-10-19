@@ -8,6 +8,12 @@ use Larium\Shop\StateMachine\ArrayLoader;
 use Finite\StateMachine\ListenableStateMachine;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
+/**
+ * StateMachineAwareTrait
+ *
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 trait StateMachineAwareTrait
 {
     protected $state_machine;

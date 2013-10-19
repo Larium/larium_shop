@@ -9,6 +9,12 @@ use Larium\Shop\Payment\PaymentMethodInterface;
 use Larium\Shop\Shipment\ShippingMethodInterface;
 use Larium\Shop\Shipment\Shipment;
 
+/**
+ * Cart
+ *
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 class Cart
 {
     /**

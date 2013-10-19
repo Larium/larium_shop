@@ -6,6 +6,13 @@ namespace Larium\Shop\Store;
 
 use Larium\Shop\Sale\OrderableInterface;
 
+/**
+ * Variant
+ *
+ * @uses OrderableInterface
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 class Variant implements OrderableInterface
 {
     protected $sku;

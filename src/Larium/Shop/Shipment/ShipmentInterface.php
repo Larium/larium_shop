@@ -7,6 +7,12 @@ namespace Larium\Shop\Shipment;
 use Larium\Shop\Sale\OrderInterface;
 use Larium\Shop\Sale\OrderItemInterface;
 
+/**
+ * ShipmentInterface
+ *
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 interface ShipmentInterface
 {
     /**

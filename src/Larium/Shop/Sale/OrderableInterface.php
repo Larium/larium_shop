@@ -4,6 +4,12 @@
 
 namespace Larium\Shop\Sale;
 
+/**
+ * OrderableInterface
+ *
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 interface OrderableInterface
 {
     /**

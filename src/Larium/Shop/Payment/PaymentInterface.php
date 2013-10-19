@@ -19,7 +19,6 @@ use Larium\Shop\Sale\OrderInterface;
  * Order can use multiple Payment objects to fullfill the required amount.
  *
  *
- * @package Larium\Shop\Payment
  * @author  Andreas Kollaros <andreaskollaros@ymail.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */

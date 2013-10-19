@@ -4,6 +4,13 @@
 
 namespace Larium\Shop\Sale;
 
+/**
+ * OrderItem
+ *
+ * @uses OrderItemInterface
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 class OrderItem implements OrderItemInterface
 {
     protected $unit_price;

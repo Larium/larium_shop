@@ -7,6 +7,13 @@ namespace Larium\Shop\StateMachine;
 use Finite\Transition\Transition as FiniteTransition;
 use Finite\StateMachine\StateMachine as FiniteStateMachine;
 
+/**
+ * Transition
+ *
+ * @uses FiniteTransition
+ * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ */
 class Transition extends FiniteTransition
 {
 

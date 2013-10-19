@@ -8,7 +8,6 @@ namespace Larium\Shop\Sale;
  * AdjustableInterface contains a collection of Adjustments and calculates a
  * total amount based on the behaviour of each Adjustment.
  *
- * @package Larium\Shop\Sale
  * @author  Andreas Kollaros <php@andreaskollaros.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */

@@ -15,7 +15,6 @@ use Finite\Event\FiniteEvents;
  * transition happens.
  *
  *
- * @package Larium\Shop\Shop
  * @author  Andreas Kollaros <andreaskollaros@ymail.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
