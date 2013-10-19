@@ -149,6 +149,8 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $response = $cart->processTo('pay');
 
         $this->assertEquals(0, $cart->getOrder()->getBalance());
+
+        $this->assertEquals(5, $cart->getOrder()->getShippingCost());
     }
 
     private function getCartWithOneItem()
