@@ -4,6 +4,8 @@
 
 namespace Larium\Shop\Store;
 
+use Larium\Shop\Common\Collection;
+
 /**
  * Product
  *
@@ -43,6 +45,14 @@ class Product
     protected $deleted_at;
 
     /**
+     * option_types
+     *
+     * @var array|Traversable
+     * @access protected
+     */
+    protected $option_types;
+
+    /**
      * variants
      *
      * @var array|iterator
@@ -60,7 +70,13 @@ class Product
 
     public function __construct()
     {
-        $this->variants = new \SplObjectStorage();
+        $this->initialize();
+    }
+
+    public function initialize()
+    {
+        $this->variants = new Collection();
+        $this->option_types = new Collection();
 
         $default = new Variant();
         $this->addVariant($default, true);
@@ -133,12 +149,14 @@ class Product
     public function addVariant(Variant $variant, $is_default=false)
     {
         $variant->setDefault();
-        $this->variants->attach($variant);
+        $this->variants->add($variant);
     }
 
     public function removeVariant(Variant $variant)
     {
-        $this->variants->detach($variant);
+        return $this->variants->remove($variant, function($v) use ($variant){
+            return $variant->getSku() === $v->getSku();
+        });
     }
 
 
@@ -155,5 +173,33 @@ class Product
         }
 
         return $this->default_variant;
+    }
+
+    /**
+     * Gets option_types.
+     *
+     * @access public
+     * @return mixed
+     */
+    public function getOptionTypes()
+    {
+        return $this->option_types;
+    }
+
+    /**
+     * Sets option_types.
+     *
+     * @param mixed $option_types the value to set.
+     * @access public
+     * @return void
+     */
+    public function setOptionTypes($option_types)
+    {
+        $this->option_types = $option_types;
+    }
+
+    public function addOptionType(OptionType $option_type)
+    {
+        $this->option_types->add($option_type);
     }
 }

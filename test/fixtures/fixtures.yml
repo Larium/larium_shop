@@ -67,4 +67,8 @@ preferences:
   some_gateway:
     login: 'x'
     password: 'x'
-    currency: 'EUR'   
+    currency: 'EUR'
+size_option_type:
+  name: 'size'
+  title: 'Size'
+

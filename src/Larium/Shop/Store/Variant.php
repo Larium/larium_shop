@@ -5,6 +5,8 @@
 namespace Larium\Shop\Store;
 
 use Larium\Shop\Sale\OrderableInterface;
+use Larium\Shop\Common\Collection;
+use Larium\Shop\Common\CollectionInterface;
 
 /**
  * Variant
@@ -56,6 +58,24 @@ class Variant implements OrderableInterface
     protected $product;
 
     /**
+     * option_values
+     *
+     * @var Larium\Shop\Common\Collection
+     * @access protected
+     */
+    protected $option_values;
+
+    public function __construct()
+    {
+        $this->initialize();
+    }
+
+    public function initialize()
+    {
+        $this->option_values = new Collection(array(), 'Larium\\Shop\\Store\\OptionValue');
+    }
+
+    /**
      * Checks if current variant is the default one.
      *
      * @return boolean
@@ -74,6 +94,11 @@ class Variant implements OrderableInterface
     public function setDefault($value = true)
     {
         $this->is_default = $value;
+    }
+
+    public function setIsDefault($value)
+    {
+        $this->setDefault($value);
     }
 
     /**
@@ -160,5 +185,47 @@ class Variant implements OrderableInterface
     public function setProduct(Product $product)
     {
         $this->product = $product;
+    }
+
+    /**
+     * Gets option_values.
+     *
+     * @access public
+     * @return mixed
+     */
+    public function getOptionValues()
+    {
+        return $this->option_values;
+    }
+
+    /**
+     * Sets option_values.
+     *
+     * @param mixed $option_values the value to set.
+     * @access public
+     * @return void
+     */
+    public function setOptionValues(CollectionInterface $option_values)
+    {
+        $this->option_values = $option_values;
+    }
+
+    public function addOptionValue(OptionValue $option_value)
+    {
+        $this->option_values->append($option_value);
+    }
+
+    /**
+     * Removes an OptionValue element from Collection.
+     *
+     * @param OptionValue $option_value
+     * @access public
+     * @return void
+     */
+    public function removeOptionValue(OptionValue $option_value)
+    {
+        return $this->option_values->remove($option_value, function($var) use ($option_value){
+            return $var->getName() == $option_value->getName();
+        });
     }
 }
