@@ -12,6 +12,7 @@ use Larium\Shop\StateMachine\StateMachineAwareInterface;
 use Larium\Shop\StateMachine\StateMachineAwareTrait;
 use Larium\Shop\StateMachine\Transition;
 use Larium\Shop\Shipment\ShipmentInterface;
+use Larium\Shop\Common\Collection;
 
 /**
  * Order class
@@ -66,10 +67,10 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
 
     public function initialize()
     {
-        $this->items        = new \SplObjectStorage();
-        $this->adjustments  = new \SplObjectStorage();
-        $this->payments     = new \SplObjectStorage();
-        $this->shipments    = new \SplObjectStorage();
+        $this->items        = new Collection();
+        $this->adjustments  = new Collection();
+        $this->payments     = new Collection();
+        $this->shipments    = new Collection();
     }
 
     /**
@@ -92,7 +93,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
     {
         $item->calculateTotalPrice();
 
-        $this->items->attach($item);
+        $this->items->add($item);
 
         $this->calculateTotalAmount();
 
@@ -104,9 +105,9 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
      */
     public function removeItem(OrderItemInterface $item)
     {
-        if ($remove = $this->contains($item)) {
+        if ($remove = $this->containsItem($item)) {
 
-            $this->items->detach($remove);
+            $this->items->remove($remove);
 
             $this->calculateTotalAmount();
         }
@@ -117,11 +118,9 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
      */
     public function containsItem(OrderItemInterface $order_item)
     {
-        foreach ($this->items as $item) {
-            if ($item->getIdentifier() == $order_item->getIdentifier()) {
-                return $item;
-            }
-        }
+        return $this->items->contains($order_item, function($item) use ($order_item){
+            return $item->getIdentifier() == $order_item->getIdentifier();
+        });
 
         return false;
     }
@@ -205,7 +204,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
      */
     public function addShipment(ShipmentInterface $shipment)
     {
-        $this->shipments->attach($shipment);
+        $this->shipments->add($shipment);
 
         $shipment->setOrder($this);
     }
@@ -220,14 +219,16 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
      */
     public function removeShipment(ShipmentInterface $shipment)
     {
-        foreach ($this->shipments as $s) {
-            if ($shipment->getIdentifier() === $s->getIdentifier()) {
-                $this->shipments->detach($shipment);
-                $shipment->detachOrder($this);
-            }
+        $removed = $this->shipments->remove($shipment, function($s) use ($shipment) {
+            return $shipment->getIdentifier() === $s->getIdentifier();
+        });
+
+        if ($removed) {
+            $shipment->detachOrder($this);
+            $this->calculateTotalAmount();
         }
 
-        $this->calculateTotalAmount();
+        return $removed;
     }
 
     /**
@@ -248,7 +249,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
      */
     public function addPayment(PaymentInterface $payment)
     {
-        $this->payments->attach($payment);
+        $this->payments->add($payment);
 
         $payment->setOrder($this);
 
@@ -260,11 +261,12 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
      */
     public function removePayment(PaymentInterface $payment)
     {
-        foreach ($this->payments as $p) {
-            if ($payment->getIdentifier() === $p->getIdentifier()) {
-                $this->payments->detach($payment);
-                $payment->detachOrder($this);
-            }
+        $removed = $this->payments->remove($payment, function($p) use ($payment) {
+            return $payment->getIdentifier() === $p->getIdentifier();
+        });
+
+        if ($removed) {
+            $payment->detachOrder($this);
         }
     }
 
@@ -434,7 +436,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
      */
     public function addAdjustment(AdjustmentInterface $adjustment)
     {
-        $this->adjustments->attach($adjustment);
+        $this->adjustments->add($adjustment);
 
         $adjustment->setAdjustable($this);
     }
@@ -444,7 +446,9 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
      */
     public function removeAdjustment(AdjustmentInterface $adjustment)
     {
-        $this->adjustments->detach($adjustment);
+        $this->adjustments->remove($adjustment, function($a) use ($adjustment){
+            return $a->getLabel() === $adjustment->getLabel();
+        });
 
         $adjustment->detachAdjustable();
     }

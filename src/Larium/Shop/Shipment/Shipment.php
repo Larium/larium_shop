@@ -6,6 +6,7 @@ namespace Larium\Shop\Shipment;
 
 use Larium\Shop\Sale\OrderInterface;
 use Larium\Shop\Sale\OrderItemInterface;
+use Larium\Shop\Common\Collection;
 
 /**
  * Shipment
@@ -35,7 +36,7 @@ class Shipment implements ShipmentInterface
 
     public function initialize()
     {
-        $this->order_items = new \SplObjectStorage();
+        $this->order_items = new Collection();
 
         $this->generate_identifier();
     }
@@ -134,7 +135,7 @@ class Shipment implements ShipmentInterface
      */
     public function addOrderItem(OrderItemInterface $order_item)
     {
-        $this->order_items->attach($order_item);
+        $this->order_items->add($order_item);
     }
 
     /**
@@ -143,8 +144,10 @@ class Shipment implements ShipmentInterface
     public function removeOrderItem(OrderItemInterface $order_item)
     {
         if ($item = $this->containsOrderItem($order_item)) {
-            $this->order_items->detach($item);
+            return $this->order_items->remove($item);
         }
+
+        return false;
     }
 
     /**
@@ -152,11 +155,10 @@ class Shipment implements ShipmentInterface
      */
     public function containsOrderItem(OrderItemInterface $order_item)
     {
-        foreach ($this->order_items as $item) {
-            if ($item->getIdentifier() == $order_item->getIdentifier()) {
-                return $item;
-            }
-        }
+
+        return $this->order_items->contains($order_item, function($item) use ($order_item){
+            return $item->getIdentifier() == $order_item->getIdentifier();
+        });
 
         return false;
     }
@@ -168,13 +170,17 @@ class Shipment implements ShipmentInterface
     {
         $label = $this->getIdentifier();
 
-        foreach ($this->order->getAdjustments() as $a) {
+        foreach ($this->order->getAdjustments() as $key => $a) {
             if ($label == $a->getLabel()) {
-                $this->order->removeAdjustment($a);
+                $this->order->getAdjustments()->remove($a);
+                $this->order = null;
+
+                return true;
+                break;
             }
         }
 
-        $this->order = null;
+        return false;
     }
 
     /**

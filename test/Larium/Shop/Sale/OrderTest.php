@@ -153,6 +153,28 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(5, $cart->getOrder()->getShippingCost());
     }
 
+    public function testRemovePaymentWillRemoveAdjustmentToo()
+    {
+        $cart = $this->getCartWithOneItem();
+
+        $cart->processTo('checkout');
+
+        $total_amount = $cart->getOrder()->getTotalAmount();
+
+        $payment_method = $this->getPaymentMethod('cash_on_delivery_payment_method');
+        $payment = $cart->addPaymentMethod($payment_method);
+
+        $this->assertTrue($cart->getOrder()->getAdjustments()->count() != 0);
+
+        $cart->getOrder()->removePayment($payment);
+
+        $this->assertTrue($cart->getOrder()->getAdjustments()->count() == 0);
+
+        $this->assertEquals($total_amount, $cart->getOrder()->getTotalAmount());
+    }
+
+    /*- ( Fixtures ) -------------------------------------------------------- */
+
     private function getCartWithOneItem()
     {
         $cart = new Cart();

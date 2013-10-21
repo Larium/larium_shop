@@ -13,6 +13,7 @@ use Larium\Shop\StateMachine\StateMachineAwareInterface;
 use Larium\Shop\StateMachine\StateMachineAwareTrait;
 use Larium\Shop\StateMachine\Transition;
 use Larium\Shop\Payment\Provider\RedirectResponse;
+use Larium\Shop\Common\Collection;
 
 /**
  * Payment class implements PaymentInterface and allows the payoff of an Order.
@@ -66,7 +67,7 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
 
     public function initialize()
     {
-        $this->transactions = new \SplObjectStorage();
+        $this->transactions = new Collection();
 
         $this->generate_identifier();
     }
@@ -92,7 +93,7 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
      */
     public function addTransaction(TransactionInterface $transaction)
     {
-        $this->getTransactions()->attach($transaction);
+        $this->getTransactions()->add($transaction);
     }
 
     /**
@@ -100,7 +101,9 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
      */
     public function removeTransaction(TransactionInterface $transaction)
     {
-        $this->getTransactions()->detach($transaction);
+        return $this->getTransactions()->remove($transaction, function($trx) use ($transaction){
+           return $trx->getTransactionId() == $transaction->getTransactionId();
+        });
     }
 
     /**
@@ -108,14 +111,9 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
      */
     public function containsTransaction(TransactionInterface $transaction)
     {
-        foreach ($this->getTransactions() as $trx) {
-            if ($trx->getTransactionId() == $transaction->getTransactionId()) {
-
-                return true;
-            }
-        }
-
-        return false;
+        return $this->getTransactions()->contains($transaction, function($trx) use ($transaction){
+           return $trx->getTransactionId() == $transaction->getTransactionId();
+        });
     }
 
     /**
@@ -204,12 +202,17 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
     {
         $label = $this->getIdentifier();
 
-        foreach ($this->order->getAdjustments() as $a) {
+        foreach ($this->order->getAdjustments() as $key => $a) {
             if ($label == $a->getLabel()) {
-                $this->order->removeAdjustment($a);
+                $this->order->getAdjustments()->remove($a);
+                $this->order = null;
+
+                return true;
+                break;
             }
         }
-        $this->order = null;
+
+        return false;
     }
 
     /**
