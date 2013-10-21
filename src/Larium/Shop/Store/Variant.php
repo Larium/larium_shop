@@ -15,40 +15,69 @@ use Larium\Shop\Sale\OrderableInterface;
  */
 class Variant implements OrderableInterface
 {
+    /**
+     * sku
+     *
+     * @var string
+     * @access protected
+     */
     protected $sku;
 
+    /**
+     * unit_price
+     *
+     * @var float|integer
+     * @access protected
+     */
     protected $unit_price;
 
+    /**
+     * stock_units
+     *
+     * @var integer
+     * @access protected
+     */
     protected $stock_units;
 
+    /**
+     * is_default
+     *
+     * @var boolean
+     * @access protected
+     */
     protected $is_default;
 
+    /**
+     * product
+     *
+     * @var Larium\Shop\Store\Product
+     * @access protected
+     */
     protected $product;
 
     /**
-     * Get is_default.
+     * Checks if current variant is the default one.
      *
-     * @return is_default.
+     * @return boolean
      */
-    public function getIsDefault()
+    public function isDefault()
     {
         return $this->is_default;
     }
 
     /**
-     * Set is_default.
+     * Sets if the current variant is the default or not.
      *
-     * @param is_default the value to set.
+     * @param boolean $value
+     * @return void
      */
-    public function setIsDefault($is_default)
+    public function setDefault($value = true)
     {
-        $this->is_default = $is_default;
+        $this->is_default = $value;
     }
 
     /**
-     * Get sku.
-     *
-     * @return sku.
+     * {@inheritdoc}
      */
     public function getSku()
     {
@@ -56,9 +85,10 @@ class Variant implements OrderableInterface
     }
 
     /**
-     * Set sku.
+     * Sets sku value.
      *
-     * @param sku the value to set.
+     * @param string $sku
+     * @return void
      */
     public function setSku($sku)
     {
@@ -66,9 +96,15 @@ class Variant implements OrderableInterface
     }
 
     /**
-     * Get unit_price.
-     *
-     * @return unit_price.
+     * {@inheritdoc}
+     */
+    public function getDescription()
+    {
+        return $this->getSku() . " - " . $this->getProduct()->getTitle();
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getUnitPrice()
     {
@@ -76,24 +112,19 @@ class Variant implements OrderableInterface
     }
 
     /**
-     * Set unit_price.
+     * Sets unit price.
      *
-     * @param unit_price the value to set.
+     * @param float|integer $unit_price
      */
     public function setUnitPrice($unit_price)
     {
         $this->unit_price = $unit_price;
     }
 
-    public function getDescription()
-    {
-        return $this->getProduct()->getTitle();
-    }
-
     /**
-     * Get stock_units.
+     * Gets the number of stock units.
      *
-     * @return stock_units.
+     * @return integer
      */
     public function getStockUnits()
     {
@@ -101,9 +132,10 @@ class Variant implements OrderableInterface
     }
 
     /**
-     * Set stock_units.
+     * Sets the number of  stock units.
      *
-     * @param stock_units the value to set.
+     * @param integer $stock_units
+     * @return void
      */
     public function setStockUnits($stock_units)
     {
@@ -111,9 +143,9 @@ class Variant implements OrderableInterface
     }
 
     /**
-     * Get product.
+     * Gets the product of variant.
      *
-     * @return product.
+     * @return Larium\Shop\Store\Product.
      */
     public function getProduct()
     {
@@ -121,9 +153,9 @@ class Variant implements OrderableInterface
     }
 
     /**
-     * Set product.
+     * Sets the product for variant.
      *
-     * @param product the value to set.
+     * @param Larium\Shop\Store\Product $product The product to set.
      */
     public function setProduct(Product $product)
     {

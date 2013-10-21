@@ -12,8 +12,20 @@ namespace Larium\Shop\Store;
  */
 class Product
 {
+    /**
+     * The title of product.
+     *
+     * @var string
+     * @access protected
+     */
     protected $title;
 
+    /**
+     * The description of product.
+     *
+     * @var string
+     * @access protected
+     */
     protected $description;
 
     protected $permalink;
@@ -30,8 +42,20 @@ class Product
 
     protected $deleted_at;
 
+    /**
+     * variants
+     *
+     * @var array|iterator
+     * @access protected
+     */
     protected $variants;
 
+    /**
+     * default_variant
+     *
+     * @var Larium\Shop\Store\Variant
+     * @access protected
+     */
     protected $default_variant;
 
     public function __construct()
@@ -42,14 +66,27 @@ class Product
         $this->addVariant($default, true);
     }
 
+    /**
+     * Delegate get unit price from default variant.
+     *
+     * @access public
+     * @return void
+     */
     public function getUnitPrice()
     {
-        return $this->unit_price;
+        return $this->getDefaultVariant()->getUnitPrice();
     }
 
+    /**
+     * Delegate set unit price to default variant.
+     *
+     * @param float|integer $price
+     * @access public
+     * @return void
+     */
     public function setUnitPrice($price)
     {
-        $this->unit_price = $price;
+        $this->getDefaultVariant()->setUnitPrice($price);
     }
 
     public function getDescription()
@@ -72,6 +109,12 @@ class Product
         $this->title = $title;
     }
 
+    /**
+     * Delegate get sku number from default variant.
+     *
+     * @access public
+     * @return string
+     */
     public function getSku()
     {
         return $this->getDefaultVariant()->getSku();
@@ -89,7 +132,7 @@ class Product
 
     public function addVariant(Variant $variant, $is_default=false)
     {
-        $variant->setIsDefault($is_default);
+        $variant->setDefault();
         $this->variants->attach($variant);
     }
 
@@ -104,7 +147,7 @@ class Product
         if (null === $this->default_variant)  {
             $variants = $this->getVariants();
             foreach( $variants as $v) {
-                if ($v->getIsDefault()) {
+                if ($v->isDefault()) {
                     $this->default_variant = $v;
                     break;
                 }

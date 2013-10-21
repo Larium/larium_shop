@@ -16,7 +16,7 @@ interface OrderableInterface
      * Gets the price of a unit.
      *
      * @access public
-     * @return number
+     * @return float|integer
      */
     public function getUnitPrice();
 
@@ -28,15 +28,14 @@ interface OrderableInterface
      */
     public function getSku();
 
-
     /**
      * Gets a description of Orderable.
      *
-     * Usefull when preview Order Items whithout the need to load Orderable
+     * Usefull when preview Order Items without the need to load Orderable
      * resource.
      *
      * @access public
-     * @return void
+     * @return string
      */
     public function getDescription();
 }
