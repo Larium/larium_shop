@@ -19,8 +19,6 @@ class OrderItem implements OrderItemInterface
 
     protected $total_price;
 
-    protected $sku;
-
     protected $description;
 
     protected $order;
