@@ -209,6 +209,12 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
         $shipment->setOrder($this);
     }
 
+    /**
+     * Gets all assigned shipments for this Order.
+     *
+     * @access public
+     * @return Collection
+     */
     public function getShipments()
     {
         return $this->shipments;
