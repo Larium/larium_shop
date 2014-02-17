@@ -2,6 +2,8 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+use Larium\Shop\Common\Collection;
+
 class Hydrator
 {
     protected $class_name;
@@ -37,10 +39,10 @@ class Hydrator
 
             if (is_array($value) && array_key_exists($key, $maps)) {
 
-                    $storage = new SplObjectStorage();
+                    $storage = new Collection();
                     foreach ($value as $k=>$v) {
                         $nest = $this->hydrate($v, null, $maps[$key]['class']);
-                        $storage->attach($nest);
+                        $storage->add($nest);
                         if (isset($maps[$key]['inverse'])) {
                             $nest_mutator = 'set' . $this->camelize($maps[$key]['inverse']);
                             $nest->$nest_mutator($class);
