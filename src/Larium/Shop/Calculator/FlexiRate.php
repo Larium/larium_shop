@@ -9,7 +9,7 @@ namespace Larium\Shop\Calculator;
  *
  * Available options are:
  * - first_item:      The amount to charge for the first item of an order.
- * - additional_item: The amount charge for additional items of an order.
+ * - additional_item: The amount to charge for additional items of an order.
  * - max_items:       Limits the number of first_item + additional item. Charge will
  *                    cycle based in max_items. Example if order has 10 items,
  *                    max_items is 3, first_item is 5 and additional_items is 1 then
@@ -30,11 +30,7 @@ class FlexiRate extends AbstractCalculator
     protected $max_items = 0;
 
     /**
-     * compute
-     *
-     * @param Larium\Shop\Sale\Order $object
-     * @access public
-     * @return float
+     * {@inheritdoc}
      */
     public function compute($object = null)
     {

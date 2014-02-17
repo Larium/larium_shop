@@ -5,7 +5,7 @@
 namespace Larium\Shop\Calculator;
 
 /**
- * PerItem
+ * Mulitples each given item with a fixed amount.
  *
  * @uses AbstractCalculator
  * @author  Andreas Kollaros <andreaskollaros@ymail.com>
@@ -15,6 +15,9 @@ class PerItem extends AbstractCalculator
 {
     protected $amount;
 
+    /**
+     * {@inheritdoc}
+     */
     public function compute($object = null)
     {
         $item_count = $object->getTotalQuantity();

@@ -5,7 +5,9 @@
 namespace Larium\Shop\Calculator;
 
 /**
- * FlatPercentItemTotal
+ * FlatPercentItemTotal class.
+ *
+ * Calculates a flat percent of total items of Order
  *
  * @uses AbstractCalculator
  * @author  Andreas Kollaros <andreaskollaros@ymail.com>
@@ -16,11 +18,7 @@ class FlatPercentItemTotal extends AbstractCalculator
     protected $flat_percent;
 
     /**
-     * Cacluclates a flat percent of total items of Order
-     *
-     * @param Larium\Shop\Sale\Order  $object
-     * @access public
-     * @return float
+     * {@inheritdoc}
      */
     public function compute($object = null)
     {
