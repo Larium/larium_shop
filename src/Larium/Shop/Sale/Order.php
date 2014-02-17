@@ -400,7 +400,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
 
     /**
      * Checks the balance of Order after a `pay` transition.
-     * If balance is greter than zero then rollback to `checkout` state to
+     * If balance is greater than zero then rollback to `checkout` state to
      * fullfil the payment of the Order.
      *
      * @access public
