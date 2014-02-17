@@ -22,154 +22,235 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
     public function testCartAddingItems()
     {
+        // Given i initialize a Cart object.
         $cart = new Cart();
 
+        // Given i fetch a product
         $product1 = $this->getProduct('product_1');
+
+        // Given i get the default variant from product
         $variant1 = $product1->getDefaultVariant();
+
+        // When i add the variant to cart
         $item1 = $cart->addItem($variant1);
 
+        // Then cart should have 1 item.
         $this->assertEquals(1, $cart->getItemsCount());
 
+        // Given i fetch another product
         $product2 = $this->getProduct('product_2');
+
+        // Given i get the default variant from product
         $variant2 = $product2->getDefaultVariant();
+
+        // When i add the variant to cart
         $item2 = $cart->addItem($variant2);
 
+        // Then cart should have 2 items
         $this->assertEquals(2, $cart->getItemsCount());
+
+        // And cart should have 2 quantities of items
         $this->assertEquals(2, $cart->getTotalQuantity());
 
+        // And the order should have 21 total amount
         $this->assertEquals(21, $cart->getOrder()->getTotalAmount());
 
     }
 
     public function testCartAddSameVariant()
     {
+        // Given i initialize a Cart object.
         $cart = new Cart();
 
+        // Given i fetch a product
         $product = $this->getProduct('product_1');
+
+        // Given i get the default variant from product
         $variant = $product->getDefaultVariant();
 
+        // When i add the variant twice to cart
         $cart->addItem($variant);
         $cart->addItem($variant);
 
+        // Then cart should have 1 item
         $this->assertEquals(1, $cart->getItemsCount());
+
+        // And the quantity should be equals to 2
         $this->assertEquals(2, $cart->getOrder()->getTotalQuantity());
     }
 
 
     public function testOrderContainsItem()
     {
+        // Given i initialize a Cart object.
         $cart = new Cart();
+
+        // Given i get the order from cart.
         $order = $cart->getOrder();
+
+        // Given i fetch a product
         $product = $this->getProduct('product_1');
+
+        // Given i get the default variant from product
         $variant = $product->getDefaultVariant();
+
+        // When i add the variant to cart
         $item = $cart->addItem($variant);
 
+        // Then order must contains that item
         $this->assertTrue(false !== $order->containsItem($item));
 
+        // Given i fetch an item from an order
         $item = $this->getOrderItem('order_item_1');
 
+        // And i assign to this item the order.
         $item->setOrder($order);
 
+        // Then order must contains that item.
         $this->assertTrue(false !== $order->containsItem($item));
     }
 
 
     public function testOrderPaymentWithCreditCard()
     {
+        // Given i fetch a cart with one item.
         $cart = $this->getCartWithOneItem();
 
+        // Given i process cart to checkout state.
         $cart->processTo('checkout');
 
+        // Given i fetch creditcard payment method.
         $method = $this->getPaymentMethod('creditcard_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
 
+        // Given i add payment method to cart.
         $payment = $cart->addPaymentMethod($method);
 
+        // When i process cart to pay state.
         $cart->processTo('pay');
 
+        // Then order should have 'paid' state
         $this->assertEquals('paid', $cart->getOrder()->getState());
+
+        // And payment should have 'paid' state
         $this->assertEquals('paid', $payment->getState());
+
+        // And credit card number should be the one i fetched.
         $this->assertEquals('1', $method->getPaymentSource()->getNumber());
+
+        // And order should have zero balance.
         $this->assertEquals(0, $cart->getOrder()->getBalance());
     }
 
     public function testOrderPaymentWithCashOnDelivery()
     {
+        // Given i fetch a cart with one item.
         $cart = $this->getCartWithOneItem();
 
+        // Given i store order total amount.
         $total_amount = $cart->getOrder()->getTotalAmount();
 
+        // Given i process cart to checkout state
         $cart->processTo('checkout');
-        //In checkout state you can add payment and shipment methods, billing and
-        //shipping addresses etc.
 
+        # In checkout state you can add payment and shipment methods, billing and
+        # shipping addresses etc.
+
+        // Given i add cash on delivery payment method to cart.
         $method = $this->getPaymentMethod('cash_on_delivery_payment_method');
         $payment = $cart->addPaymentMethod($method);
 
+        // When i process cart to pay state.
         $cart->processTo('pay');
 
+        // Then total amount of order should be increased.
         $this->assertTrue($cart->getOrder()->getTotalAmount() > $total_amount);
+
+        // And order state should be 'paid'
         $this->assertEquals('paid', $cart->getOrder()->getState());
+
+        // And payment state should be 'paid'
         $this->assertEquals('paid', $payment->getState());
+
+        // And order should have zero balance.
         $this->assertEquals(0, $cart->getOrder()->getBalance());
     }
 
     public function testRedirectPayment()
     {
+        // Given i fetch a cart with one item.
         $cart = $this->getCartWithOneItem();
 
+        // Given i process cart to checkout state
         $cart->processTo('checkout');
 
+        // Given i add redirect payment method to cart.
         $method = $this->getPaymentMethod('redirect_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
-
         $payment = $cart->addPaymentMethod($method);
 
+        // Given i process cart to pay state
         $response = $cart->processTo('pay');
 
+        // Then response should be instance of 'Larium\Shop\Payment\Provider\RedirectResponse'
         $this->assertInstanceOf('Larium\Shop\Payment\Provider\RedirectResponse', $response);
+        // And payment should be in 'unpaid' state
         $this->assertEquals('unpaid', $payment->getState());
     }
 
     public function testOrderWithShippingMethod()
     {
+        // Given i fetch a cart with one item.
         $cart = $this->getCartWithOneItem();
 
+        // Given i process cart to checkout state
         $cart->processTo('checkout');
 
+        // Given i add cash on delivery payment method to cart.
         $payment_method = $this->getPaymentMethod('cash_on_delivery_payment_method');
         $payment = $cart->addPaymentMethod($payment_method);
 
+        // Given i add courier shipping method to cart.
         $shipping_method = $this->getShippingMethod('courier_shipping_method');
 
-        $this->assertEquals(5, $shipping_method->calculateCost($cart->getOrder()));
-
+        // Given i set shipping method to cart.
         $cart->setShippingMethod($shipping_method);
 
+        // When i process cart to pay state.
         $response = $cart->processTo('pay');
 
+        // Then order balance should be zero.
         $this->assertEquals(0, $cart->getOrder()->getBalance());
 
-        $this->assertEquals(5, $cart->getOrder()->getShippingCost());
+        // And order shipping cost should be equal to shipping method cost
+        $this->assertEquals($shipping_method->calculateCost($cart->getOrder()), $cart->getOrder()->getShippingCost());
     }
 
     public function testRemovePaymentWillRemoveAdjustmentToo()
     {
+        // Given i fetch a cart with one item.
         $cart = $this->getCartWithOneItem();
 
+        // Given i process cart to checkout state
         $cart->processTo('checkout');
 
+        // Given i store order total amount before adding any adjustment.
         $total_amount = $cart->getOrder()->getTotalAmount();
 
+        // Given i add cash on delivery payment method to cart.
         $payment_method = $this->getPaymentMethod('cash_on_delivery_payment_method');
         $payment = $cart->addPaymentMethod($payment_method);
 
+        // Then order should have at least one adjustment
         $this->assertTrue($cart->getOrder()->getAdjustments()->count() != 0);
 
+        // When i remove the payment
         $cart->getOrder()->removePayment($payment);
 
+        // Then order should have not any adjustments
         $this->assertTrue($cart->getOrder()->getAdjustments()->count() == 0);
 
+        // And order total amount should be the same with the one i stored.
         $this->assertEquals($total_amount, $cart->getOrder()->getTotalAmount());
     }
 
