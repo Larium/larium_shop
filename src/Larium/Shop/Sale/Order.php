@@ -30,7 +30,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
     /**
      * Order items.
      *
-     * @var array|Traversable
+     * @var Collection
      * @access protected
      */
     protected $items;
@@ -38,25 +38,74 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
     /**
      * Order adjustments
      *
-     * @var mixed
+     * @var Collection
      * @access protected
      */
     protected $adjustments;
 
+    /**
+     * Order payments
+     *
+     * @var Collection
+     * @access protected
+     */
     protected $payments;
 
+    /**
+     * Order current processed payment
+     *
+     * @var PaymentInterface
+     * @access protected
+     */
     protected $current_payment;
 
+    /**
+     * Order shipments
+     *
+     * @var Collection
+     * @access protected
+     */
     protected $shipments;
 
+    /**
+     * Order adjustments total amount
+     *
+     * @var float
+     * @access protected
+     */
     protected $adjustments_total;
 
+    /**
+     * Order total items amount
+     *
+     * @var float
+     * @access protected
+     */
     protected $items_total;
 
+    /**
+     * Order total amount
+     *
+     * @var float
+     * @access protected
+     */
     protected $total_amount;
 
+    /**
+     * Order total payment amount
+     *
+     * @var float
+     * @access protected
+     */
     protected $total_payment_amount;
 
+    /**
+     * Order current state.
+     * @see Order::getStates method for a listo of available states.
+     *
+     * @var string
+     * @access protected
+     */
     protected $state;
 
     public function __construct()
@@ -399,11 +448,18 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
     {
 
         foreach ($this->payments as $payment) {
-            if ('unpaid' === $payment->getState()) {
+
+            $state = $payment->getState();
+
+            if ('unpaid' === $state || 'in_progress' === $state) {
 
                 $this->setCurrentPayment($payment);
 
-                $response = $payment->getStateMachine()->apply('purchase');
+                if ('unpaid' === $state) {
+                    $response = $payment->getStateMachine()->apply('purchase');
+                } elseif ('in_progress' === $state) {
+                    $response = $payment->getStateMachine()->apply('doPurchase');
+                }
 
                 return $response;
             }

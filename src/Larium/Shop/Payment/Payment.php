@@ -247,6 +247,7 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
     {
         return array(
             'unpaid'     => ['type' => 'initial', 'properties' => []],
+            'in_process' => ['type' => 'normal','properties' => []],
             'authorized' => ['type' => 'normal','properties' => []],
             'paid'       => ['type' => 'final', 'properties' => []],
             'refunded'   => ['type' => 'final', 'properties' => []]
@@ -256,11 +257,13 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
     public function getTransitions()
     {
         return array(
-            'purchase'  => ['from'=>['unpaid'], 'to'=>'paid', 'do'=>[$this, 'toPaid']],
-            'authorize' => ['from'=>['unpaid'], 'to'=>'authorized'],
-            'capture'   => ['from'=>['authorized'], 'to'=>'paid'],
-            'void'      => ['from'=>['authorized'], 'to'=>'refunded'],
-            'credit'    => ['from'=>['paid'], 'to'=>'refunded'],
+            'purchase'      => ['from'=>['unpaid'], 'to'=>'paid', 'do'=>[$this, 'toPaid']],
+            'doPurchase'   => ['from'=>['in_progress'], 'to'=>'paid', 'do'=>[$this, 'toPaid']],
+            'doAuthorize'  => ['from'=>['in_progress'], 'to'=>'authorize'],
+            'authorize'     => ['from'=>['unpaid'], 'to'=>'authorized'],
+            'capture'       => ['from'=>['authorized'], 'to'=>'paid'],
+            'void'          => ['from'=>['authorized'], 'to'=>'refunded'],
+            'credit'        => ['from'=>['paid'], 'to'=>'refunded'],
         );
     }
 
@@ -303,7 +306,7 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
 
             if ($response instanceof RedirectResponse) {
                 $this->event->afterTransition('purchase', function(){
-                    $this->state = 'unpaid';
+                    $this->state = 'in_progress';
                 });
             }
 
@@ -362,6 +365,7 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
 
             throw new Exception('Provider must implements Larium\Shop\Payment\PaymentProviderInterface');
         }
+
         return $providerMethod->invokeArgs($provider, $params);
     }
 
@@ -381,7 +385,13 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
 
     protected function create_transaction_from_response(Provider\Response $response)
     {
+        $transaction = new Transaction();
 
+        $transaction->setPayment($this);
+        $transaction->setAmount($this->payment_amount());
+        $transaction->settransactionId($response->getTransactionId());
+
+        $this->transactions->add($transaction);
     }
 
     /**

@@ -23,4 +23,18 @@ class RedirectProvider extends GatewayProvider implements PaymentProviderInterfa
 
         return $response;
     }
+
+    public function doPurchase($amount, array $options=array())
+    {
+        $response = new Response();
+
+        $cc = new CreditCard($this->payment_source->getOptions());
+
+        $r = $this->getGateway()->purchase($amount, $cc, $options);
+
+        $response->setSuccess($r->success());
+        $response->setTransactionId($this->getGateway()->generateUniqueId());
+
+        return $response;
+    }
 }

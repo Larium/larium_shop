@@ -192,7 +192,19 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         // Then response should be instance of 'Larium\Shop\Payment\Provider\RedirectResponse'
         $this->assertInstanceOf('Larium\Shop\Payment\Provider\RedirectResponse', $response);
         // And payment should be in 'unpaid' state
-        $this->assertEquals('unpaid', $payment->getState());
+        $this->assertEquals('in_progress', $payment->getState());
+
+        // Given i fetch a cart with payment in_process state
+        $cart = $this->getCartWithOneItemAndPaymentInCheckoutState();
+
+        // When i process cart to pay state
+        $response = $cart->processTo('pay');
+
+        $payment = $cart->getOrder()->getCurrentPayment();
+
+        $this->assertTrue($payment->getState() == 'paid');
+        $this->assertTrue($payment->getTransactions()->count() > 0);
+        $this->assertNotNull($payment->getTransactions()->first()->getTransactionId());
     }
 
     public function testOrderWithShippingMethod()
@@ -281,6 +293,23 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $product = $this->getProduct('product_1');
         $variant = $product->getDefaultVariant();
         $item = $cart->addItem($variant);
+
+        return $cart;
+    }
+
+    private function getCartWithOneItemAndPaymentInCheckoutState()
+    {
+        $cart = new Cart();
+        $product = $this->getProduct('product_1');
+        $variant = $product->getDefaultVariant();
+        $item = $cart->addItem($variant);
+
+        $method = $this->getPaymentMethod('redirect_payment_method');
+        $method->setSourceOptions($this->getValidCreditCardOptions());
+        $payment = $cart->addPaymentMethod($method);
+        $payment->setState('in_progress');
+
+        $cart->getOrder()->setState('checkout');
 
         return $cart;
     }
