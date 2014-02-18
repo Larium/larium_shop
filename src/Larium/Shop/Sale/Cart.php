@@ -175,7 +175,7 @@ class Cart
      *
      * @param ShippingMethodInterface $shipping_method
      * @access public
-     * @return void
+     * @return Shipment
      */
     public function setShippingMethod(ShippingMethodInterface $shipping_method)
     {
@@ -183,9 +183,7 @@ class Cart
         $shipment->setShippingMethod($shipping_method);
         $this->getOrder()->addShipment($shipment);
 
-        foreach ($this->getOrder()->getItems() as $item) {
-            $shipment->addOrderItem($item);
-        }
+        return $shipment;
     }
 
     /**
