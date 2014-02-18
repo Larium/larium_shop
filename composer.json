@@ -17,5 +17,10 @@
         "aktive_merchant/aktive_merchant": "1.0.*",
         "symfony/event-dispatcher": "2.3.*"
     },
-    "minimum-stability": "dev" 
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "Larium\\": "src/"
+        }
+    }
 }
