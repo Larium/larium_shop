@@ -153,9 +153,6 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         // Given i process cart to checkout state
         $cart->processTo('checkout');
 
-        # In checkout state you can add payment and shipment methods, billing and
-        # shipping addresses etc.
-
         // Given i add cash on delivery payment method to cart.
         $method = $this->getPaymentMethod('cash_on_delivery_payment_method');
         $payment = $cart->addPaymentMethod($method);

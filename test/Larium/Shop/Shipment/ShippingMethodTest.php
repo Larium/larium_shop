@@ -40,6 +40,8 @@ class ShippingMethodTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /*- ( Fixtures ) -------------------------------------------------------- */
+
     private function getShippingMethod($id)
     {
         $this->data = $this->loader->getData();

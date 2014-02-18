@@ -7,8 +7,6 @@ namespace Larium\Shop\Store;
 class OptionValue
 {
     /**
-     * option_type
-     *
      * @var Larium\Shop\Store\OptionType
      * @access protected
      */
@@ -19,15 +17,13 @@ class OptionValue
     protected $title;
 
     /**
-     * position
-     *
      * @var integer
      * @access protected
      */
     protected $position;
 
     /**
-     * Gets option_type.
+     * Gets option type instance.
      *
      * @access public
      * @return Larium\Shop\Store\OptionType
@@ -38,7 +34,7 @@ class OptionValue
     }
 
     /**
-     * Sets option_type.
+     * Sets option type instance.
      *
      * @param Larium\Shop\Store\OptionType $option_type the value to set.
      * @access public
@@ -53,7 +49,7 @@ class OptionValue
      * Gets name.
      *
      * @access public
-     * @return mixed
+     * @return string
      */
     public function getName()
     {
@@ -76,7 +72,7 @@ class OptionValue
      * Gets title.
      *
      * @access public
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -99,7 +95,7 @@ class OptionValue
      * Gets position.
      *
      * @access public
-     * @return mixed
+     * @return integer
      */
     public function getPosition()
     {

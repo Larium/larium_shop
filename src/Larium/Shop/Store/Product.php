@@ -159,7 +159,6 @@ class Product
         });
     }
 
-
     public function getDefaultVariant()
     {
         if (null === $this->default_variant)  {
@@ -176,10 +175,10 @@ class Product
     }
 
     /**
-     * Gets option_types.
+     * Gets option types collection.
      *
      * @access public
-     * @return mixed
+     * @return Collection
      */
     public function getOptionTypes()
     {
@@ -187,13 +186,13 @@ class Product
     }
 
     /**
-     * Sets option_types.
+     * Sets option types collection
      *
-     * @param mixed $option_types the value to set.
+     * @param Collection $option_types the value to set.
      * @access public
      * @return void
      */
-    public function setOptionTypes($option_types)
+    public function setOptionTypes(Collection $option_types)
     {
         $this->option_types = $option_types;
     }
