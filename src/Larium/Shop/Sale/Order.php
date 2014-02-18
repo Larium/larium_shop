@@ -206,6 +206,10 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
     {
         $this->shipments->add($shipment);
 
+        foreach ($this->getItems() as $item) {
+            $shipment->addOrderItem($item);
+        }
+
         $shipment->setOrder($this);
     }
 
@@ -234,7 +238,7 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
             $this->calculateTotalAmount();
         }
 
-        return $removed;
+        return $removed != null;
     }
 
     /**
@@ -274,6 +278,8 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
         if ($removed) {
             $payment->detachOrder($this);
         }
+
+        return $removed != null;
     }
 
     public function getPayments()

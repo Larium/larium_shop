@@ -146,7 +146,20 @@ interface OrderInterface extends AdjustableInterface
 
     public function addShipment(ShipmentInterface $shipment);
 
+    /**
+     * removeShipment
+     *
+     * @param ShipmentInterface $shipment
+     * @access public
+     * @return boolean
+     */
     public function removeShipment(ShipmentInterface $shipment);
 
+    /**
+     * getShippingCost
+     *
+     * @access public
+     * @return float
+     */
     public function getShippingCost();
 }
