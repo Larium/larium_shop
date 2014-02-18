@@ -251,6 +251,28 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($total_amount, $cart->getOrder()->getTotalAmount());
     }
 
+    public function testRemoveShipmentWillRemoveAdjustmentToo()
+    {
+        // Given i fetch a cart with one item.
+        $cart = $this->getCartWithOneItem();
+
+        // Given i process cart to checkout state
+        $cart->processTo('checkout');
+
+        // Given i set shipping method to cart.
+        $shipping_method = $this->getShippingMethod('courier_shipping_method');
+        $shipment = $cart->setShippingMethod($shipping_method);
+
+        // Then order should have at least one adjustment
+        $this->assertTrue($cart->getOrder()->getAdjustments()->count() != 0);
+
+        // When i remove the payment
+        $cart->getOrder()->removeShipment($shipment);
+
+        // Then order should have not any adjustments
+        $this->assertTrue($cart->getOrder()->getAdjustments()->count() == 0);
+    }
+
     /*- ( Fixtures ) -------------------------------------------------------- */
 
     private function getCartWithOneItem()
