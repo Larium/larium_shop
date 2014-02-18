@@ -5,7 +5,7 @@
 namespace Larium\Shop\StateMachine;
 
 use Larium\Shop\StateMachine\ArrayLoader;
-use Finite\StateMachine\ListenableStateMachine;
+use Finite\StateMachine\StateMachine;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -31,16 +31,13 @@ trait StateMachineAwareTrait
             );
 
             $loader = new ArrayLoader($data);
-            $this->state_machine = new ListenableStateMachine();
+            $dispatcher = new EventDispatcher();
+            $this->state_machine = new StateMachine($this, $dispatcher);
             $loader->load($this->state_machine);
-
-            $this->state_machine->setEventDispatcher($dispatcher = new EventDispatcher);
 
             $this->event = new EventTransition($dispatcher);
 
             $this->setupEvents();
-
-            $this->state_machine->setObject($this);
 
             $this->state_machine->initialize();
         }
