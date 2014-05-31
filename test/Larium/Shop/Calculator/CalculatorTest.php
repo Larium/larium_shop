@@ -54,8 +54,8 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
     public function testFlexiRate($fi, $ai, $mi, $expects)
     {
         $options = array(
-            'first_item' => $fi,
-            'additional_item' => $ai,
+            'first_item_amount' => $fi,
+            'additional_item_amount' => $ai,
             'max_items' =>  $mi
         );
         $calc = new FlexiRate($options);
