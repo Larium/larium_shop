@@ -1,5 +1,9 @@
 <?php
 
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+use Symfony\Component\Yaml\Parser;
+
 class FixtureLoader
 {
     protected $file;
@@ -13,7 +17,9 @@ class FixtureLoader
 
     protected function parse_file()
     {
-        $this->data = yaml_parse_file(__DIR__ . '/fixtures/fixtures.yml');
+        $yaml = new Parser();
+
+        $this->data = $yaml->parse(file_get_contents(__DIR__ . '/fixtures/fixtures.yml'));
     }
 
     public function getData()

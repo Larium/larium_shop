@@ -16,6 +16,9 @@
         "aktive_merchant/aktive_merchant": "1.0.*",
         "symfony/event-dispatcher": "2.3.*"
     },
+    "require-dev": {
+        "symfony/yaml": "2.4.*"
+    },
     "minimum-stability": "dev",
     "autoload": {
         "psr-0": {

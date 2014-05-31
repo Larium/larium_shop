@@ -309,7 +309,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $payment = $cart->addPaymentMethod($method);
         $payment->setState('in_progress');
 
-        $cart->getOrder()->setState('checkout');
+        $cart->processTo('checkout');
 
         return $cart;
     }

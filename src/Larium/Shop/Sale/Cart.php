@@ -8,6 +8,10 @@ use Larium\Shop\Payment\Payment;
 use Larium\Shop\Payment\PaymentMethodInterface;
 use Larium\Shop\Shipment\ShippingMethodInterface;
 use Larium\Shop\Shipment\Shipment;
+use Finite\State\State;
+use Finite\StateMachine\StateMachine;
+use Larium\Shop\StateMachine\ArrayLoader;
+use Larium\Shop\StateMachine\TransitionListener;
 
 /**
  * Cart
@@ -15,7 +19,7 @@ use Larium\Shop\Shipment\Shipment;
  * @author  Andreas Kollaros <andreaskollaros@ymail.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
-class Cart
+class Cart implements CartInterface
 {
     /**
      * An order instance that belongs to this cart.
@@ -25,13 +29,10 @@ class Cart
      */
     protected $order;
 
+    protected $state_machine;
+
     /**
-     * Add an Orderable object to the Order.
-     *
-     * @param  OrderableInterface $orderable
-     * @param  int                $quantity
-     * @access public
-     * @return OrderItem
+     * {@inheritdoc}
      */
     public function addItem(OrderableInterface $orderable, $quantity=1)
     {
@@ -55,11 +56,7 @@ class Cart
     }
 
     /**
-     * Removes an Orderitem from Order
-     *
-     * @param  OrderItem $item
-     * @access public
-     * @return void
+     * {@inheritdoc}
      */
     public function removeItem(OrderItem $item)
     {
@@ -77,6 +74,7 @@ class Cart
     {
         if (null === $this->order) {
             $this->order = new Order();
+            $this->initialize_state_machine();
         }
 
         return $this->order;
@@ -135,13 +133,7 @@ class Cart
     }
 
     /**
-     * Creates and adds a Payment to order based on PaymentMethod.
-     *
-     * Returns the Payment instance.
-     *
-     * @param PaymentMethodInterface $method
-     * @access public
-     * @return Larium\Shop\Payment\PaymentInterface
+     * {@inheritdoc}
      */
     public function addPaymentMethod(PaymentMethodInterface $method, $amount = null)
     {
@@ -163,19 +155,11 @@ class Cart
      */
     public function processTo($state)
     {
-        return $this->getOrder()->getStateMachine()->apply($state);
+        return $this->state_machine->apply($state);
     }
 
     /**
-     * Customer can choose a shipping method. Cart class will create a Shipment
-     * for all OrderItems.
-     *
-     * Order can have multiple shipments that can be set up in a different
-     * context.
-     *
-     * @param ShippingMethodInterface $shipping_method
-     * @access public
-     * @return Shipment
+     * {@inheritdoc}
      */
     public function setShippingMethod(ShippingMethodInterface $shipping_method)
     {
@@ -196,7 +180,7 @@ class Cart
      */
     protected function item_from_orderable(
         OrderableInterface $orderable,
-        $quantity=1
+        $quantity = 1
     ) {
         $item = new OrderItem();
         $item->setOrderable($orderable);
@@ -205,5 +189,62 @@ class Cart
         $item->setDescription($orderable->getDescription());
 
         return $item;
+    }
+
+    protected function initialize_state_machine()
+    {
+        $this->state_machine = new StateMachine();
+
+        $states = [
+            self::CART       => ['type' => State::TYPE_INITIAL, 'properties' => []],
+            self::CHECKOUT   => ['type' => State::TYPE_NORMAL, 'properties' => []],
+            self::PAID       => ['type' => State::TYPE_NORMAL, 'properties' => []],
+            self::PROCESSING => ['type' => State::TYPE_NORMAL, 'properties' => []],
+            self::SENT       => ['type' => State::TYPE_NORMAL, 'properties' => []],
+            self::CANCELLED  => ['type' => State::TYPE_FINAL, 'properties' => []],
+            self::DELIVERED  => ['type' => State::TYPE_FINAL, 'properties' => []],
+            self::RETURNED   => ['type' => State::TYPE_FINAL, 'properties' => []],
+        ];
+
+        $transitions = [
+            'checkout'  => ['from'=>[self::CART], 'to' => self::CHECKOUT],
+            'pay'       => ['from'=>[self::CHECKOUT], 'to' => self::PAID, 'do'=>[$this->order, 'processPayments'], 'if' => function ($sm){ return $sm->getObject()->needsPayment(); }],
+            'process'   => ['from'=>[self::PAID], 'to' => self::PROCESSING],
+            'send'      => ['from'=>[self::PROCESSING], 'to' => self::SENT],
+            'deliver'   => ['from'=>[self::SENT],'to' => self::DELIVERED],
+            'return'    => ['from'=>[self::SENT], 'to' => self::RETURNED],
+            'cancel'    => ['from'=>[self::PAID, self::PROCESSING], 'to' => self::CANCELLED],
+            'retry'     => ['from'=>[self::CANCELLED], 'to' => self::CHECKOUT],
+        ];
+
+        $loader = new ArrayLoader(
+            [
+                'class' => get_class($this->order),
+                'states' => $states,
+                'transitions' => $transitions
+            ]
+        );
+
+        $this->state_machine = new StateMachine($this->order);
+
+        $loader->load($this->state_machine);
+
+        $event = new TransitionListener($this->state_machine->getDispatcher());
+
+        $event->afterTransition('pay', array($this->order, 'rollbackPayment'));
+
+        $this->state_machine->initialize();
+
+    }
+
+    /**
+     * Gets state_machine.
+     *
+     * @access public
+     * @return mixed
+     */
+    public function getStateMachine()
+    {
+        return $this->state_machine;
     }
 }

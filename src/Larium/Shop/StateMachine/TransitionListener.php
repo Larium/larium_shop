@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Finite\Event\FiniteEvents;
 
 /**
- * EventTransition class for setting listeners for specified Transitions.
+ * TransitionListener class for setting listeners for specified Transitions.
  *
  * This class provides the functionality to add pre / post callback listeners
  * to specified transitions in the state machine and call them only when specified
@@ -18,7 +18,7 @@ use Finite\Event\FiniteEvents;
  * @author  Andreas Kollaros <andreaskollaros@ymail.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
-class EventTransition
+class TransitionListener
 {
     protected $dispatcher;
 
@@ -58,11 +58,9 @@ class EventTransition
     protected function event_transition($transition_name, $action, $event_name)
     {
         $this->dispatcher->addListener(
-            $event_name,
-            function($event) use ($transition_name, $action) {
-                if ($event->getTransition()->getName() == $transition_name) {
-                    call_user_func_array($action, array($event));
-                }
+            $event_name.'.'.$transition_name,
+            function($event) use ($action) {
+                call_user_func_array($action, array($event));
             }
         );
     }

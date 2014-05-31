@@ -6,10 +6,7 @@ namespace Larium\Shop\Sale;
 
 use Larium\Shop\Payment\PaymentInterface;
 use Finite\StatefulInterface;
-use Finite\Event\StateMachineEvent;
 use Finite\StateMachine\StateMachine;
-use Larium\Shop\StateMachine\StateMachineAwareInterface;
-use Larium\Shop\StateMachine\StateMachineAwareTrait;
 use Larium\Shop\StateMachine\Transition;
 use Larium\Shop\Shipment\ShipmentInterface;
 use Larium\Shop\Common\Collection;
@@ -23,10 +20,8 @@ use Larium\Shop\Common\Collection;
  * @author Andreas Kollaros <andreaskollaros@ymail.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
-class Order implements OrderInterface, StatefulInterface, StateMachineAwareInterface
+class Order implements OrderInterface, StatefulInterface
 {
-    use StateMachineAwareTrait;
-
     /**
      * Order items.
      *
@@ -409,44 +404,8 @@ class Order implements OrderInterface, StatefulInterface, StateMachineAwareInter
         return $this->getTotalAmount() - $this->getTotalPaymentAmount();
     }
 
-    /* -(  StateMachine  ) ------------------------------------------------- */
-
-    public function getStates()
-    {
-        return array(
-            'cart'       => ['type' => 'initial', 'properties' => []],
-            'checkout'   => ['type' => 'normal', 'properties' => []],
-            'paid'       => ['type' => 'normal', 'properties' => []],
-            'processing' => ['type' => 'normal', 'properties' => []],
-            'sent'       => ['type' => 'normal', 'properties' => []],
-            'cancelled'  => ['type' => 'final', 'properties' => []],
-            'delivered'  => ['type' => 'final', 'properties' => []],
-            'returned'   => ['type' => 'final', 'properties' => []],
-        );
-    }
-
-    public function getTransitions()
-    {
-        return [
-            'checkout'  => ['from'=>['cart'], 'to'=>'checkout'],
-            'pay'       => ['from'=>['checkout'], 'to'=>'paid', 'do'=>[$this, 'processPayments'], 'if'=>$this->needsPayment()],
-            'process'   => ['from'=>['paid'], 'to'=>'processing'],
-            'send'      => ['from'=>['processing'], 'to'=>'sent'],
-            'deliver'   => ['from'=>['sent'],'to'=>'delivered'],
-            'return'    => ['from'=>['sent'], 'to'=>'returned'],
-            'cancel'    => ['from'=>['paid', 'processing'], 'to'=>'cancelled'],
-            'retry'     => ['from'=>['cancelled'], 'to'=>'checkout'],
-        ];
-    }
-
-    public function setupEvents()
-    {
-        $this->event->afterTransition('pay', array($this, 'rollbackPayment'));
-    }
-
     public function processPayments(StateMachine $sm, Transition $transition)
     {
-
         foreach ($this->payments as $payment) {
 
             $state = $payment->getState();

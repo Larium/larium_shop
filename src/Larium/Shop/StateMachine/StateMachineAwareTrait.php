@@ -35,7 +35,7 @@ trait StateMachineAwareTrait
             $this->state_machine = new StateMachine($this, $dispatcher);
             $loader->load($this->state_machine);
 
-            $this->event = new EventTransition($dispatcher);
+            $this->event = new TransitionListener($dispatcher);
 
             $this->setupEvents();
 

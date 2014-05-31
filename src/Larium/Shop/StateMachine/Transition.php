@@ -25,8 +25,8 @@ class Transition extends FiniteTransition
         $name,
         $initialStates,
         $state,
-        $callback=null,
-        $condition=true
+        $callback = null,
+        $condition = null
     ) {
         parent::__construct($name, $initialStates, $state);
 
@@ -36,7 +36,7 @@ class Transition extends FiniteTransition
 
     public function process(FiniteStateMachine $stateMachine)
     {
-        if (true === $this->condition) {
+        if (true === $this->call_condition($stateMachine)) {
             return $this->invoke_callback($stateMachine);
         }
     }
@@ -57,5 +57,25 @@ class Transition extends FiniteTransition
 
             return $function->invokeArgs(array($stateMachine, $this));
         }
+    }
+
+    private function call_condition($stateMachine)
+    {
+        $callable = $this->condition;
+
+        if (is_array($callable) && 2 == count($callable)) {
+
+            $method = new \ReflectionMethod($callable[0], $callable[1]);
+
+            return $method->invokeArgs($callable[0], array($stateMachine, $this));
+
+        } elseif (is_callable($callable)) {
+
+            $function = new \ReflectionFunction($callable);
+
+            return $function->invokeArgs(array($stateMachine, $this));
+        }
+
+        return true;
     }
 }
