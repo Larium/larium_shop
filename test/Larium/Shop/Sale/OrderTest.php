@@ -195,7 +195,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('in_progress', $payment->getState());
 
         // Given i fetch a cart with payment in_process state
-        $cart = $this->getCartWithOneItemAndPaymentInCheckoutState();
+        $cart = $this->getCartWithOneItemAndPaymentInProgressState();
 
         // When i process cart to pay state
         $response = $cart->processTo('pay');
@@ -297,7 +297,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         return $cart;
     }
 
-    private function getCartWithOneItemAndPaymentInCheckoutState()
+    private function getCartWithOneItemAndPaymentInProgressState()
     {
         $cart = new Cart();
         $product = $this->getProduct('product_1');
@@ -306,8 +306,11 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
         $method = $this->getPaymentMethod('redirect_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
-        $payment = $cart->addPaymentMethod($method);
+        $payment = new Payment();
+
         $payment->setState('in_progress');
+        $payment->setPaymentMethod($method);
+        $cart->getOrder()->addPayment($payment);
 
         $cart->processTo('checkout');
 

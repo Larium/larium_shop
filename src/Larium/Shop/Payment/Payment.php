@@ -12,7 +12,6 @@ use Finite\StateMachine\StateMachine;
 use Larium\Shop\StateMachine\StateMachineAwareInterface;
 use Larium\Shop\StateMachine\StateMachineAwareTrait;
 use Larium\Shop\StateMachine\Transition;
-use Larium\Shop\Payment\Provider\RedirectResponse;
 use Larium\Shop\Common\Collection;
 
 /**
@@ -36,14 +35,11 @@ use Larium\Shop\Common\Collection;
  *
  * @uses PaymentInterface
  * @uses StatefulInterface
- * @uses StateMachineAwareInterface
  * @author  Andreas Kollaros <andreaskollaros@ymail.com>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
-class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareInterface
+class Payment implements PaymentInterface, StatefulInterface
 {
-    use StateMachineAwareTrait;
-
     protected $transactions;
 
     protected $amount;
@@ -59,6 +55,8 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
     protected $state = 'unpaid';
 
     protected $identifier;
+
+    protected $response;
 
     public function __construct()
     {
@@ -243,34 +241,6 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
         $this->setState($state);
     }
 
-    public function getStates()
-    {
-        return array(
-            'unpaid'     => ['type' => 'initial', 'properties' => []],
-            'in_process' => ['type' => 'normal','properties' => []],
-            'authorized' => ['type' => 'normal','properties' => []],
-            'paid'       => ['type' => 'final', 'properties' => []],
-            'refunded'   => ['type' => 'final', 'properties' => []]
-        );
-    }
-
-    public function getTransitions()
-    {
-        return array(
-            'purchase'      => ['from'=>['unpaid'], 'to'=>'paid', 'do'=>[$this, 'toPaid']],
-            'doPurchase'   => ['from'=>['in_progress'], 'to'=>'paid', 'do'=>[$this, 'toPaid']],
-            'doAuthorize'  => ['from'=>['in_progress'], 'to'=>'authorize'],
-            'authorize'     => ['from'=>['unpaid'], 'to'=>'authorized'],
-            'capture'       => ['from'=>['authorized'], 'to'=>'paid'],
-            'void'          => ['from'=>['authorized'], 'to'=>'refunded'],
-            'credit'        => ['from'=>['paid'], 'to'=>'refunded'],
-        );
-    }
-
-    public function setupEvents()
-    {
-    }
-
     /**
      * Tries to set the payment state as paid.
      *
@@ -304,11 +274,7 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
                 $this->setAmount($amount);
             }
 
-            if ($response instanceof RedirectResponse) {
-                $this->event->afterTransition('purchase', function(){
-                    $this->state = 'in_progress';
-                });
-            }
+            $this->response = $response;
 
             return $response;
         }
@@ -403,5 +369,16 @@ class Payment implements PaymentInterface, StatefulInterface, StateMachineAwareI
     protected function generate_identifier()
     {
         $this->identifier = uniqid();
+    }
+
+    /**
+     * Gets response.
+     *
+     * @access public
+     * @return Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
     }
 }

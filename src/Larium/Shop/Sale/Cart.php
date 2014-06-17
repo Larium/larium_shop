@@ -193,8 +193,6 @@ class Cart implements CartInterface
 
     protected function initialize_state_machine()
     {
-        $this->state_machine = new StateMachine();
-
         $states = [
             self::CART       => ['type' => State::TYPE_INITIAL, 'properties' => []],
             self::CHECKOUT   => ['type' => State::TYPE_NORMAL, 'properties' => []],

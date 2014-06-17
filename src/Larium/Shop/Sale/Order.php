@@ -10,6 +10,10 @@ use Finite\StateMachine\StateMachine;
 use Larium\Shop\StateMachine\Transition;
 use Larium\Shop\Shipment\ShipmentInterface;
 use Larium\Shop\Common\Collection;
+use Larium\Shop\StateMachine\ArrayLoader;
+use Finite\State\State;
+use Larium\Shop\Payment\Provider\RedirectResponse;
+use Larium\Shop\StateMachine\TransitionListener;
 
 /**
  * Order class
@@ -102,6 +106,8 @@ class Order implements OrderInterface, StatefulInterface
      * @access protected
      */
     protected $state;
+
+    protected $state_machines = array();
 
     public function __construct()
     {
@@ -308,6 +314,8 @@ class Order implements OrderInterface, StatefulInterface
         $payment->setOrder($this);
 
         $this->calculateTotalPaymentAmount();
+
+        $this->initialize_state_machine($payment);
     }
 
     /**
@@ -321,6 +329,12 @@ class Order implements OrderInterface, StatefulInterface
 
         if ($removed) {
             $payment->detachOrder($this);
+
+            foreach ($this->state_machines as $key => $sm) {
+                if ($sm->getObject()->getIdentifier() === $payment->getIdentifier()) {
+                    unset($this->state_machines[$key]);
+                }
+            }
         }
 
         return $removed != null;
@@ -406,7 +420,9 @@ class Order implements OrderInterface, StatefulInterface
 
     public function processPayments(StateMachine $sm, Transition $transition)
     {
-        foreach ($this->payments as $payment) {
+        foreach ($this->state_machines as $sm) {
+
+            $payment = $sm->getObject();
 
             $state = $payment->getState();
 
@@ -415,9 +431,9 @@ class Order implements OrderInterface, StatefulInterface
                 $this->setCurrentPayment($payment);
 
                 if ('unpaid' === $state) {
-                    $response = $payment->getStateMachine()->apply('purchase');
+                    $response = $sm->apply('purchase');
                 } elseif ('in_progress' === $state) {
-                    $response = $payment->getStateMachine()->apply('doPurchase');
+                    $response = $sm->apply('doPurchase');
                 }
 
                 return $response;
@@ -524,5 +540,53 @@ class Order implements OrderInterface, StatefulInterface
         $this->calculateAdjustmentsTotal();
 
         return $this->adjustments_total;
+    }
+
+    public function initialize_state_machine($payment)
+    {
+        $states = [
+            'unpaid'     => ['type' => State::TYPE_INITIAL, 'properties' => []],
+            'in_process' => ['type' => State::TYPE_NORMAL,'properties' => []],
+            'authorized' => ['type' => State::TYPE_NORMAL,'properties' => []],
+            'paid'       => ['type' => State::TYPE_FINAL, 'properties' => []],
+            'refunded'   => ['type' => State::TYPE_FINAL, 'properties' => []]
+        ];
+
+
+        $transitions = [
+            'purchase'      => ['from'=>['unpaid'], 'to'=>'paid', 'do'=>[$payment, 'toPaid']],
+            'doPurchase'   => ['from'=>['in_progress'], 'to'=>'paid', 'do'=>[$payment, 'toPaid']],
+            'doAuthorize'  => ['from'=>['in_progress'], 'to'=>'authorize'],
+            'authorize'     => ['from'=>['unpaid'], 'to'=>'authorized'],
+            'capture'       => ['from'=>['authorized'], 'to'=>'paid'],
+            'void'          => ['from'=>['authorized'], 'to'=>'refunded'],
+            'credit'        => ['from'=>['paid'], 'to'=>'refunded'],
+        ];
+
+        $loader = new ArrayLoader(
+            [
+                'class' => get_class($payment),
+                'states' => $states,
+                'transitions' => $transitions
+            ]
+        );
+
+        $state_machine = new StateMachine($payment);
+
+        $loader->load($state_machine);
+
+        $state_machine->initialize();
+
+        $event = new TransitionListener($state_machine->getDispatcher());
+
+        $event->afterTransition('purchase', function($event) {
+            $payment = $event->getStateMachine()->getObject();
+            if ($payment->getResponse() instanceOf RedirectResponse) {
+                $payment->setState('in_progress');
+            }
+        });
+
+        $this->state_machines[] = $state_machine;
+
     }
 }
