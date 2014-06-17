@@ -12,8 +12,6 @@ class Collection extends \ArrayIterator implements CollectionInterface
      * Creates a new instance of Collection class.
      *
      * @param array  $array          An array of elements to manage.
-     * @param int    $flags          Flags to control the behaviour of
-     *                               the ArrayIterator
      * @param string $elements_class The name of the class that collection can
      *                               manage.
      * @access public
