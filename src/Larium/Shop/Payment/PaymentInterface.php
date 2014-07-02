@@ -62,7 +62,6 @@ interface PaymentInterface
      */
     public function containsTransaction(TransactionInterface $transaction);
 
-
     /**
      * Sets the amount of money to pay.
      *
