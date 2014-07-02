@@ -125,25 +125,6 @@ interface PaymentInterface
      */
     public function getIdentifier();
 
-    /**
-     * Delegate
-     *
-     * Gets the cost of this payment according to PaymentSource
-     *
-     * @access public
-     * @return number
-     */
-    public function getCost();
-
-    /**
-     * Delegate
-     *
-     * Gets the descriptions of this payment according to PaymentSource
-     *
-     * @access public
-     * @return string
-     */
-    public function getDescription();
 
     /**
      * Gets the Order object associated with this Payment.

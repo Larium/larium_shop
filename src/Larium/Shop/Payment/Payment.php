@@ -44,8 +44,6 @@ class Payment implements PaymentInterface, StatefulInterface
 
     protected $amount;
 
-    protected $source;
-
     protected $tag;
 
     protected $order;
@@ -158,22 +156,6 @@ class Payment implements PaymentInterface, StatefulInterface
     public function getAmount()
     {
         return $this->amount;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDescription()
-    {
-        return $this->getSource()->getDescription();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCost()
-    {
-        return $this->getSource()->getCost();
     }
 
     /**
@@ -355,7 +337,7 @@ class Payment implements PaymentInterface, StatefulInterface
 
         $transaction->setPayment($this);
         $transaction->setAmount($this->payment_amount());
-        $transaction->settransactionId($response->getTransactionId());
+        $transaction->setTransactionId($response->getTransactionId());
 
         $this->transactions->add($transaction);
     }
