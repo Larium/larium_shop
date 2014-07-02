@@ -115,20 +115,6 @@ class Payment implements PaymentInterface, StatefulInterface
     /**
      * {@inheritdoc}
      */
-    public function getTotalTransactionsAmount()
-    {
-        $amount = 0;
-
-        foreach ($this->getTransactions() as $trx) {
-            $amount += $trx->getAmount();
-        }
-
-        return $amount;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getPaymentMethod()
     {
         return $this->payment_method;
