@@ -46,7 +46,20 @@ interface TransactionInterface
      */
     public function setAmount($amount);
 
+    /**
+     * Returns a uniq id that represents this transaction.
+     *
+     * @access public
+     * @return string
+     */
     public function getTransactionId();
 
+    /**
+     * Sets TransactionId
+     *
+     * @param mixed $id
+     * @access public
+     * @return void
+     */
     public function setTransactionId($id);
 }
