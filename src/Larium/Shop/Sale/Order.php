@@ -442,21 +442,6 @@ class Order implements OrderInterface, StatefulInterface
     }
 
     /**
-     * Checks the balance of Order after a `pay` transition.
-     * If balance is greater than zero then rollback to `checkout` state to
-     * fullfil the payment of the Order.
-     *
-     * @access public
-     * @return void
-     */
-    public function rollbackPayment()
-    {
-        if ($this->getBalance() > 0) {
-            $this->state = 'checkout';
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getFiniteState()

@@ -196,6 +196,7 @@ class Cart implements CartInterface
         $states = [
             self::CART       => ['type' => State::TYPE_INITIAL, 'properties' => []],
             self::CHECKOUT   => ['type' => State::TYPE_NORMAL, 'properties' => []],
+            self::PARTIAL_PAID => ['type' => State::TYPE_NORMAL, 'properties' => []],
             self::PAID       => ['type' => State::TYPE_NORMAL, 'properties' => []],
             self::PROCESSING => ['type' => State::TYPE_NORMAL, 'properties' => []],
             self::SENT       => ['type' => State::TYPE_NORMAL, 'properties' => []],
@@ -206,7 +207,8 @@ class Cart implements CartInterface
 
         $transitions = [
             'checkout'  => ['from'=>[self::CART], 'to' => self::CHECKOUT],
-            'pay'       => ['from'=>[self::CHECKOUT], 'to' => self::PAID, 'do'=>[$this->order, 'processPayments'], 'if' => function ($sm){ return $sm->getObject()->needsPayment(); }],
+            'partial_pay' => ['from'=>[self::PAID, SELF::PARTIAL_PAID], 'to' => self::PARTIAL_PAID],
+            'pay'       => ['from'=>[self::CHECKOUT, SELF::PARTIAL_PAID], 'to' => self::PAID, 'do'=>[$this->order, 'processPayments'], 'if' => function ($sm){ return $sm->getObject()->needsPayment(); }],
             'process'   => ['from'=>[self::PAID], 'to' => self::PROCESSING],
             'send'      => ['from'=>[self::PROCESSING], 'to' => self::SENT],
             'deliver'   => ['from'=>[self::SENT],'to' => self::DELIVERED],
@@ -229,7 +231,7 @@ class Cart implements CartInterface
 
         $event = new TransitionListener($this->state_machine->getDispatcher());
 
-        $event->afterTransition('pay', array($this->order, 'rollbackPayment'));
+        $event->afterTransition('pay', array($this, 'rollbackPayment'));
 
         $this->state_machine->initialize();
 
@@ -244,5 +246,20 @@ class Cart implements CartInterface
     public function getStateMachine()
     {
         return $this->state_machine;
+    }
+
+    /**
+     * Checks the balance of Order after a `pay` transition.
+     * If balance is greater than zero then rollback to `checkout` state to
+     * fullfil the payment of the Order.
+     *
+     * @access public
+     * @return void
+     */
+    public function rollbackPayment()
+    {
+        if ($this->getOrder()->getBalance() > 0) {
+            $this->processTo('partial_pay');
+        }
     }
 }

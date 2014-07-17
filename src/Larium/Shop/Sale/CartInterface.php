@@ -13,6 +13,8 @@ interface CartInterface
 
     const CHECKOUT   = 'checkout';
 
+    const PARTIAL_PAID = 'partial_paid';
+
     const PAID       = 'paid';
 
     const PROCESSING = 'processing';

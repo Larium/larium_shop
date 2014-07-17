@@ -291,6 +291,95 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($cart->getOrder()->getAdjustments()->count() == 0);
     }
 
+    public function testRollbackPayment()
+    {
+        // Given i fetch a cart with one item.
+        $cart = $this->getCartWithOneItem();
+
+        // Given i process cart to checkout state
+        $cart->processTo('checkout');
+
+        // Given i store order total amount before adding any adjustment.
+        $total_amount = $cart->getOrder()->getTotalAmount();
+
+        // Given i add cash on delivery payment method to cart.
+        $payment_method = $this->getPaymentMethod('creditcard_payment_method');
+        $payment_method->setSourceOptions($this->getValidCreditCardOptions());
+
+        // Given i create a partial payment for the order.
+        $payment = $cart->addPaymentMethod($payment_method, $total_amount - 1);
+
+        // When i process cart to pay state.
+        $response = $cart->processTo('pay');
+
+        // Then order state should be still to checkout.
+        $this->assertEquals(Cart::PARTIAL_PAID, $cart->getOrder()->getState());
+
+        $this->assertEquals(1, $cart->getOrder()->getBalance());
+
+        // Given i add a new payment with the rest of amount
+        $payment_method = $this->getPaymentMethod('creditcard_payment_method');
+        $payment_method->setSourceOptions($this->getValidCreditCardOptions());
+        $payment = $cart->addPaymentMethod($payment_method);
+
+        // When i process cart to pay state.
+        $response = $cart->processTo('pay');
+
+        // Then order state should be paid.
+        $this->assertEquals(Cart::PAID, $cart->getOrder()->getState());
+    }
+
+    public function testMultiplePartialPayments()
+    {
+        // Given i fetch a cart with one item.
+        $cart = $this->getCartWithOneItem();
+
+        // Given i process cart to checkout state
+        $cart->processTo('checkout');
+
+        // Given i store order total amount before adding any adjustment.
+        $total_amount = $cart->getOrder()->getTotalAmount();
+
+        // Given i add cash on delivery payment method to cart.
+        $payment_method = $this->getPaymentMethod('creditcard_payment_method');
+        $payment_method->setSourceOptions($this->getValidCreditCardOptions());
+
+        // Given i create a partial payment for the order.
+        $payment = $cart->addPaymentMethod($payment_method, $total_amount - 4);
+
+        // When i process cart to pay state.
+        $response = $cart->processTo('pay');
+
+        // Then order state should be partial_paid.
+        $this->assertEquals(Cart::PARTIAL_PAID, $cart->getOrder()->getState());
+
+        $this->assertEquals(4, $cart->getOrder()->getBalance());
+
+        // Given i add a new payment with another amount.
+        $payment_method = $this->getPaymentMethod('creditcard_payment_method');
+        $payment_method->setSourceOptions($this->getValidCreditCardOptions());
+        $payment = $cart->addPaymentMethod($payment_method, 2);
+
+        // When i process cart to pay state.
+        $response = $cart->processTo('pay');
+
+        // Then order state should be partial_paid.
+        $this->assertEquals(Cart::PARTIAL_PAID, $cart->getOrder()->getState());
+
+        // Given i add a new payment with the rest of amount.
+        $payment_method = $this->getPaymentMethod('creditcard_payment_method');
+        $payment_method->setSourceOptions($this->getValidCreditCardOptions());
+        $payment = $cart->addPaymentMethod($payment_method, 2);
+
+        // When i process cart to pay state.
+        $response = $cart->processTo('pay');
+
+        // Then order state should be partial_paid.
+        $this->assertEquals(Cart::PAID, $cart->getOrder()->getState());
+
+        $this->assertEquals(3, $cart->getOrder()->getPayments()->count());
+    }
+
     /*- ( Fixtures ) -------------------------------------------------------- */
 
     private function getCartWithOneItem()
