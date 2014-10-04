@@ -201,7 +201,7 @@ class Variant implements OrderableInterface
     /**
      * Sets option_values.
      *
-     * @param mixed $option_values the value to set.
+     * @param CollectionInterface $option_values the value to set.
      * @access public
      * @return void
      */
@@ -224,8 +224,11 @@ class Variant implements OrderableInterface
      */
     public function removeOptionValue(OptionValue $option_value)
     {
-        return $this->option_values->remove($option_value, function($var) use ($option_value){
-            return $var->getName() == $option_value->getName();
-        });
+        return $this->option_values->remove(
+            $option_value,
+            function ($var) use ($option_value) {
+                return $var->getName() == $option_value->getName();
+            }
+        );
     }
 }
