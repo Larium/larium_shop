@@ -36,7 +36,7 @@ class Response
      * Gets transaction_id.
      *
      * @access public
-     * @return mixed
+     * @return string
      */
     public function getTransactionId()
     {
@@ -46,7 +46,7 @@ class Response
     /**
      * Sets transaction_id.
      *
-     * @param mixed $transaction_id the value to set.
+     * @param string $transaction_id the value to set.
      * @access public
      * @return void
      */

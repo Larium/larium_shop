@@ -4,6 +4,8 @@
 
 namespace Larium\Shop\Sale;
 
+use Money\Money;
+
 /**
  * Adjustment
  *
@@ -16,7 +18,7 @@ class Adjustment implements AdjustmentInterface
     /**
      * The amount of Adjustement.
      *
-     * @var    number
+     * @var   Money\Money
      * @access protected
      */
     protected $amount;
@@ -24,7 +26,7 @@ class Adjustment implements AdjustmentInterface
     /**
      * The Adjustable object
      *
-     * @var    AdjustableInterface
+     * @var    Larium\Shop\Sale\AdjustableInterface
      * @access protected
      */
     protected $adjustable;
@@ -40,7 +42,7 @@ class Adjustment implements AdjustmentInterface
     /**
      * {@inheritdoc}
      */
-    public function setAmount($amount)
+    public function setAmount(Money $amount)
     {
         $this->amount = $amount;
     }

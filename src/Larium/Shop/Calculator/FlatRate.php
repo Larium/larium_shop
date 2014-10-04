@@ -4,6 +4,8 @@
 
 namespace Larium\Shop\Calculator;
 
+use Money\Money;
+
 /**
  * FlatRate
  *
@@ -26,6 +28,6 @@ class FlatRate extends AbstractCalculator
      */
     public function compute($object = null)
     {
-        return $this->amount;
+        return Money::EUR($this->amount * 100);
     }
 }

@@ -3,6 +3,7 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 use Larium\Shop\Common\Collection;
+use Money\Money;
 
 class Hydrator
 {
@@ -51,6 +52,9 @@ class Hydrator
                     $class->$mutator($storage);
 
             } else {
+                if (in_array($key, ['unit_price', 'cost', 'amount', 'total_price'])) {
+                    $value = Money::EUR($value * 100);
+                }
                 $class->$mutator($value);
             }
         }

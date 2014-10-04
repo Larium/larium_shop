@@ -30,24 +30,66 @@ class Product
      */
     protected $description;
 
+    /**
+     * permalink
+     *
+     * @var string
+     * @access protected
+     */
     protected $permalink;
 
+    /**
+     * meta_description
+     *
+     * @var string
+     * @access protected
+     */
     protected $meta_description;
 
+    /**
+     * meta_keywords
+     *
+     * @var string
+     * @access protected
+     */
     protected $meta_keywords;
 
+    /**
+     * available_on
+     *
+     * @var DateTime
+     * @access protected
+     */
     protected $available_on;
 
+    /**
+     * created_at
+     *
+     * @var DateTime
+     * @access protected
+     */
     protected $created_at;
 
+    /**
+     * updated_at
+     *
+     * @var DateTime
+     * @access protected
+     */
     protected $updated_at;
 
+    /**
+     * deleted_at
+     *
+     * @var DateTime
+     * @access protected
+     */
     protected $deleted_at;
 
     /**
      * option_types
      *
-     * @var array|Traversable
+     * @var Larium\Common\Collection
      * @access protected
      */
     protected $option_types;
@@ -55,7 +97,7 @@ class Product
     /**
      * variants
      *
-     * @var array|iterator
+     * @var Larium\Common\Collection
      * @access protected
      */
     protected $variants;

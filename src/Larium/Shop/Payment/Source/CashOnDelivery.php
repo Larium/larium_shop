@@ -8,7 +8,7 @@ use Larium\Shop\Payment\PaymentSourceInterface;
 
 class CashOnDelivery implements PaymentSourceInterface
 {
-    public function setOptions(array $options=array())
+    public function setOptions(array $options = array())
     {
     }
 

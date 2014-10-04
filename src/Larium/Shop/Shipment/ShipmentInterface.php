@@ -86,7 +86,7 @@ interface ShipmentInterface
      * Gets order items that woudl be send with this shipment.
      *
      * @access public
-     * @return array|Traversable
+     * @return Larium\Shop\Common\Collection
      */
     public function getOrderItems();
 

@@ -6,10 +6,28 @@ namespace Larium\Shop\Payment;
 
 class Transaction implements TransactionInterface
 {
+    /**
+     * transaction_id
+     *
+     * @var string
+     * @access protected
+     */
     protected $transaction_id;
 
+    /**
+     * payment
+     *
+     * @var Larium\Shop\Payment\Payment
+     * @access protected
+     */
     protected $payment;
 
+    /**
+     * amount
+     *
+     * @var Money\Money
+     * @access protected
+     */
     protected $amount;
 
     /**

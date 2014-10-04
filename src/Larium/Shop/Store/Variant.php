@@ -28,7 +28,7 @@ class Variant implements OrderableInterface
     /**
      * unit_price
      *
-     * @var float|integer
+     * @var Money\Money
      * @access protected
      */
     protected $unit_price;

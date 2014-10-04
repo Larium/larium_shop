@@ -15,12 +15,36 @@ use Larium\Shop\Sale\OrderInterface;
  */
 class ShippingMethod implements ShippingMethodInterface
 {
+    /**
+     * label
+     *
+     * @var string
+     * @access protected
+     */
     protected $label;
 
+    /**
+     * calculator_class
+     *
+     * @var string
+     * @access protected
+     */
     protected $calculator_class;
 
+    /**
+     * calculator
+     *
+     * @var Larium\Shop\Calculator\AbstractCalculator
+     * @access protected
+     */
     protected $calculator;
 
+    /**
+     * calculator_options
+     *
+     * @var array
+     * @access protected
+     */
     protected $calculator_options;
 
     /**
@@ -83,7 +107,7 @@ class ShippingMethod implements ShippingMethodInterface
      * Gets calculator_class.
      *
      * @access public
-     * @return mixed
+     * @return string
      */
     public function getCalculatorClass()
     {

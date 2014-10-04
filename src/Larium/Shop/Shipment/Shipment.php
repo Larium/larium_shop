@@ -17,16 +17,52 @@ use Larium\Shop\Common\Collection;
  */
 class Shipment implements ShipmentInterface
 {
+    /**
+     * order
+     *
+     * @var Larium\Shop\Sale\Order
+     * @access protected
+     */
     protected $order;
 
+    /**
+     * address
+     *
+     * @var Larium\Shop\Shipment\Address
+     * @access protected
+     */
     protected $address;
 
+    /**
+     * shipping_method
+     *
+     * @var Larium\Shop\Shipment\ShippingMethod
+     * @access protected
+     */
     protected $shipping_method;
 
+    /**
+     * order_items
+     *
+     * @var Larium\Shop\Common\Collection
+     * @access protected
+     */
     protected $order_items;
 
+    /**
+     * cost
+     *
+     * @var Money\Money
+     * @access protected
+     */
     protected $cost;
 
+    /**
+     * identifier
+     *
+     * @var string
+     * @access protected
+     */
     protected $identifier;
 
     public function __construct()
@@ -79,7 +115,8 @@ class Shipment implements ShipmentInterface
     public function setOrder(OrderInterface $order)
     {
         $this->order = $order;
-        if ($this->cost = $this->getShippingMethod()->calculateCost($order)) {
+        $this->cost = $this->getShippingMethod()->calculateCost($order);
+        if ($this->cost->getAmount()) {
             $adj = new \Larium\Shop\Sale\Adjustment();
             $adj->setAmount($this->cost);
             $adj->setLabel($this->getIdentifier());

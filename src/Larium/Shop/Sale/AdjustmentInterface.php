@@ -4,6 +4,8 @@
 
 namespace Larium\Shop\Sale;
 
+use Money\Money;
+
 /**
  * AdjustmentInterface describes the behavior of an subject that when applied
  * to an Adjustable object will affect to its total amount.
@@ -22,7 +24,7 @@ interface AdjustmentInterface
      * @access public
      * @return void
      */
-    public function setAmount($amount);
+    public function setAmount(Money $amount);
 
     /**
      * Gets the amount of the adjust that applied to adjustable object.

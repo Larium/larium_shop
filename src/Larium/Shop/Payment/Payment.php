@@ -10,6 +10,7 @@ use Larium\Shop\Sale\AdjustableInterface;
 use Larium\Shop\Sale\OrderInterface;
 use Larium\Shop\Common\Collection;
 use Larium\Shop\Payment\Provider\RedirectResponse;
+use Money\Money;
 
 /**
  * Payment class implements PaymentInterface and allows the payoff of an Order.
@@ -39,6 +40,12 @@ class Payment implements PaymentInterface, StatefulInterface
 {
     protected $transactions;
 
+    /**
+     * amount
+     *
+     * @var Money\Money
+     * @access protected
+     */
     protected $amount;
 
     protected $tag;
@@ -270,13 +277,14 @@ class Payment implements PaymentInterface, StatefulInterface
 
     protected function create_payment_method_adjustment()
     {
-
         if (null === $this->getPaymentMethod()) {
 
             return;
         }
 
-        if ($cost = $this->getPaymentMethod()->getCost()) {
+        $cost = $this->getPaymentMethod()->getCost();
+
+        if ($cost->getAmount()) {
             $adj = new \Larium\Shop\Sale\Adjustment();
             $adj->setAmount($cost);
             $adj->setLabel($this->getIdentifier());

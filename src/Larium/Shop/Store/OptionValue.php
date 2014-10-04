@@ -12,8 +12,20 @@ class OptionValue
      */
     protected $option_type;
 
+    /**
+     * name
+     *
+     * @var string
+     * @access protected
+     */
     protected $name;
 
+    /**
+     * title
+     *
+     * @var string
+     * @access protected
+     */
     protected $title;
 
     /**

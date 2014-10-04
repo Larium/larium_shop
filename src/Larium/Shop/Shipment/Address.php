@@ -13,22 +13,76 @@ namespace Larium\Shop\Shipment;
  */
 class Address implements AddressInterface
 {
+    /**
+     * first_name
+     *
+     * @var string
+     * @access protected
+     */
     protected $first_name;
 
+    /**
+     * last_name
+     *
+     * @var string
+     * @access protected
+     */
     protected $last_name;
 
+    /**
+     * address1
+     *
+     * @var string
+     * @access protected
+     */
     protected $address1;
 
+    /**
+     * address2
+     *
+     * @var string
+     * @access protected
+     */
     protected $address2;
 
+    /**
+     * city
+     *
+     * @var string
+     * @access protected
+     */
     protected $city;
 
+    /**
+     * state
+     *
+     * @var string
+     * @access protected
+     */
     protected $state;
 
+    /**
+     * country
+     *
+     * @var string
+     * @access protected
+     */
     protected $country;
 
+    /**
+     * zip
+     *
+     * @var string
+     * @access protected
+     */
     protected $zip;
 
+    /**
+     * phone
+     *
+     * @var string
+     * @access protected
+     */
     protected $phone;
 
     /**
@@ -70,7 +124,7 @@ class Address implements AddressInterface
     /**
      * Sets address1.
      *
-     * @param mixed $address1 the value to set.
+     * @param string $address1 the value to set.
      *
      * @return void
      */
@@ -90,7 +144,7 @@ class Address implements AddressInterface
     /**
      * Sets address2.
      *
-     * @param mixed $address2 the value to set.
+     * @param string $address2 the value to set.
      *
      * @return void
      */
@@ -110,7 +164,7 @@ class Address implements AddressInterface
     /**
      * Sets city.
      *
-     * @param mixed $city the value to set.
+     * @param string $city the value to set.
      *
      * @return void
      */
@@ -130,7 +184,7 @@ class Address implements AddressInterface
     /**
      * Sets state.
      *
-     * @param mixed $state the value to set.
+     * @param string $state the value to set.
      *
      * @return void
      */
@@ -150,7 +204,7 @@ class Address implements AddressInterface
     /**
      * Sets country.
      *
-     * @param mixed $country the value to set.
+     * @param string $country the value to set.
      *
      * @return void
      */
@@ -170,7 +224,7 @@ class Address implements AddressInterface
     /**
      * Sets zip.
      *
-     * @param mixed $zip the value to set.
+     * @param string $zip the value to set.
      *
      * @return void
      */
@@ -190,7 +244,7 @@ class Address implements AddressInterface
     /**
      * Sets phone.
      *
-     * @param mixed $phone the value to set.
+     * @param string $phone the value to set.
      *
      * @return void
      */

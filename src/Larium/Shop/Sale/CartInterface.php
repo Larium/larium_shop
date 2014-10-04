@@ -6,6 +6,7 @@ namespace Larium\Shop\Sale;
 
 use Larium\Shop\Payment\PaymentMethodInterface;
 use Larium\Shop\Shipment\ShippingMethodInterface;
+use Money\Money;
 
 interface CartInterface
 {
@@ -37,7 +38,7 @@ interface CartInterface
      * @access public
      * @return Larium\Shop\Payment\PaymentInterface
      */
-    public function addPaymentMethod(PaymentMethodInterface $method, $amount = null);
+    public function addPaymentMethod(PaymentMethodInterface $method, Money $amount = null);
 
     /**
      * Customer can choose a shipping method. Cart class will create a Shipment

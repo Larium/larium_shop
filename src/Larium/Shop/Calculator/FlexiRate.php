@@ -45,6 +45,6 @@ class FlexiRate extends AbstractCalculator
             }
         }
 
-        return $sum;
+        return Money::EUR($sum);
     }
 }

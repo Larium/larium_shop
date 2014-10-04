@@ -13,18 +13,60 @@ namespace Larium\Shop\Sale;
  */
 class OrderItem implements OrderItemInterface
 {
+    /**
+     * unit_price
+     *
+     * @var Money\Money
+     * @access protected
+     */
     protected $unit_price;
 
-    protected $quantity=1;
+    /**
+     * quantity
+     *
+     * @var integer
+     * @access protected
+     */
+    protected $quantity = 1;
 
+    /**
+     * total_price
+     *
+     * @var Money\Money
+     * @access protected
+     */
     protected $total_price;
 
+    /**
+     * description
+     *
+     * @var string
+     * @access protected
+     */
     protected $description;
 
+    /**
+     * order
+     *
+     * @var Larium\Shop\Sale\Order
+     * @access protected
+     */
     protected $order;
 
+    /**
+     * orderable
+     *
+     * @var Larium\Shop\Sale\OrderableInterface
+     * @access protected
+     */
     protected $orderable;
 
+    /**
+     * identifier
+     *
+     * @var string
+     * @access protected
+     */
     protected $identifier;
 
     /**
@@ -77,7 +119,7 @@ class OrderItem implements OrderItemInterface
 
     public function calculateTotalPrice()
     {
-        $this->total_price = $this->getQuantity() * $this->getUnitPrice();
+        $this->total_price = $this->getUnitPrice()->multiply($this->getQuantity());
     }
 
     /**

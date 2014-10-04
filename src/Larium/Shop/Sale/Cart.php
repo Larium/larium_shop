@@ -11,6 +11,7 @@ use Larium\Shop\Payment\Payment;
 use Larium\Shop\Payment\PaymentMethodInterface;
 use Larium\Shop\Shipment\ShippingMethodInterface;
 use Larium\Shop\Shipment\Shipment;
+use Money\Money;
 
 /**
  * Cart
@@ -28,6 +29,12 @@ class Cart implements CartInterface
      */
     protected $order;
 
+    /**
+     * state_machine
+     *
+     * @var Finite\StateMachine\StateMachine
+     * @access protected
+     */
     protected $state_machine;
 
     /**
@@ -134,8 +141,10 @@ class Cart implements CartInterface
     /**
      * {@inheritdoc}
      */
-    public function addPaymentMethod(PaymentMethodInterface $method, $amount = null)
-    {
+    public function addPaymentMethod(
+        PaymentMethodInterface $method,
+        Money $amount = null
+    ) {
         $payment = new Payment();
 
         $payment->setPaymentMethod($method);
@@ -269,7 +278,7 @@ class Cart implements CartInterface
      */
     public function rollbackPayment()
     {
-        if ($this->getOrder()->getBalance() > 0) {
+        if ($this->getOrder()->needsPayment()) {
             $this->processTo('partial_pay');
         }
     }

@@ -12,6 +12,7 @@ use Finite\Event\TransitionEvent;
 use Larium\Shop\Payment\PaymentInterface;
 use Larium\Shop\Shipment\ShipmentInterface;
 use Larium\Shop\Common\Collection;
+use Money\Money;
 
 /**
  * Order class
@@ -27,7 +28,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * Order items.
      *
-     * @var Collection
+     * @var Larium\Shop\Common\Collection
      * @access protected
      */
     protected $items;
@@ -35,7 +36,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * Order adjustments
      *
-     * @var Collection
+     * @var Larium\Shop\Common\Collection
      * @access protected
      */
     protected $adjustments;
@@ -43,7 +44,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * Order payments
      *
-     * @var Collection
+     * @var Larium\Shop\Common\Collection
      * @access protected
      */
     protected $payments;
@@ -51,7 +52,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * Order current processed payment
      *
-     * @var PaymentInterface
+     * @var Larium\Shop\Payment\Payment
      * @access protected
      */
     protected $current_payment;
@@ -59,7 +60,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * Order shipments
      *
-     * @var Collection
+     * @var Larium\Shop\Common\Collection
      * @access protected
      */
     protected $shipments;
@@ -67,7 +68,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * Order adjustments total amount
      *
-     * @var float
+     * @var Money\Money
      * @access protected
      */
     protected $adjustments_total;
@@ -75,7 +76,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * Order total items amount
      *
-     * @var float
+     * @var Money\Money
      * @access protected
      */
     protected $items_total;
@@ -83,7 +84,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * Order total amount
      *
-     * @var float
+     * @var Money\Money
      * @access protected
      */
     protected $total_amount;
@@ -91,7 +92,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * Order total payment amount
      *
-     * @var float
+     * @var Money\Money
      * @access protected
      */
     protected $total_payment_amount;
@@ -105,13 +106,18 @@ class Order implements OrderInterface, StatefulInterface
      */
     protected $state;
 
+    /**
+     * state_machines
+     *
+     * @var array
+     * @access protected
+     */
     protected $state_machines = array();
 
     public function __construct()
     {
         $this->initialize();
     }
-
 
     public function initialize()
     {
@@ -196,9 +202,9 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function calculateItemsTotal()
     {
-        $total = 0;
+        $total = Money::EUR(0);
         foreach ( $this->getItems() as $item) {
-            $total += $item->getTotalPrice();
+            $total = $total->add($item->getTotalPrice());
         }
 
         $this->items_total = $total;
@@ -217,11 +223,16 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function calculateTotalAmount()
     {
+        $total = Money::EUR(0);
         $this->calculateItemsTotal();
 
         $this->calculateAdjustmentsTotal();
 
-        $this->total_amount = $this->items_total + $this->adjustments_total;
+        $total = $total->add($this->items_total);
+
+        $total = $total->add($this->adjustments_total);
+
+        $this->total_amount = $total;
     }
 
     /**
@@ -294,9 +305,9 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function getShippingCost()
     {
-        $amount = 0;
+        $amount = Money::EUR(0);
         foreach ($this->shipments as $shipment) {
-            $amount += $shipment->getCost();
+            $amount = $amount->add($shipment->getCost());
         }
 
         return $amount;
@@ -379,11 +390,11 @@ class Order implements OrderInterface, StatefulInterface
 
     public function calculateTotalPaymentAmount()
     {
-        $total = 0;
+        $total = Money::EUR(0);
 
         foreach ($this->getPayments() as $payment) {
             if ($payment->getState() == 'paid') {
-                $total += $payment->getAmount();
+                $total = $total->add($payment->getAmount());
             }
         }
 
@@ -405,7 +416,7 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function needsPayment()
     {
-        return $this->getBalance() > 0;
+        return $this->getBalance()->isPositive();
     }
 
     /**
@@ -413,7 +424,7 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function getBalance()
     {
-        return $this->getTotalAmount() - $this->getTotalPaymentAmount();
+        return $this->getTotalAmount()->subtract($this->getTotalPaymentAmount());
     }
 
     public function processPayments(Order $order, TransitionEvent $event)
@@ -510,9 +521,9 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function calculateAdjustmentsTotal()
     {
-        $total = 0;
+        $total = Money::EUR(0);
         foreach ( $this->getAdjustments() as $item) {
-            $total += $item->getAmount();
+            $total = $total->add($item->getAmount());
         }
 
         $this->adjustments_total = $total;
@@ -523,7 +534,6 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function getAdjustmentsTotal()
     {
-
         $this->calculateAdjustmentsTotal();
 
         return $this->adjustments_total;
