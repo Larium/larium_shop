@@ -4,15 +4,12 @@
 
 namespace Larium\Shop\Payment;
 
+use Finite\StatefulInterface;
+use Finite\Event\TransitionEvent;
 use Larium\Shop\Sale\AdjustableInterface;
 use Larium\Shop\Sale\OrderInterface;
-use Finite\StatefulInterface;
-use Finite\Event\StateMachineEvent;
-use Finite\StateMachine\StateMachine;
-use Larium\Shop\StateMachine\StateMachineAwareInterface;
-use Larium\Shop\StateMachine\StateMachineAwareTrait;
-use Larium\Shop\StateMachine\Transition;
 use Larium\Shop\Common\Collection;
+use Larium\Shop\Payment\Provider\RedirectResponse;
 
 /**
  * Payment class implements PaymentInterface and allows the payoff of an Order.
@@ -220,7 +217,7 @@ class Payment implements PaymentInterface, StatefulInterface
      * @access public
      * @return false|Larium\Shop\Payment\Provider\Response
      */
-    public function toPaid(StateMachine $sm, Transition $transition)
+    public function toPaid(Payment $payment, TransitionEvent $event)
     {
         if (null === $this->getOrder()) {
             throw new \InvalidArgumentException("You must add this Payment to an Order.");
@@ -233,9 +230,13 @@ class Payment implements PaymentInterface, StatefulInterface
         // The amount to charge for this payment.
         $amount = $this->payment_amount();
 
-        $response = $this->invoke_provider($amount, $transition->getName());
+        $response = $this->invoke_provider($amount, $event->getTransition()->getName());
 
         $this->create_transaction_from_response($response);
+
+        if ($response instanceOf RedirectResponse) {
+            $this->setState('in_progress');
+        }
 
         if ($response->isSuccess()) {
             if (null === $this->amount) {
@@ -248,7 +249,6 @@ class Payment implements PaymentInterface, StatefulInterface
         }
 
         return false;
-
     }
 
     /**

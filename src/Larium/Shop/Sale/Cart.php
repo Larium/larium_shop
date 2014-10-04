@@ -3,15 +3,14 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 namespace Larium\Shop\Sale;
 
+use Finite\State\State;
+use Finite\StateMachine\StateMachine;
+use Finite\Loader\ArrayLoader;
 use Larium\Shop\Store\Product;
 use Larium\Shop\Payment\Payment;
 use Larium\Shop\Payment\PaymentMethodInterface;
 use Larium\Shop\Shipment\ShippingMethodInterface;
 use Larium\Shop\Shipment\Shipment;
-use Finite\State\State;
-use Finite\StateMachine\StateMachine;
-use Larium\Shop\StateMachine\ArrayLoader;
-use Larium\Shop\StateMachine\TransitionListener;
 
 /**
  * Cart
@@ -38,7 +37,7 @@ class Cart implements CartInterface
     {
         $item = $this->item_from_orderable($orderable, $quantity);
 
-        // Checks for duplicated item an increase quantity instead of adding.
+        // Checks for duplicated item and increase quantity instead of adding.
         if ($order_item = $this->getOrder()->containsItem($item)) {
 
             $order_item->setQuantity(
@@ -194,44 +193,56 @@ class Cart implements CartInterface
     protected function initialize_state_machine()
     {
         $states = [
-            self::CART       => ['type' => State::TYPE_INITIAL, 'properties' => []],
-            self::CHECKOUT   => ['type' => State::TYPE_NORMAL, 'properties' => []],
-            self::PARTIAL_PAID => ['type' => State::TYPE_NORMAL, 'properties' => []],
-            self::PAID       => ['type' => State::TYPE_NORMAL, 'properties' => []],
-            self::PROCESSING => ['type' => State::TYPE_NORMAL, 'properties' => []],
-            self::SENT       => ['type' => State::TYPE_NORMAL, 'properties' => []],
-            self::CANCELLED  => ['type' => State::TYPE_FINAL, 'properties' => []],
-            self::DELIVERED  => ['type' => State::TYPE_FINAL, 'properties' => []],
-            self::RETURNED   => ['type' => State::TYPE_FINAL, 'properties' => []],
+            Order::CART       => ['type' => State::TYPE_INITIAL, 'properties' => []],
+            Order::CHECKOUT   => ['type' => State::TYPE_NORMAL, 'properties' => []],
+            Order::PARTIAL_PAID => ['type' => State::TYPE_NORMAL, 'properties' => []],
+            Order::PAID       => ['type' => State::TYPE_NORMAL, 'properties' => []],
+            Order::PROCESSING => ['type' => State::TYPE_NORMAL, 'properties' => []],
+            Order::SENT       => ['type' => State::TYPE_NORMAL, 'properties' => []],
+            Order::CANCELLED  => ['type' => State::TYPE_FINAL, 'properties' => []],
+            Order::DELIVERED  => ['type' => State::TYPE_FINAL, 'properties' => []],
+            Order::RETURNED   => ['type' => State::TYPE_FINAL, 'properties' => []],
         ];
 
         $transitions = [
-            'checkout'  => ['from'=>[self::CART], 'to' => self::CHECKOUT],
-            'partial_pay' => ['from'=>[self::PAID, SELF::PARTIAL_PAID], 'to' => self::PARTIAL_PAID],
-            'pay'       => ['from'=>[self::CHECKOUT, SELF::PARTIAL_PAID], 'to' => self::PAID, 'do'=>[$this->order, 'processPayments'], 'if' => function ($sm){ return $sm->getObject()->needsPayment(); }],
-            'process'   => ['from'=>[self::PAID], 'to' => self::PROCESSING],
-            'send'      => ['from'=>[self::PROCESSING], 'to' => self::SENT],
-            'deliver'   => ['from'=>[self::SENT],'to' => self::DELIVERED],
-            'return'    => ['from'=>[self::SENT], 'to' => self::RETURNED],
-            'cancel'    => ['from'=>[self::PAID, self::PROCESSING], 'to' => self::CANCELLED],
-            'retry'     => ['from'=>[self::CANCELLED], 'to' => self::CHECKOUT],
+            'checkout'    => ['from'=>[Order::CART], 'to' => Order::CHECKOUT],
+            'partial_pay' => ['from'=>[Order::PAID, Order::PARTIAL_PAID], 'to' => Order::PARTIAL_PAID],
+            'pay'         => ['from'=>[Order::CHECKOUT, Order::PARTIAL_PAID], 'to' => Order::PAID],
+            'process'     => ['from'=>[Order::PAID], 'to' => Order::PROCESSING],
+            'send'        => ['from'=>[Order::PROCESSING], 'to' => Order::SENT],
+            'deliver'     => ['from'=>[Order::SENT],'to' => Order::DELIVERED],
+            'return'      => ['from'=>[Order::SENT], 'to' => Order::RETURNED],
+            'cancel'      => ['from'=>[Order::PAID, Order::PROCESSING], 'to' => Order::CANCELLED],
+            'retry'       => ['from'=>[Order::CANCELLED], 'to' => Order::CHECKOUT],
+        ];
+
+        $callbacks = [
+            'after' => [
+                [
+                    'from' => [Order::CHECKOUT, Order::PARTIAL_PAID],
+                    'to'   => Order::PAID,
+                    'do'   => [$this->order, 'processPayments']
+                ],
+                [
+                    'from' => [Order::CHECKOUT, Order::PARTIAL_PAID],
+                    'to'   => Order::PAID,
+                    'do'   => [$this, 'rollbackPayment']
+                ]
+            ]
         ];
 
         $loader = new ArrayLoader(
             [
                 'class' => get_class($this->order),
                 'states' => $states,
-                'transitions' => $transitions
+                'transitions' => $transitions,
+                'callbacks' => $callbacks
             ]
         );
 
         $this->state_machine = new StateMachine($this->order);
 
         $loader->load($this->state_machine);
-
-        $event = new TransitionListener($this->state_machine->getDispatcher());
-
-        $event->afterTransition('pay', array($this, 'rollbackPayment'));
 
         $this->state_machine->initialize();
 

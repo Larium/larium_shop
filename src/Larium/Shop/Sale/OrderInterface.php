@@ -19,6 +19,24 @@ use Larium\Shop\Payment\PaymentInterface;
  */
 interface OrderInterface extends AdjustableInterface
 {
+    const CART         = 'cart';
+
+    const CHECKOUT     = 'checkout';
+
+    const PARTIAL_PAID = 'partial_paid';
+
+    const PAID         = 'paid';
+
+    const PROCESSING   = 'processing';
+
+    const SENT         = 'sent';
+
+    const CANCELLED    = 'cancelled';
+
+    const DELIVERED    = 'delivered';
+
+    const RETURNED     = 'returned';
+
     /**
      * Return the current state of the Order.
      *

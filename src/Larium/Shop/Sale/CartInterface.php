@@ -9,24 +9,6 @@ use Larium\Shop\Shipment\ShippingMethodInterface;
 
 interface CartInterface
 {
-    const CART       = 'cart';
-
-    const CHECKOUT   = 'checkout';
-
-    const PARTIAL_PAID = 'partial_paid';
-
-    const PAID       = 'paid';
-
-    const PROCESSING = 'processing';
-
-    const SENT       = 'sent';
-
-    const CANCELLED  = 'cancelled';
-
-    const DELIVERED  = 'delivered';
-
-    const RETURNED   = 'returned';
-
     /**
      * Add an Orderable object to the Order.
      *

@@ -4,16 +4,14 @@
 
 namespace Larium\Shop\Sale;
 
-use Larium\Shop\Payment\PaymentInterface;
 use Finite\StatefulInterface;
 use Finite\StateMachine\StateMachine;
-use Larium\Shop\StateMachine\Transition;
+use Finite\State\State;
+use Finite\Loader\ArrayLoader;
+use Finite\Event\TransitionEvent;
+use Larium\Shop\Payment\PaymentInterface;
 use Larium\Shop\Shipment\ShipmentInterface;
 use Larium\Shop\Common\Collection;
-use Larium\Shop\StateMachine\ArrayLoader;
-use Finite\State\State;
-use Larium\Shop\Payment\Provider\RedirectResponse;
-use Larium\Shop\StateMachine\TransitionListener;
 
 /**
  * Order class
@@ -418,8 +416,12 @@ class Order implements OrderInterface, StatefulInterface
         return $this->getTotalAmount() - $this->getTotalPaymentAmount();
     }
 
-    public function processPayments(StateMachine $sm, Transition $transition)
+    public function processPayments(Order $order, TransitionEvent $event)
     {
+        if (!$this->needsPayment()) {
+            return;
+        }
+
         foreach ($this->state_machines as $sm) {
 
             $payment = $sm->getObject();
@@ -531,28 +533,39 @@ class Order implements OrderInterface, StatefulInterface
     {
         $states = [
             'unpaid'     => ['type' => State::TYPE_INITIAL, 'properties' => []],
-            'in_process' => ['type' => State::TYPE_NORMAL,'properties' => []],
-            'authorized' => ['type' => State::TYPE_NORMAL,'properties' => []],
-            'paid'       => ['type' => State::TYPE_FINAL, 'properties' => []],
-            'refunded'   => ['type' => State::TYPE_FINAL, 'properties' => []]
+            'in_process' => ['type' => State::TYPE_NORMAL,  'properties' => []],
+            'authorized' => ['type' => State::TYPE_NORMAL,  'properties' => []],
+            'paid'       => ['type' => State::TYPE_FINAL,   'properties' => []],
+            'refunded'   => ['type' => State::TYPE_FINAL,   'properties' => []]
         ];
 
 
         $transitions = [
-            'purchase'      => ['from'=>['unpaid'], 'to'=>'paid', 'do'=>[$payment, 'toPaid']],
-            'doPurchase'   => ['from'=>['in_progress'], 'to'=>'paid', 'do'=>[$payment, 'toPaid']],
-            'doAuthorize'  => ['from'=>['in_progress'], 'to'=>'authorize'],
+            'purchase'      => ['from'=>['unpaid'], 'to'=>'paid'],
+            'doPurchase'    => ['from'=>['in_progress'], 'to'=>'paid'],
+            'doAuthorize'   => ['from'=>['in_progress'], 'to'=>'authorize'],
             'authorize'     => ['from'=>['unpaid'], 'to'=>'authorized'],
             'capture'       => ['from'=>['authorized'], 'to'=>'paid'],
             'void'          => ['from'=>['authorized'], 'to'=>'refunded'],
             'credit'        => ['from'=>['paid'], 'to'=>'refunded'],
         ];
 
+        $callbacks = [
+            'after' => [
+                [
+                    'from' => ['unpaid', 'in_progress'],
+                    'to'   => 'paid',
+                    'do'   => [$payment, 'toPaid']
+                ]
+            ]
+        ];
+
         $loader = new ArrayLoader(
             [
                 'class' => get_class($payment),
                 'states' => $states,
-                'transitions' => $transitions
+                'transitions' => $transitions,
+                'callbacks' => $callbacks
             ]
         );
 
@@ -562,16 +575,6 @@ class Order implements OrderInterface, StatefulInterface
 
         $state_machine->initialize();
 
-        $event = new TransitionListener($state_machine->getDispatcher());
-
-        $event->afterTransition('purchase', function($event) {
-            $payment = $event->getStateMachine()->getObject();
-            if ($payment->getResponse() instanceOf RedirectResponse) {
-                $payment->setState('in_progress');
-            }
-        });
-
         $this->state_machines[] = $state_machine;
-
     }
 }

@@ -187,7 +187,9 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $payment = $cart->addPaymentMethod($method);
 
         // Given i process cart to pay state
-        $response = $cart->processTo('pay');
+        $cart->processTo('pay');
+
+        $response = $cart->getOrder()->getCurrentPayment()->getResponse();
 
         // Then response should be instance of 'Larium\Shop\Payment\Provider\RedirectResponse'
         $this->assertInstanceOf('Larium\Shop\Payment\Provider\RedirectResponse', $response);
@@ -313,7 +315,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $response = $cart->processTo('pay');
 
         // Then order state should be still to checkout.
-        $this->assertEquals(Cart::PARTIAL_PAID, $cart->getOrder()->getState());
+        $this->assertEquals(Order::PARTIAL_PAID, $cart->getOrder()->getState());
 
         $this->assertEquals(1, $cart->getOrder()->getBalance());
 
@@ -326,7 +328,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $response = $cart->processTo('pay');
 
         // Then order state should be paid.
-        $this->assertEquals(Cart::PAID, $cart->getOrder()->getState());
+        $this->assertEquals(Order::PAID, $cart->getOrder()->getState());
     }
 
     public function testMultiplePartialPayments()
@@ -351,7 +353,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $response = $cart->processTo('pay');
 
         // Then order state should be partial_paid.
-        $this->assertEquals(Cart::PARTIAL_PAID, $cart->getOrder()->getState());
+        $this->assertEquals(Order::PARTIAL_PAID, $cart->getOrder()->getState());
 
         $this->assertEquals(4, $cart->getOrder()->getBalance());
 
@@ -364,7 +366,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $response = $cart->processTo('pay');
 
         // Then order state should be partial_paid.
-        $this->assertEquals(Cart::PARTIAL_PAID, $cart->getOrder()->getState());
+        $this->assertEquals(Order::PARTIAL_PAID, $cart->getOrder()->getState());
 
         // Given i add a new payment with the rest of amount.
         $payment_method = $this->getPaymentMethod('creditcard_payment_method');
@@ -375,7 +377,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $response = $cart->processTo('pay');
 
         // Then order state should be partial_paid.
-        $this->assertEquals(Cart::PAID, $cart->getOrder()->getState());
+        $this->assertEquals(Order::PAID, $cart->getOrder()->getState());
 
         $this->assertEquals(3, $cart->getOrder()->getPayments()->count());
     }
