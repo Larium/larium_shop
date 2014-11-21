@@ -28,6 +28,6 @@ class FlatRate extends AbstractCalculator
      */
     public function compute($object = null)
     {
-        return Money::EUR($this->amount * 100);
+        return Money::EUR($this->amount);
     }
 }
