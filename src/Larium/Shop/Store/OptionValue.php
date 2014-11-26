@@ -4,6 +4,8 @@
 
 namespace Larium\Shop\Store;
 
+use Larium\Shop\Common\Collection;
+
 class OptionValue
 {
     /**
@@ -13,7 +15,7 @@ class OptionValue
     protected $option_type;
 
     /**
-     * name
+     * The unique name.
      *
      * @var string
      * @access protected
@@ -21,7 +23,7 @@ class OptionValue
     protected $name;
 
     /**
-     * title
+     * The presentation title.
      *
      * @var string
      * @access protected
@@ -33,6 +35,19 @@ class OptionValue
      * @access protected
      */
     protected $position;
+
+    public function __construct()
+    {
+        $this->initialize();
+    }
+
+    public function initialize()
+    {
+        $this->variants = new Collection(
+            array(),
+            'Larium\\Shop\\Store\\Variant'
+        );
+    }
 
     /**
      * Gets option type instance.
@@ -55,6 +70,11 @@ class OptionValue
     public function setOptionType(OptionType $option_type)
     {
         $this->option_type = $option_type;
+    }
+
+    public function detachOptionType()
+    {
+        $this->option_type = null;
     }
 
     /**

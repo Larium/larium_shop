@@ -18,7 +18,7 @@ use Larium\Shop\Common\CollectionInterface;
 class Variant implements OrderableInterface
 {
     /**
-     * sku
+     * The unique sku description.
      *
      * @var string
      * @access protected
@@ -65,6 +65,14 @@ class Variant implements OrderableInterface
      */
     protected $option_values;
 
+    /**
+     * option_types
+     *
+     * @var Larium\Shop\Common\Collection
+     * @access protected
+     */
+    protected $option_types;
+
     public function __construct()
     {
         $this->initialize();
@@ -72,7 +80,15 @@ class Variant implements OrderableInterface
 
     public function initialize()
     {
-        $this->option_values = new Collection(array(), 'Larium\\Shop\\Store\\OptionValue');
+        $this->option_values = new Collection(
+            array(),
+            'Larium\\Shop\\Store\\OptionValue'
+        );
+
+        $this->option_types = new Collection(
+            array(),
+            'Larium\\Shop\\Store\\OptionType'
+        );
     }
 
     /**
@@ -210,13 +226,29 @@ class Variant implements OrderableInterface
         $this->option_values = $option_values;
     }
 
+    /**
+     * Adds an OptionValue element to Variant.
+     *
+     * @param OptionValue $option_value
+     * @access public
+     * @return void
+     */
     public function addOptionValue(OptionValue $option_value)
     {
-        $this->option_values->append($option_value);
+        $contains = $this->option_values->contains(
+            $option_value,
+            function($element) use ($option_value) {
+                return $option_value->getName() == $element->getName();
+            }
+        );
+
+        if (false === $contains) {
+            $this->option_values->append($option_value);
+        }
     }
 
     /**
-     * Removes an OptionValue element from Collection.
+     * Removes an OptionValue element from Variant.
      *
      * @param OptionValue $option_value
      * @access public
@@ -228,6 +260,51 @@ class Variant implements OrderableInterface
             $option_value,
             function ($var) use ($option_value) {
                 return $var->getName() == $option_value->getName();
+            }
+        );
+    }
+
+    /**
+     * Gets option_types.
+     *
+     * @access public
+     * @return mixed
+     */
+    public function getOptionTypes()
+    {
+        return $this->option_types;
+    }
+
+    /**
+     * Sets option_types.
+     *
+     * @param CollectionInterface $option_types the value to set.
+     * @access public
+     * @return void
+     */
+    public function setOptionTypes(CollectionInterface $option_types)
+    {
+        $this->option_types = $option_types;
+    }
+
+    public function addOptionType(OptionType $option_type)
+    {
+        $this->option_types->append($option_type);
+    }
+
+    /**
+     * Removes an OptionType element from Collection.
+     *
+     * @param OptionType $option_type
+     * @access public
+     * @return void
+     */
+    public function removeOptionType(OptionType $option_type)
+    {
+        return $this->option_types->remove(
+            $option_type,
+            function ($var) use ($option_type) {
+                return $var->getName() == $option_type->getName();
             }
         );
     }

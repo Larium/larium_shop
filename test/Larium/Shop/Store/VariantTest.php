@@ -17,30 +17,31 @@ class VariantTest extends \PHPUnit_Framework_TestCase
     {
         $variant = new Variant();
 
-        $option_type = $this->getOptionType('size_option_type');
+        $options_values = $this->populateOptionValues();
+        foreach ($options_values as $option_value) {
+            $variant->addOptionValue($option_value);
+        }
+
+        $this->assertEquals(
+            count($options_values),
+            $variant->getOptionValues()->count()
+        );
+
         $small = new OptionValue();
         $small->setName('small');
-        $small->setTitle('small');
-        $small->setOptionType($option_type);
-
-        $option_values = $this->populateOptionValues();
-
-        $variant->setOptionValues(new Collection($option_values));
+        $variant->addOptionValue($small);
 
         $this->assertEquals(
-            count($option_values),
+            count($options_values),
             $variant->getOptionValues()->count()
         );
 
-        $variant->removeOptionValue($small);
-
-        $this->assertEquals(
-            count($option_values) - 1,
-            $variant->getOptionValues()->count()
-        );
-
-        //$variant->getOptionValues()->append(new \stdclass);
-        //$variant->getOptionValues()[]=new \stdclass;
+        if ($variant->removeOptionValue($small)) {
+            $this->assertEquals(
+                count($options_values) - 1,
+                $variant->getOptionValues()->count()
+            );
+        }
     }
 
     private function getOptionType($id)

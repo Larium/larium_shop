@@ -125,7 +125,7 @@ class Collection extends ArrayIterator implements CollectionInterface
         }
     }
 
-    private function apply_filter_callback(\Closure $callback)
+    private function apply_filter_callback(Closure $callback)
     {
         $elements = array_filter($this->getArrayCopy(), $callback);
 

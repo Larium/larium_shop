@@ -4,6 +4,8 @@
 
 namespace Larium\Shop\Store;
 
+use Larium\Shop\Common\Collection;
+
 class OptionType
 {
     /**
@@ -21,6 +23,27 @@ class OptionType
      * @access protected
      */
     protected $title;
+
+    /**
+     * option_values
+     *
+     * @var Larium\Shop\Common\Collection
+     * @access protected
+     */
+    protected $option_values;
+
+    public function __construct()
+    {
+        $this->initialize();
+    }
+
+    public function initialize()
+    {
+        $this->option_values = new Collection(
+            array(),
+            'Larium\\Shop\\Store\\OptionValue'
+        );
+    }
 
     /**
      * Gets name.
@@ -66,5 +89,41 @@ class OptionType
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+
+    /**
+     * Sets option_values.
+     *
+     * @param CollectionInterface $option_values the value to set.
+     * @access public
+     * @return void
+     */
+    public function setOptionValues(CollectionInterface $option_values)
+    {
+        $this->option_values = $option_values;
+    }
+
+    public function addOptionValue(OptionValue $option_value)
+    {
+        $this->option_values->append($option_value);
+        $option_value->setOptionType($this);
+    }
+
+    /**
+     * Removes an OptionValue element from Collection.
+     *
+     * @param OptionValue $option_value
+     * @access public
+     * @return void
+     */
+    public function removeOptionValue(OptionValue $option_value)
+    {
+        $option_value->detachOptionType();
+        return $this->option_values->remove(
+            $option_value,
+            function ($var) use ($option_value) {
+                return $var->getName() == $option_value->getName();
+            }
+        );
     }
 }
