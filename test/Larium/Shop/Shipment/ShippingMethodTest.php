@@ -36,7 +36,7 @@ class ShippingMethodTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $this->data['courier_shipping_method']['calculator_options']['amount'],
-            $shipping_method->calculateCost()
+            $shipping_method->calculateCost()->getAmount()
         );
     }
 

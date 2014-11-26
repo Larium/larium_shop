@@ -80,7 +80,6 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $cart->getOrder()->getTotalQuantity());
     }
 
-
     public function testOrderContainsItem()
     {
         // Given i initialize a Cart object.
