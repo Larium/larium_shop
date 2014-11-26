@@ -4,7 +4,10 @@
 
 namespace Larium\Shop\Common;
 
-class Collection extends \ArrayIterator implements CollectionInterface
+use Closure;
+use ArrayIterator;
+
+class Collection extends ArrayIterator implements CollectionInterface
 {
     protected $elements_class;
 
@@ -64,7 +67,7 @@ class Collection extends \ArrayIterator implements CollectionInterface
     /**
      * {@inheritdoc}
      */
-    public function remove($element, \Closure $c = null)
+    public function remove($element, Closure $c = null)
     {
         $this->validate_element($element);
 
@@ -91,7 +94,7 @@ class Collection extends \ArrayIterator implements CollectionInterface
     /**
      * {@inheritdoc}
      */
-    public function contains($element, \Closure $c = null)
+    public function contains($element, Closure $c = null)
     {
         if (null === $c) {
             return in_array($element, $this->getArrayCopy(), true);
@@ -134,6 +137,4 @@ class Collection extends \ArrayIterator implements CollectionInterface
 
         return false;
     }
-
-
 }

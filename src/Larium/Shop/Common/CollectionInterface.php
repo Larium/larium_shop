@@ -4,6 +4,8 @@
 
 namespace Larium\Shop\Common;
 
+use Closure;
+
 interface CollectionInterface
 {
     /**
@@ -26,16 +28,13 @@ interface CollectionInterface
      * Removes an element from the Collection.
      *
      * @param mixed    $element The element to remove.
-     * @param \Closure $c       A callback for custom comparison of element to
-     *                          remove. Default comparison is strict type using
-     *                          array_search. Callback will filter elements
-     *                          using array_filter and remove the first
-     *                          filtered.
+     * @param Closure  $c       A callback for custom comparison of element to
+     *                          remove.
      * @access public
      * @return boolean True if element removed successful or false if element
      *                 does not exist.
      */
-    public function remove($element, \Closure $c);
+    public function remove($element, Closure $c = null);
 
     /**
      * Adds a new element to collection.
@@ -51,13 +50,11 @@ interface CollectionInterface
      * Check if Collection contains given element
      *
      * @param mixed    $element The element to check.
-     * @param \Closure $c       A callback for custom comparison of element to
-     *                          check. Default comparison is strict type using
-     *                          in_array function. Callback will filter elements
-     *                          using array_filter and return the first
-     *                          filtered.
+     * @param Closure  $c       A callback for custom comparison of element to
+     *                          check.
      * @access public
-     * @return void
+     * @return mixed|boolean    If closurer isset return the element that is
+     *                          stored in collection else return true or false.
      */
-    public function contains($element, \Closure $c = null);
+    public function contains($element, Closure $c = null);
 }
