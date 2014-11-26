@@ -12,7 +12,9 @@
     ],
     "require": {
         "php": ">=5.4",
-        "yohang/finite": "1.0.*",
+        "yohang/finite": "~1.1",
+        "symfony/options-resolver": "2.4.*",
+        "symfony/event-dispatcher": "2.4.*",
         "aktive_merchant/aktive_merchant": "1.0.*",
         "mathiasverraes/money": "dev-master"
     },
