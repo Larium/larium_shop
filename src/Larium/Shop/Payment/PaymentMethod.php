@@ -37,7 +37,7 @@ class PaymentMethod implements PaymentMethodInterface
 
     protected $gateway_options = array();
 
-    public function initialize(array $options=array())
+    public function initialize(array $options =array())
     {
         $default = array(
             'source_class' => '',

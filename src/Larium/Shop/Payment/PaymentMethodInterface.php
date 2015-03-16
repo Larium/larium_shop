@@ -60,5 +60,5 @@ interface PaymentMethodInterface
      * @access public
      * @return void
      */
-    public function setSourceOptions(array $options=array());
+    public function setSourceOptions(array $options = array());
 }
