@@ -10,6 +10,7 @@ use Larium\Shop\Sale\AdjustableInterface;
 use Larium\Shop\Sale\OrderInterface;
 use Larium\Shop\Common\Collection;
 use Larium\Shop\Payment\Provider\RedirectResponse;
+use Larium\Shop\Sale\Adjustment;
 use Money\Money;
 
 /**
@@ -258,16 +259,6 @@ class Payment implements PaymentInterface, StatefulInterface
         return false;
     }
 
-    /**
-     * Creates an adjustment for payment cost if needed and calculate the
-     * amount for this payment.
-     *
-     * If Payment has received an amount then this amount will be used alse
-     * will use the TotalAmount from Order.
-     *
-     * @access protected
-     * @return void
-     */
     protected function payment_amount()
     {
         return null === $this->amount
@@ -275,6 +266,16 @@ class Payment implements PaymentInterface, StatefulInterface
             : $this->amount;
     }
 
+    /**
+     * Creates an adjustment for payment cost if needed and calculate the
+     * amount for this payment.
+     *
+     * If Payment has received an amount then this amount will be used else
+     * the total amount of Order will be used.
+     *
+     * @access protected
+     * @return void
+     */
     protected function create_payment_method_adjustment()
     {
         if (null === $this->getPaymentMethod()) {
@@ -285,7 +286,7 @@ class Payment implements PaymentInterface, StatefulInterface
         $cost = $this->getPaymentMethod()->getCost();
 
         if ($cost->getAmount()) {
-            $adj = new \Larium\Shop\Sale\Adjustment();
+            $adj = new Adjustment();
             $adj->setAmount($cost);
             $adj->setLabel($this->getIdentifier());
             $this->getOrder()->addAdjustment($adj);

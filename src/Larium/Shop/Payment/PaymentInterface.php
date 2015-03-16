@@ -145,6 +145,8 @@ interface PaymentInterface
     /**
      * Detach the Order object from Payment.
      *
+     * Additional remove any adjustment created by Payment to Order.
+     *
      * @access public
      * @return void
      */
