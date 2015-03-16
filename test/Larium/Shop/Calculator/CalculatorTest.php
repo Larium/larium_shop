@@ -5,26 +5,7 @@
 namespace Larium\Shop\Calculator;
 
 use Money\Money;
-
-class OrderMock
-{
-    protected $options;
-
-    public function __construct($options)
-    {
-        $this->options = $options;
-    }
-
-    public function getItemsTotal()
-    {
-        return $this->options['item_total'];
-    }
-
-    public function getTotalQuantity()
-    {
-        return $this->options['item_count'];
-    }
-}
+use Stub\Order;
 
 class CalculatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +15,7 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
         $calc = new FlatRate($options);
 
         $opt = array('item_total' => Money::EUR(4042));
-        $order = new OrderMock($opt);
+        $order = new Order($opt);
 
         $this->assertEquals($options['amount'], $calc->compute($order)->getAmount());
     }
@@ -45,7 +26,7 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
         $calc = new FlatPercentItemTotal($options);
 
         $opt = array('item_total' => Money::EUR(4042));
-        $order = new OrderMock($opt);
+        $order = new Order($opt);
 
         $this->assertEquals(404, $calc->compute($order)->getAmount());
     }
@@ -63,7 +44,7 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
         $calc = new FlexiRate($options);
 
         $opt = array('item_count' => 10);
-        $order = new OrderMock($opt);
+        $order = new Order($opt);
 
         $this->assertEquals($expects, $calc->compute($order)->getAmount());
     }
@@ -85,7 +66,7 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
         $calc = new PerItem($options);
 
         $opt = array('item_count' => 8);
-        $order = new OrderMock($opt);
+        $order = new Order($opt);
 
         $this->assertEquals(80, $calc->compute($order));
     }
@@ -102,7 +83,7 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
         $calc = new PriceSack($options);
 
         $opt = array('item_total' => $total);
-        $order = new OrderMock($opt);
+        $order = new Order($opt);
 
         $this->assertEquals($expect, $calc->compute($order));
     }
