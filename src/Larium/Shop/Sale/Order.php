@@ -370,7 +370,7 @@ class Order implements OrderInterface, StatefulInterface
      * Returns the payment that currently is processed.
      *
      * @access public
-     * @return PaymentInterfacce
+     * @return PaymentInterface
      */
     public function getCurrentPayment()
     {
