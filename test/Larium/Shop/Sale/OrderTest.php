@@ -4,15 +4,13 @@
 
 namespace Larium\Shop\Sale;
 
-use Larium\Shop\Payment\Payment;
-use Larium\Shop\Payment\PaymentMethod;
-use Larium\Shop\Payment\CreditCard;
-use Finite\Event\TransitionEvent;
-use Larium\Shop\Payment\Provider\RedirectResponse;
+use Larium\Helper;
 use Money\Money;
 
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
+
+    use Helper;
 
     protected $loader;
 
@@ -380,84 +378,5 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Order::PAID, $cart->getOrder()->getState());
 
         $this->assertEquals(3, $cart->getOrder()->getPayments()->count());
-    }
-
-    /*- ( Fixtures ) -------------------------------------------------------- */
-
-    private function getCartWithOneItem()
-    {
-        $cart = new Cart();
-        $product = $this->getProduct('product_1');
-        $variant = $product->getDefaultVariant();
-        $item = $cart->addItem($variant);
-
-        return $cart;
-    }
-
-    private function getCartWithOneItemAndPaymentInProgressState()
-    {
-        $cart = new Cart();
-        $product = $this->getProduct('product_1');
-        $variant = $product->getDefaultVariant();
-        $item = $cart->addItem($variant);
-
-        $method = $this->getPaymentMethod('redirect_payment_method');
-        $method->setSourceOptions($this->getValidCreditCardOptions());
-        $payment = new Payment();
-
-        $payment->setState('in_progress');
-        $payment->setPaymentMethod($method);
-        $cart->getOrder()->addPayment($payment);
-
-        $cart->processTo('checkout');
-
-        return $cart;
-    }
-
-    private function getProduct($id)
-    {
-        $data = $this->loader->getData();
-
-        $hydrator = new \Hydrator('Larium\Shop\\Store\\Product');
-
-        return $hydrator->hydrate($data[$id], $id);
-    }
-
-    private function getOrderItem($id)
-    {
-        $data = $this->loader->getData();
-
-        $hydrator = new \Hydrator('Larium\Shop\\Sale\\OrderItem');
-
-        return $hydrator->hydrate($data[$id], $id);
-    }
-
-    private function getPaymentMethod($id)
-    {
-        $data = $this->loader->getData();
-
-        $hydrator = new \Hydrator('Larium\Shop\\Payment\\PaymentMethod');
-
-        return $hydrator->hydrate($data[$id], $id);
-    }
-
-    private function getValidCreditCardOptions()
-    {
-        return array(
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'month' => '2',
-            'year' => date('Y') + 5,
-            'number'=>'1'
-        );
-    }
-
-    private function getShippingMethod($id)
-    {
-        $data = $this->loader->getData();
-
-        $hydrator = new \Hydrator('Larium\Shop\\Shipment\\ShippingMethod');
-
-        return $hydrator->hydrate($data[$id], $id);
     }
 }
