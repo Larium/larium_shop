@@ -37,6 +37,8 @@ class PaymentMethod implements PaymentMethodInterface
 
     protected $gateway_options = array();
 
+    protected $action;
+
     public function initialize(array $options =array())
     {
         $default = array(
@@ -278,5 +280,21 @@ class PaymentMethod implements PaymentMethodInterface
     public function setGatewayOptions(array $gateway_options=array())
     {
         $this->gateway_options = $gateway_options;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAction($action)
+    {
+        $this->action = $action;
     }
 }

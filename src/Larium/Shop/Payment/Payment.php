@@ -12,6 +12,7 @@ use Larium\Shop\Common\Collection;
 use Larium\Shop\Payment\Provider\RedirectResponse;
 use Larium\Shop\Sale\Adjustment;
 use Money\Money;
+use InvalidArgumentException;
 
 /**
  * Payment class implements PaymentInterface and allows the payoff of an Order.
@@ -187,6 +188,48 @@ class Payment implements PaymentInterface, StatefulInterface
     }
 
     /**
+     * Tries to set the payment state as paid.
+     *
+     * @throws InvalidArgumentException If Order or PaymentMethod objects are
+     *                                  missing.
+     * @access public
+     * @return false|Larium\Shop\Payment\Provider\Response
+     */
+    public function pay($action = null)
+    {
+
+        if (null === $this->getOrder()) {
+            throw new InvalidArgumentException("You must add this Payment to an Order.");
+        }
+
+        if (null === $this->getPaymentMethod()) {
+            throw new InvalidArgumentException("You must set a PaymentMethod for this Payment.");
+        }
+
+        $amount = $this->payment_amount();
+
+        $response = $this->invoke_provider($amount, $action);
+
+        $this->create_transaction_from_response($response);
+
+        if ($response instanceOf RedirectResponse) {
+            $this->setState('in_progress');
+        }
+
+        if ($response->isSuccess()) {
+            if (null === $this->amount) {
+                $this->setAmount($amount);
+            }
+
+            $this->response = $response;
+
+            return $response;
+        }
+
+        return false;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getState()
@@ -212,51 +255,6 @@ class Payment implements PaymentInterface, StatefulInterface
     public function setFiniteState($state)
     {
         $this->setState($state);
-    }
-
-    /**
-     * Tries to set the payment state as paid.
-     *
-     * @param StateMachine $sm
-     * @param Transition $transition
-     *
-     * @throws InvalidArgumentException If Order or PaymentMethod objects are
-     *                                  missing.
-     * @access public
-     * @return false|Larium\Shop\Payment\Provider\Response
-     */
-    public function toPaid(Payment $payment, TransitionEvent $event)
-    {
-        if (null === $this->getOrder()) {
-            throw new \InvalidArgumentException("You must add this Payment to an Order.");
-        }
-
-        if (null === $this->getPaymentMethod()) {
-            throw new \InvalidArgumentException("You must set a PaymentMethod for this Payment.");
-        }
-
-        // The amount to charge for this payment.
-        $amount = $this->payment_amount();
-
-        $response = $this->invoke_provider($amount, $event->getTransition()->getName());
-
-        $this->create_transaction_from_response($response);
-
-        if ($response instanceOf RedirectResponse) {
-            $this->setState('in_progress');
-        }
-
-        if ($response->isSuccess()) {
-            if (null === $this->amount) {
-                $this->setAmount($amount);
-            }
-
-            $this->response = $response;
-
-            return $response;
-        }
-
-        return false;
     }
 
     protected function payment_amount()
@@ -297,6 +295,7 @@ class Payment implements PaymentInterface, StatefulInterface
 
     protected function invoke_provider($amount, $action)
     {
+        $action = $action ?: $this->getPaymentMethod()->getAction();
         $provider = $this->getPaymentMethod()->getProvider();
 
         if ($provider instanceof PaymentProviderInterface) {

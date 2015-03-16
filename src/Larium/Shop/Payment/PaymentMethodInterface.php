@@ -61,4 +61,27 @@ interface PaymentMethodInterface
      * @return void
      */
     public function setSourceOptions(array $options = array());
+
+    /**
+     * Sets the payment action to perform on Payment.
+     * Available options are:
+     * - purchase
+     * - authorize
+     * - capture
+     * - credit
+     * - void
+     *
+     * @param string $action
+     * @access public
+     * @return void
+     */
+    public function setAction($action);
+
+    /**
+     * Gets the payment action.
+     *
+     * @access public
+     * @return string
+     */
+    public function getAction();
 }

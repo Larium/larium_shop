@@ -28,6 +28,7 @@ order_item_1:
   sku: 'PRD-01-0001'
   description: 'T-Shirt LongSleeve'
 creditcard_payment_method:
+  action: 'purchase'
   source_class: 'Larium\Shop\Payment\Source\CreditCard'
   provider_class: 'Larium\Shop\Payment\Provider\GatewayProvider'
   gateway_class: 'AktiveMerchant\Billing\Gateways\Bogus'
@@ -37,6 +38,7 @@ creditcard_payment_method:
   id: 1 # Optional value assigned probably from storage engine
   description: 'Some description' # Optional value used to inform end user.
 cash_on_delivery_payment_method:
+  action: 'purchase'
   source_class: 'Larium\Shop\Payment\Source\CashOnDelivery'
   provider_class: 'Larium\Shop\Payment\Provider\LocalProvider'
   title: 'Cash On Delivery payment'
@@ -44,6 +46,7 @@ cash_on_delivery_payment_method:
   id: 2
   description: 'Some description'
 giftcard_payment_method:
+  action: 'purchase'
   source_class: 'Larium\Shop\Payment\Source\Giftcard'
   provider_class: 'Larium\Shop\Payment\Provider\LocalProvider'
   title: 'Giftcard payment'
@@ -51,6 +54,7 @@ giftcard_payment_method:
   id: 3
   description: 'Some description'
 redirect_payment_method:
+  action: 'doPurchase'
   source_class: 'Larium\Shop\Payment\Source\CreditCard'
   provider_class: 'Larium\Shop\Payment\Provider\RedirectProvider'
   gateway_class: 'AktiveMerchant\Billing\Gateways\Bogus'

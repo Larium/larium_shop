@@ -324,7 +324,7 @@ class Order implements OrderInterface, StatefulInterface
 
         $this->calculateTotalPaymentAmount();
 
-        $this->initialize_state_machine($payment);
+        $this->initializeStateMachine($payment);
     }
 
     /**
@@ -539,45 +539,11 @@ class Order implements OrderInterface, StatefulInterface
         return $this->adjustments_total;
     }
 
-    public function initialize_state_machine($payment)
+    public function initializeStateMachine(StatefulInterface $payment)
     {
-        $states = [
-            'unpaid'     => ['type' => State::TYPE_INITIAL, 'properties' => []],
-            'in_process' => ['type' => State::TYPE_NORMAL,  'properties' => []],
-            'authorized' => ['type' => State::TYPE_NORMAL,  'properties' => []],
-            'paid'       => ['type' => State::TYPE_FINAL,   'properties' => []],
-            'refunded'   => ['type' => State::TYPE_FINAL,   'properties' => []]
-        ];
+        $config = include __DIR__ . '/../../../config/payment_finite_state.php';
 
-
-        $transitions = [
-            'purchase'      => ['from'=>['unpaid'], 'to'=>'paid'],
-            'doPurchase'    => ['from'=>['in_progress'], 'to'=>'paid'],
-            'doAuthorize'   => ['from'=>['in_progress'], 'to'=>'authorize'],
-            'authorize'     => ['from'=>['unpaid'], 'to'=>'authorized'],
-            'capture'       => ['from'=>['authorized'], 'to'=>'paid'],
-            'void'          => ['from'=>['authorized'], 'to'=>'refunded'],
-            'credit'        => ['from'=>['paid'], 'to'=>'refunded'],
-        ];
-
-        $callbacks = [
-            'after' => [
-                [
-                    'from' => ['unpaid', 'in_progress'],
-                    'to'   => 'paid',
-                    'do'   => [$payment, 'toPaid']
-                ]
-            ]
-        ];
-
-        $loader = new ArrayLoader(
-            [
-                'class' => get_class($payment),
-                'states' => $states,
-                'transitions' => $transitions,
-                'callbacks' => $callbacks
-            ]
-        );
+        $loader = new ArrayLoader($config);
 
         $state_machine = new StateMachine($payment);
 

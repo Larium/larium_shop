@@ -5,10 +5,10 @@
 namespace Larium\Shop\Payment;
 
 use Larium\Helper;
+use Larium\Shop\Sale\Order;
 
 class PaymentTest extends \PHPUnit_Framework_TestCase
 {
-
     use Helper;
 
     public function setUp()
@@ -30,9 +30,18 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     public function testPayment()
     {
         $method = $this->getPaymentMethod('creditcard_payment_method');
+        $method->setSourceOptions($this->getValidCreditCardOptions());
+
+        $order = new Order();
 
         $payment = new Payment();
 
+        $order->addPayment($payment);
+
+        $payment->setAmount(100);
+
         $payment->setPaymentMethod($method);
+
+        $response = $payment->pay();
     }
 }
