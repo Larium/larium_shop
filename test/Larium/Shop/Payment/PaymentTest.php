@@ -6,6 +6,8 @@ namespace Larium\Shop\Payment;
 
 use Larium\Helper;
 use Larium\Shop\Sale\Order;
+use Finite\StateMachine\StateMachine;
+use Finite\Loader\ArrayLoader;
 
 class PaymentTest extends \PHPUnit_Framework_TestCase
 {
@@ -42,6 +44,26 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
 
         $payment->setPaymentMethod($method);
 
-        $response = $payment->pay();
+        $sm = $this->initialize_state_machine($payment);
+
+        $sm->apply('purchase');
+
+        $this->assertEquals('paid', $payment->getState());
+    }
+
+    private function initialize_state_machine($payment)
+    {
+
+        $config = include __DIR__ . '/../../../../src/config/payment_finite_state.php';
+
+        $loader = new ArrayLoader($config);
+
+        $state_machine = new StateMachine($payment);
+
+        $loader->load($state_machine);
+
+        $state_machine->initialize();
+
+        return $state_machine;
     }
 }

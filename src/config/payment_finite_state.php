@@ -30,8 +30,8 @@ $callbacks = [
         [
             'from' => ['unpaid', 'in_progress'],
             'to'   => 'paid',
-            'do'   => function(StatefulInterface $document, TransitionEvent $e) {
-                $document->pay($e->getTransition()->getName());
+            'do'   => function(StatefulInterface $payment, TransitionEvent $e) {
+                $payment->process($e->getTransition()->getName());
             }
         ]
     ]

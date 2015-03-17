@@ -427,7 +427,7 @@ class Order implements OrderInterface, StatefulInterface
         return $this->getTotalAmount()->subtract($this->getTotalPaymentAmount());
     }
 
-    public function processPayments(Order $order, TransitionEvent $event)
+    public function processPayments()
     {
         if (!$this->needsPayment()) {
             return;

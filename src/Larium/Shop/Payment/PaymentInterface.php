@@ -151,4 +151,13 @@ interface PaymentInterface
      * @return void
      */
     public function detachOrder();
+
+    /**
+     * Tries to process payment to the given state.
+     *
+     * @param mixed $action
+     * @access public
+     * @return void
+     */
+    public function process($state = null);
 }

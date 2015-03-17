@@ -195,7 +195,7 @@ class Payment implements PaymentInterface, StatefulInterface
      * @access public
      * @return false|Larium\Shop\Payment\Provider\Response
      */
-    public function pay($action = null)
+    public function process($state = null)
     {
 
         if (null === $this->getOrder()) {
@@ -208,7 +208,7 @@ class Payment implements PaymentInterface, StatefulInterface
 
         $amount = $this->payment_amount();
 
-        $response = $this->invoke_provider($amount, $action);
+        $response = $this->invoke_provider($amount, $state);
 
         $this->create_transaction_from_response($response);
 
@@ -293,19 +293,19 @@ class Payment implements PaymentInterface, StatefulInterface
         }
     }
 
-    protected function invoke_provider($amount, $action)
+    protected function invoke_provider($amount, $state)
     {
-        $action = $action ?: $this->getPaymentMethod()->getAction();
+        $action = $state ?: $this->getPaymentMethod()->getAction();
         $provider = $this->getPaymentMethod()->getProvider();
 
         if ($provider instanceof PaymentProviderInterface) {
 
-            // Invoke the method of Provider based on Transition name.
+            // Invoke the method of Provider based on given action.
             $providerMethod = new \ReflectionMethod($provider, $action);
             $params = array($amount, $this->options());
         } else {
 
-            throw new Exception('Provider must implements Larium\Shop\Payment\PaymentProviderInterface');
+            throw new InvalidArgumentException('Provider must implements Larium\Shop\Payment\PaymentProviderInterface');
         }
 
         return $providerMethod->invokeArgs($provider, $params);
