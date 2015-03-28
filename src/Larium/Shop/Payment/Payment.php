@@ -147,7 +147,7 @@ class Payment implements PaymentInterface, StatefulInterface
      */
     public function getAmount()
     {
-        return $this->amount;
+        return $this->payment_amount();
     }
 
     /**
@@ -197,11 +197,6 @@ class Payment implements PaymentInterface, StatefulInterface
      */
     public function process($state = null)
     {
-
-        if (null === $this->getOrder()) {
-            throw new InvalidArgumentException("You must add this Payment to an Order.");
-        }
-
         if (null === $this->getPaymentMethod()) {
             throw new InvalidArgumentException("You must set a PaymentMethod for this Payment.");
         }
@@ -259,13 +254,17 @@ class Payment implements PaymentInterface, StatefulInterface
 
     protected function payment_amount()
     {
-        return null === $this->amount
-            ? $this->getOrder()->getTotalAmount()
-            : $this->amount;
+        if (null === $this->amount && null === $this->getOrder()) {
+            throw new \InvalidArgumentException('Amount cannot br null');
+        }
+
+        $cost = $this->getPaymentMethod()->getCost()->getAmount();
+
+        return ($this->amount ?: $this->getOrder()->getTotalAmount()) + $cost;
     }
 
     /**
-     * Creates an adjustment for payment cost if needed and calculate the
+     * Creates an adjustment for payment cost if needed and calculates the
      * amount for this payment.
      *
      * If Payment has received an amount then this amount will be used else

@@ -29,31 +29,35 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Larium\\Shop\\Common\\Collection', $payment->getTransactions());
     }
 
-    public function testPayment()
+    public function testCreditCardPayment()
     {
         $method = $this->getPaymentMethod('creditcard_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
-
-        $order = new Order();
-
         $payment = new Payment();
-
-        $order->addPayment($payment);
-
         $payment->setAmount(100);
-
         $payment->setPaymentMethod($method);
-
         $sm = $this->initialize_state_machine($payment);
-
         $sm->apply('purchase');
 
         $this->assertEquals('paid', $payment->getState());
     }
 
+    public function testCashOnDeliveryPayment()
+    {
+        $method = $this->getPaymentMethod('cash_on_delivery_payment_method');
+
+        $payment = new Payment();
+        $payment->setAmount(100);
+        $payment->setPaymentMethod($method);
+        $sm = $this->initialize_state_machine($payment);
+        $sm->apply('purchase');
+
+        $this->assertEquals('paid', $payment->getState());
+        $this->assertEquals($method->getCost()->getAmount() + 100, $payment->getAmount());
+    }
+
     private function initialize_state_machine($payment)
     {
-
         $config = include __DIR__ . '/../../../../src/config/payment_finite_state.php';
 
         $loader = new ArrayLoader($config);
