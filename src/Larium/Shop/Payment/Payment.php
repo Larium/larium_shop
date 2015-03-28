@@ -43,7 +43,7 @@ class Payment implements PaymentInterface, StatefulInterface
     protected $transactions;
 
     /**
-     * amount
+     * Amount to be paid on this payment
      *
      * @var Money\Money
      * @access protected
@@ -258,9 +258,7 @@ class Payment implements PaymentInterface, StatefulInterface
             throw new \InvalidArgumentException('Amount cannot br null');
         }
 
-        $cost = $this->getPaymentMethod()->getCost()->getAmount();
-
-        return ($this->amount ?: $this->getOrder()->getTotalAmount()) + $cost;
+        return $this->amount ?: $this->getOrder()->getTotalAmount();
     }
 
     /**
