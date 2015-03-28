@@ -18,12 +18,12 @@ class GatewayProvider implements PaymentProviderInterface
 
     protected $payment_source;
 
-    public function authorize($amount, array $options=array())
+    public function authorize($amount, array $options = array())
     {
 
     }
 
-    public function purchase($amount, array $options=array())
+    public function purchase($amount, array $options = array())
     {
         $response = new Response();
 
@@ -37,7 +37,7 @@ class GatewayProvider implements PaymentProviderInterface
         return $response;
     }
 
-    public function capture($amount, $authorization, array $options=array())
+    public function capture($amount, $authorization, array $options = array())
     {
 
     }
@@ -78,7 +78,7 @@ class GatewayProvider implements PaymentProviderInterface
      * @access public
      * @return void
      */
-    public function setGatewayOptions(array $gateway_options=array())
+    public function setGatewayOptions(array $gateway_options = array())
     {
         $this->gateway_options = $gateway_options;
     }

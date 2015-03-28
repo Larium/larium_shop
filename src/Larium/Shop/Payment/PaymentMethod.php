@@ -39,7 +39,7 @@ class PaymentMethod implements PaymentMethodInterface
 
     protected $action;
 
-    public function initialize(array $options =array())
+    public function initialize(array $options = array())
     {
         $default = array(
             'source_class' => '',
@@ -55,7 +55,9 @@ class PaymentMethod implements PaymentMethodInterface
         $this->source_class = $options['source_class'];
         $this->provider_class = $options['provider_class'];
         $this->title = $options['title'];
-        $this->cost = is_numeric($options['cost']) ? Money::EUR($options['cost']*100) : $options['cost'];
+        $this->cost = is_numeric($options['cost'])
+            ? Money::EUR($options['cost']*100)
+            : $options['cost'];
         $this->id = $options['id'];
         $this->description = $options['description'];
     }
