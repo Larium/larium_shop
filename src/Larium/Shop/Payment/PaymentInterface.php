@@ -25,7 +25,7 @@ use Larium\Shop\Sale\OrderInterface;
 interface PaymentInterface
 {
     /**
-     * getTransactions
+     * Gets all transactions associated with this payment.
      *
      * @access public
      * @return array|Traversable
@@ -79,7 +79,6 @@ interface PaymentInterface
      * @return number
      */
     public function getAmount();
-
 
     /**
      * Gets the current state of Payment.
@@ -154,10 +153,11 @@ interface PaymentInterface
 
     /**
      * Tries to process payment to the given state.
-     *
-     * @param mixed $action
+
+     * @throws InvalidArgumentException If PaymentMethod objects is missing.
+     * @param string $action
      * @access public
-     * @return void
+     * @return false|Larium\Shop\Payment\Provider\Response
      */
     public function process($state = null);
 }

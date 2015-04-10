@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreaskollaros@ymail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Payment;
 
 use Finite\StatefulInterface;
@@ -188,12 +196,7 @@ class Payment implements PaymentInterface, StatefulInterface
     }
 
     /**
-     * Tries to set the payment state as paid.
-     *
-     * @throws InvalidArgumentException If Order or PaymentMethod objects are
-     *                                  missing.
-     * @access public
-     * @return false|Larium\Shop\Payment\Provider\Response
+     * {@inheritdoc}
      */
     public function process($state = null)
     {
@@ -265,7 +268,7 @@ class Payment implements PaymentInterface, StatefulInterface
      * Creates an adjustment for payment cost if needed and calculates the
      * amount for this payment.
      *
-     * If Payment has received an amount then this amount will be used else
+     * If Payment has already an amount then this amount will be used else
      * the total amount of Order will be used.
      *
      * @access protected
@@ -290,22 +293,32 @@ class Payment implements PaymentInterface, StatefulInterface
         }
     }
 
-    protected function invoke_provider($amount, $state)
+    /**
+     * Resolves provider from payment method and executes given state.
+     *
+     * State can be resolved either from given argument or from payment method.
+     * @throw InvalidArgumentException If payment provider is not an instance
+     *                                 of PaymentProviderInterface.
+     * @param Money\Money $amount
+     * @param string $state
+     * @access protected
+     * @return Provider\Response
+     */
+    protected function invoke_provider($amount, $state = null)
     {
         $action = $state ?: $this->getPaymentMethod()->getAction();
         $provider = $this->getPaymentMethod()->getProvider();
 
         if ($provider instanceof PaymentProviderInterface) {
-
             // Invoke the method of Provider based on given action.
             $providerMethod = new \ReflectionMethod($provider, $action);
+            // Arguments to pass to PaymentProvider.
             $params = array($amount, $this->options());
-        } else {
 
+            return $providerMethod->invokeArgs($provider, $params);
+        } else {
             throw new InvalidArgumentException('Provider must implements Larium\Shop\Payment\PaymentProviderInterface');
         }
-
-        return $providerMethod->invokeArgs($provider, $params);
     }
 
     /**
@@ -345,7 +358,7 @@ class Payment implements PaymentInterface, StatefulInterface
     }
 
     /**
-     * Gets response.
+     * Gets the payment response after a transaction.
      *
      * @access public
      * @return Response

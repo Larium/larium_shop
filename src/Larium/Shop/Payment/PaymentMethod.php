@@ -2,16 +2,23 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreaskollaros@ymail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Payment;
 
 use Money\Money;
 
 /**
- * PaymentMethod
+ * Implementation of PaymentMethodInterface
  *
  * @uses PaymentMethodInterface
  * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
 class PaymentMethod implements PaymentMethodInterface
 {

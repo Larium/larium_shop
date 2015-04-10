@@ -41,4 +41,3 @@ class CreditCard implements PaymentSourceInterface
         return false;
     }
 }
-
