@@ -28,7 +28,7 @@ class GatewayProvider implements PaymentProviderInterface
 
     public function purchase($amount, array $options = array())
     {
-        $response = new GatewayResponse();
+        $response = new Response();
 
         $cc = new CreditCard($this->payment_source->getOptions());
 

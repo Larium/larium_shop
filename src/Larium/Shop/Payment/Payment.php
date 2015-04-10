@@ -211,7 +211,7 @@ class Payment implements PaymentInterface, StatefulInterface
         $this->create_transaction_from_response($response);
 
         if ($response instanceOf RedirectResponse) {
-            $this->setState('in_progress');
+            $this->setState('pending');
         }
 
         if ($response->isSuccess()) {

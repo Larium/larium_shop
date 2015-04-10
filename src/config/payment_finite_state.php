@@ -8,7 +8,7 @@ use Finite\Event\TransitionEvent;
 
 $states = [
     'unpaid'     => ['type' => State::TYPE_INITIAL, 'properties' => []],
-    'in_process' => ['type' => State::TYPE_NORMAL,  'properties' => []],
+    'pending'    => ['type' => State::TYPE_NORMAL,  'properties' => []],
     'authorized' => ['type' => State::TYPE_NORMAL,  'properties' => []],
     'paid'       => ['type' => State::TYPE_FINAL,   'properties' => []],
     'refunded'   => ['type' => State::TYPE_FINAL,   'properties' => []]
@@ -17,8 +17,8 @@ $states = [
 
 $transitions = [
     'purchase'      => ['from'=>['unpaid'], 'to'=>'paid'],
-    'doPurchase'    => ['from'=>['in_progress'], 'to'=>'paid'],
-    'doAuthorize'   => ['from'=>['in_progress'], 'to'=>'authorize'],
+    'doPurchase'    => ['from'=>['pending'], 'to'=>'paid'],
+    'doAuthorize'   => ['from'=>['pending'], 'to'=>'authorize'],
     'authorize'     => ['from'=>['unpaid'], 'to'=>'authorized'],
     'capture'       => ['from'=>['authorized'], 'to'=>'paid'],
     'void'          => ['from'=>['authorized'], 'to'=>'refunded'],
@@ -28,7 +28,7 @@ $transitions = [
 $callbacks = [
     'after' => [
         [
-            'from' => ['unpaid', 'in_progress'],
+            'from' => ['unpaid', 'pending'],
             'to'   => 'paid',
             'do'   => function(StatefulInterface $payment, TransitionEvent $e) {
                 $payment->process($e->getTransition()->getName());

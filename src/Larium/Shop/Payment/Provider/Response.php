@@ -6,6 +6,8 @@ namespace Larium\Shop\Payment\Provider;
 
 class Response
 {
+    protected $transaction_id;
+
     /**
      * Indicates the status of successful response.
      *
@@ -66,5 +68,29 @@ class Response
     public function setSuccess($success)
     {
         $this->success = (boolean) $success;
+    }
+
+    /**
+     * Gets the transaction id of a success payment action.
+     *
+     * @access public
+     * @return string
+     */
+    public function getTransactionId()
+    {
+        return $this->transaction_id;
+    }
+
+    /**
+     * Sets the transaction id of a success payment action.
+     *
+     * @param string $transaction_id The value returned from remote system
+     *                               whiche indicates a success action.
+     * @access public
+     * @return void
+     */
+    public function setTransactionId($transaction_id)
+    {
+        $this->transaction_id = $transaction_id;
     }
 }

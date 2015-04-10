@@ -19,7 +19,7 @@ trait Helper
         return $cart;
     }
 
-    protected function getCartWithOneItemAndPaymentInProgressState()
+    protected function getCartWithOneItemAndPaymentInPendingState()
     {
         $cart = new Cart();
         $product = $this->getProduct('product_1');
@@ -30,7 +30,7 @@ trait Helper
         $method->setSourceOptions($this->getValidCreditCardOptions());
         $payment = new Payment();
 
-        $payment->setState('in_progress');
+        $payment->setState('pending');
         $payment->setPaymentMethod($method);
         $cart->getOrder()->addPayment($payment);
 

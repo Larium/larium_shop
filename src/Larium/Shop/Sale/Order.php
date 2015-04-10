@@ -439,13 +439,13 @@ class Order implements OrderInterface, StatefulInterface
 
             $state = $payment->getState();
 
-            if ('unpaid' === $state || 'in_progress' === $state) {
+            if ('unpaid' === $state || 'pending' === $state) {
 
                 $this->setCurrentPayment($payment);
 
                 if ('unpaid' === $state) {
                     $response = $sm->apply('purchase');
-                } elseif ('in_progress' === $state) {
+                } elseif ('pending' === $state) {
                     $response = $sm->apply('doPurchase');
                 }
 
