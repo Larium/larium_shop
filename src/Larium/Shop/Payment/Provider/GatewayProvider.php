@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreaskollaros@ymail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Payment\Provider;
 
 use Larium\Shop\Payment\PaymentProviderInterface;
@@ -18,14 +26,9 @@ class GatewayProvider implements PaymentProviderInterface
 
     protected $payment_source;
 
-    public function authorize($amount, array $options = array())
-    {
-
-    }
-
     public function purchase($amount, array $options = array())
     {
-        $response = new Response();
+        $response = new GatewayResponse();
 
         $cc = new CreditCard($this->payment_source->getOptions());
 
@@ -35,6 +38,11 @@ class GatewayProvider implements PaymentProviderInterface
         $response->setTransactionId($r->authorization());
 
         return $response;
+    }
+
+    public function authorize($amount, array $options = array())
+    {
+
     }
 
     public function capture($amount, $authorization, array $options = array())

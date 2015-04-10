@@ -6,52 +6,65 @@ namespace Larium\Shop\Payment\Provider;
 
 class Response
 {
+    /**
+     * Indicates the status of successful response.
+     *
+     * @var boolean
+     * @access protected
+     */
     protected $success;
 
+    /**
+     * The message from response
+     *
+     * @var string
+     * @access protected
+     */
     protected $message;
 
-    protected $transaction_id;
-
+    /**
+     * isSuccess
+     *
+     * @access public
+     * @return void
+     */
     public function isSuccess()
     {
         return $this->success;
     }
 
+    /**
+     * Gets the message returned from remote gateway.
+     *
+     * @access public
+     * @return string
+     */
     public function getMessage()
     {
         return $this->message;
     }
 
+    /**
+     * Sets the message that returned from remote gateway.
+     *
+     * @param string $message
+     * @access public
+     * @return void
+     */
     public function setMessage($message)
     {
         $this->message = $message;
     }
 
-    public function setSuccess($success)
-    {
-        $this->success = $success;
-    }
-
     /**
-     * Gets transaction_id.
+     * Set the success status of a response.
      *
-     * @access public
-     * @return string
-     */
-    public function getTransactionId()
-    {
-        return $this->transaction_id;
-    }
-
-    /**
-     * Sets transaction_id.
-     *
-     * @param string $transaction_id the value to set.
+     * @param boolean $success
      * @access public
      * @return void
      */
-    public function setTransactionId($transaction_id)
+    public function setSuccess($success)
     {
-        $this->transaction_id = $transaction_id;
+        $this->success = (boolean) $success;
     }
 }
