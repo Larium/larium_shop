@@ -5,7 +5,7 @@
     backupGlobals               = "false"
     backupStaticAttributes      = "false"
     colors                      = "true"
-    bootstrap                   = "test/init.php" >
+    bootstrap                   = "vendor/autoload.php" >
     <filter>
         <whitelist>
             <directory suffix=".php">src/</directory>

@@ -27,5 +27,8 @@
         "psr-0": {
             "Larium\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "files": ["test/FixtureLoader.php", "test/Hydrator.php", "test/Larium/RedirectProvider.php", "test/Stub/Order.php", "test/Larium/Helper.php"]
     }
 }
