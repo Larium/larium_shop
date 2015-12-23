@@ -7,15 +7,13 @@ namespace Larium\Shop\Payment;
 /**
  * TransactionInterface
  *
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 interface TransactionInterface
 {
     /**
      * Gets the Payment object for this transaction.
      *
-     * @access public
      * @return PaymentInerface
      */
     public function getPayment();
@@ -24,15 +22,13 @@ interface TransactionInterface
      * Sets the Payment object for this transaction.
      *
      * @param PaymentInterface $payment
-     * @access public
      * @return void
      */
     public function setPayment(PaymentInterface $payment);
 
     /**
-     * Gets the amount pf transaction
+     * Gets the amount of transaction
      *
-     * @access public
      * @return float|integer
      */
     public function getAmount();
@@ -41,7 +37,6 @@ interface TransactionInterface
      * Sets the amount of transaction
      *
      * @param float|integer $amount
-     * @access public
      * @return void
      */
     public function setAmount($amount);
@@ -49,7 +44,6 @@ interface TransactionInterface
     /**
      * Returns a uniq id that represents this transaction.
      *
-     * @access public
      * @return string
      */
     public function getTransactionId();
@@ -57,8 +51,7 @@ interface TransactionInterface
     /**
      * Sets TransactionId
      *
-     * @param mixed $id
-     * @access public
+     * @param string $id
      * @return void
      */
     public function setTransactionId($id);

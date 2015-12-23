@@ -2,11 +2,26 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Common;
 
 use Closure;
 use ArrayIterator;
 
+/**
+ * Collection
+ *
+ * @uses ArrayIterator
+ * @uses CollectionInterface
+ * @author  Andreas Kollaros <andreas@larium.net>
+ */
 class Collection extends ArrayIterator implements CollectionInterface
 {
     protected $elements_class;
@@ -17,7 +32,6 @@ class Collection extends ArrayIterator implements CollectionInterface
      * @param array  $array          An array of elements to manage.
      * @param string $elements_class The name of the class that collection can
      *                               manage.
-     * @access public
      * @return void
      */
     public function __construct($array = array(), $elements_class = null)

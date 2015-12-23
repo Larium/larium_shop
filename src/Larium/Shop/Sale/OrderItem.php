@@ -2,70 +2,56 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Sale;
 
 /**
  * OrderItem
  *
  * @uses OrderItemInterface
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 class OrderItem implements OrderItemInterface
 {
     /**
-     * unit_price
-     *
      * @var Money\Money
-     * @access protected
      */
     protected $unit_price;
 
     /**
-     * quantity
-     *
      * @var integer
-     * @access protected
      */
     protected $quantity = 1;
 
     /**
-     * total_price
-     *
      * @var Money\Money
-     * @access protected
      */
     protected $total_price;
 
     /**
-     * description
-     *
      * @var string
-     * @access protected
      */
     protected $description;
 
     /**
-     * order
-     *
      * @var Larium\Shop\Sale\Order
-     * @access protected
      */
     protected $order;
 
     /**
-     * orderable
-     *
      * @var Larium\Shop\Sale\OrderableInterface
-     * @access protected
      */
     protected $orderable;
 
     /**
-     * identifier
-     *
      * @var string
-     * @access protected
      */
     protected $identifier;
 

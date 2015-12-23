@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Sale;
 
 use Money\Money;
@@ -10,7 +18,7 @@ use Money\Money;
  * Adjustment
  *
  * @uses AdjustmentInterface
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @author  Andreas Kollaros <andreas@larium.net>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
 class Adjustment implements AdjustmentInterface
@@ -19,7 +27,6 @@ class Adjustment implements AdjustmentInterface
      * The amount of Adjustement.
      *
      * @var   Money\Money
-     * @access protected
      */
     protected $amount;
 
@@ -27,7 +34,6 @@ class Adjustment implements AdjustmentInterface
      * The Adjustable object
      *
      * @var    Larium\Shop\Sale\AdjustableInterface
-     * @access protected
      */
     protected $adjustable;
 
@@ -35,7 +41,6 @@ class Adjustment implements AdjustmentInterface
      * The display label.
      *
      * @var string
-     * @access protected
      */
     protected $label;
 

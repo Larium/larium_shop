@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Store;
 
 use Larium\Shop\Common\Collection;
@@ -12,7 +20,6 @@ class OptionType
      * The identification name.
      *
      * @var string A lowercase string with only letters.
-     * @access protected
      */
     protected $name;
 
@@ -20,7 +27,6 @@ class OptionType
      * The presentation title.
      *
      * @var string
-     * @access protected
      */
     protected $title;
 
@@ -28,7 +34,6 @@ class OptionType
      * option_values
      *
      * @var Larium\Shop\Common\Collection
-     * @access protected
      */
     protected $option_values;
 
@@ -48,7 +53,6 @@ class OptionType
     /**
      * Gets name.
      *
-     * @access public
      * @return mixed
      */
     public function getName()
@@ -60,7 +64,6 @@ class OptionType
      * Sets name.
      *
      * @param mixed $name the value to set.
-     * @access public
      * @return void
      */
     public function setName($name)
@@ -71,7 +74,6 @@ class OptionType
     /**
      * Gets title.
      *
-     * @access public
      * @return mixed
      */
     public function getTitle()
@@ -83,7 +85,6 @@ class OptionType
      * Sets title.
      *
      * @param mixed $title the value to set.
-     * @access public
      * @return void
      */
     public function setTitle($title)
@@ -95,7 +96,6 @@ class OptionType
      * Sets option_values.
      *
      * @param CollectionInterface $option_values the value to set.
-     * @access public
      * @return void
      */
     public function setOptionValues(CollectionInterface $option_values)
@@ -113,7 +113,6 @@ class OptionType
      * Removes an OptionValue element from Collection.
      *
      * @param OptionValue $option_value
-     * @access public
      * @return void
      */
     public function removeOptionValue(OptionValue $option_value)

@@ -4,13 +4,20 @@
 
 namespace Larium\Shop\Shipment;
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 use Larium\Shop\Sale\OrderInterface;
 
 /**
  * ShippingMethodInterface
  *
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 interface ShippingMethodInterface
 {
@@ -19,7 +26,6 @@ interface ShippingMethodInterface
      *
      * Label is a short description about ShippingMethod.
      *
-     * @access public
      * @return string
      */
     public function getLabel();
@@ -27,7 +33,6 @@ interface ShippingMethodInterface
     /**
      * Calculate the total amount to charge.
      *
-     * @access public
      * @return number
      */
     public function calculateCost(OrderInterface $order = null);
@@ -35,7 +40,6 @@ interface ShippingMethodInterface
     /**
      * Gets the Calculator instance for this ShippingMethod.
      *
-     * @access public
      * @return Larium\Shop\Calculator\CalculatorInterface
      */
     public function getCalculator();

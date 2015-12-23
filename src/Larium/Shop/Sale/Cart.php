@@ -1,6 +1,15 @@
 <?php
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Sale;
 
 use Finite\State\State;
@@ -16,7 +25,7 @@ use Money\Money;
 /**
  * Cart
  *
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @author  Andreas Kollaros <andreas@larium.net>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
 class Cart implements CartInterface
@@ -25,15 +34,11 @@ class Cart implements CartInterface
      * An order instance that belongs to this cart.
      *
      * @var Order
-     * @access protected
      */
     protected $order;
 
     /**
-     * state_machine
-     *
      * @var Finite\StateMachine\StateMachine
-     * @access protected
      */
     protected $state_machine;
 
@@ -72,7 +77,6 @@ class Cart implements CartInterface
      * Gets the Order that handle the Cart.
      * Creates new if does not exist.
      *
-     * @access public
      * @return Order
      */
     public function getOrder()
@@ -89,7 +93,6 @@ class Cart implements CartInterface
      * Sets an Order to handle.
      *
      * @param  Order $order
-     * @access public
      * @return void
      */
     public function setOrder(Order $order)
@@ -100,7 +103,6 @@ class Cart implements CartInterface
     /**
      * Gets a collection of order items
      *
-     * @access public
      * @return array|Traversable
      */
     public function getItems()
@@ -111,7 +113,6 @@ class Cart implements CartInterface
     /**
      * Gets the total number of items in order.
      *
-     * @access public
      * @return integer
      */
     public function getItemsCount()
@@ -129,7 +130,6 @@ class Cart implements CartInterface
      * Delegate to Order.
      * Gets the total quantity of order items.
      *
-     * @access public
      * @return integer
      */
     public function getTotalQuantity()
@@ -157,7 +157,6 @@ class Cart implements CartInterface
      * Applies the given state to Order.
      *
      * @param string $state
-     * @access public
      * @return mixed
      */
     public function processTo($state)
@@ -182,8 +181,7 @@ class Cart implements CartInterface
      *
      * @param  OrderableInterface $orderable
      * @param  int                $quantity
-     * @access protected
-     * @return void
+     * @return OrderItem
      */
     protected function itemFromOrderable(
         OrderableInterface $orderable,
@@ -213,10 +211,9 @@ class Cart implements CartInterface
     }
 
     /**
-     * Gets state_machine.
+     * Gets state machine instance.
      *
-     * @access public
-     * @return mixed
+     * @return StateMachine
      */
     public function getStateMachine()
     {

@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Store;
 
 use Larium\Shop\Common\Collection;
@@ -9,8 +17,7 @@ use Larium\Shop\Common\Collection;
 /**
  * Product
  *
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 class Product
 {
@@ -18,7 +25,6 @@ class Product
      * The title of product.
      *
      * @var string
-     * @access protected
      */
     protected $title;
 
@@ -26,7 +32,6 @@ class Product
      * The description of product.
      *
      * @var string
-     * @access protected
      */
     protected $description;
 
@@ -34,7 +39,6 @@ class Product
      * permalink
      *
      * @var string
-     * @access protected
      */
     protected $permalink;
 
@@ -42,7 +46,6 @@ class Product
      * meta_description
      *
      * @var string
-     * @access protected
      */
     protected $meta_description;
 
@@ -50,7 +53,6 @@ class Product
      * meta_keywords
      *
      * @var string
-     * @access protected
      */
     protected $meta_keywords;
 
@@ -58,7 +60,6 @@ class Product
      * available_on
      *
      * @var DateTime
-     * @access protected
      */
     protected $available_on;
 
@@ -66,7 +67,6 @@ class Product
      * created_at
      *
      * @var DateTime
-     * @access protected
      */
     protected $created_at;
 
@@ -74,7 +74,6 @@ class Product
      * updated_at
      *
      * @var DateTime
-     * @access protected
      */
     protected $updated_at;
 
@@ -82,7 +81,6 @@ class Product
      * deleted_at
      *
      * @var DateTime
-     * @access protected
      */
     protected $deleted_at;
 
@@ -90,7 +88,6 @@ class Product
      * option_types
      *
      * @var Larium\Common\Collection
-     * @access protected
      */
     protected $option_types;
 
@@ -98,7 +95,6 @@ class Product
      * variants
      *
      * @var Larium\Common\Collection
-     * @access protected
      */
     protected $variants;
 
@@ -106,7 +102,6 @@ class Product
      * default_variant
      *
      * @var Larium\Shop\Store\Variant
-     * @access protected
      */
     protected $default_variant;
 
@@ -127,7 +122,6 @@ class Product
     /**
      * Delegate get unit price from default variant.
      *
-     * @access public
      * @return void
      */
     public function getUnitPrice()
@@ -139,7 +133,6 @@ class Product
      * Delegate set unit price to default variant.
      *
      * @param float|integer $price
-     * @access public
      * @return void
      */
     public function setUnitPrice($price)
@@ -170,7 +163,6 @@ class Product
     /**
      * Delegate get sku number from default variant.
      *
-     * @access public
      * @return string
      */
     public function getSku()
@@ -219,7 +211,6 @@ class Product
     /**
      * Gets option types collection.
      *
-     * @access public
      * @return Collection
      */
     public function getOptionTypes()
@@ -231,7 +222,6 @@ class Product
      * Sets option types collection
      *
      * @param Collection $option_types the value to set.
-     * @access public
      * @return void
      */
     public function setOptionTypes(Collection $option_types)

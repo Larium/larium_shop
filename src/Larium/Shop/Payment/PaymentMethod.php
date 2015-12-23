@@ -5,7 +5,7 @@
 /*
  * This file is part of the Larium Shop package.
  *
- * (c) Andreas Kollaros <andreaskollaros@ymail.com>
+ * (c) Andreas Kollaros <andreas@larium.net>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,7 +18,7 @@ use Money\Money;
  * Implementation of PaymentMethodInterface
  *
  * @uses PaymentMethodInterface
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 class PaymentMethod implements PaymentMethodInterface
 {

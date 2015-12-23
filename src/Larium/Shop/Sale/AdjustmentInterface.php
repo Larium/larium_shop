@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Sale;
 
 use Money\Money;
@@ -21,7 +29,6 @@ interface AdjustmentInterface
      * Sets the amount to adjust the adjustable object.
      *
      * @param  number $amount The amount to charge or credit.
-     * @access public
      * @return void
      */
     public function setAmount(Money $amount);
@@ -29,7 +36,6 @@ interface AdjustmentInterface
     /**
      * Gets the amount of the adjust that applied to adjustable object.
      *
-     * @access public
      * @return number
      */
     public function getAmount();
@@ -38,7 +44,6 @@ interface AdjustmentInterface
      * Checks if adjustment will charge the adjustable object and as result
      * will increase its amount.
      *
-     * @access public
      * @return boolean
      */
     public function isCharge();
@@ -47,7 +52,6 @@ interface AdjustmentInterface
      * Checks if adjustment will credit the adjustable object and as result
      * will decrease its amount.
      *
-     * @access public
      * @return boolean
      */
     public function isCredit();
@@ -56,7 +60,6 @@ interface AdjustmentInterface
      * Sets the adjustable object
      *
      * @param  AdjustableInterface $adjustable
-     * @access public
      * @return void
      */
     public function setAdjustable(AdjustableInterface $adjustable);
@@ -64,7 +67,6 @@ interface AdjustmentInterface
     /**
      * Gets the adjustable object.
      *
-     * @access public
      * @return AdjustableInterface
      */
     public function getAdjustable();
@@ -72,7 +74,6 @@ interface AdjustmentInterface
     /**
      * Detach the adjustable from adjustment.
      *
-     * @access public
      * @return void
      */
     public function detachAdjustable();
@@ -80,7 +81,6 @@ interface AdjustmentInterface
     /**
      * Gets label.
      *
-     * @access public
      * @return string
      */
     public function getLabel();
@@ -89,7 +89,6 @@ interface AdjustmentInterface
      * Sets label.
      *
      * @param string $label the value to set.
-     * @access public
      * @return void
      */
     public function setLabel($label);

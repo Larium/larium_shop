@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Store;
 
 use Larium\Shop\Common\Collection;
@@ -10,7 +18,6 @@ class OptionValue
 {
     /**
      * @var Larium\Shop\Store\OptionType
-     * @access protected
      */
     protected $option_type;
 
@@ -18,7 +25,6 @@ class OptionValue
      * The unique name.
      *
      * @var string
-     * @access protected
      */
     protected $name;
 
@@ -26,13 +32,11 @@ class OptionValue
      * The presentation title.
      *
      * @var string
-     * @access protected
      */
     protected $title;
 
     /**
      * @var integer
-     * @access protected
      */
     protected $position;
 
@@ -52,7 +56,6 @@ class OptionValue
     /**
      * Gets option type instance.
      *
-     * @access public
      * @return Larium\Shop\Store\OptionType
      */
     public function getOptionType()
@@ -64,7 +67,6 @@ class OptionValue
      * Sets option type instance.
      *
      * @param Larium\Shop\Store\OptionType $option_type the value to set.
-     * @access public
      * @return void
      */
     public function setOptionType(OptionType $option_type)
@@ -80,7 +82,6 @@ class OptionValue
     /**
      * Gets name.
      *
-     * @access public
      * @return string
      */
     public function getName()
@@ -92,7 +93,6 @@ class OptionValue
      * Sets name.
      *
      * @param mixed $name the value to set.
-     * @access public
      * @return void
      */
     public function setName($name)
@@ -103,7 +103,6 @@ class OptionValue
     /**
      * Gets title.
      *
-     * @access public
      * @return string
      */
     public function getTitle()
@@ -115,7 +114,6 @@ class OptionValue
      * Sets title.
      *
      * @param mixed $title the value to set.
-     * @access public
      * @return void
      */
     public function setTitle($title)
@@ -126,7 +124,6 @@ class OptionValue
     /**
      * Gets position.
      *
-     * @access public
      * @return integer
      */
     public function getPosition()
@@ -138,7 +135,6 @@ class OptionValue
      * Sets position.
      *
      * @param mixed $position the value to set.
-     * @access public
      * @return void
      */
     public function setPosition($position)

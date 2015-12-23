@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Sale;
 
 use Larium\Shop\Payment\PaymentMethodInterface;
@@ -15,7 +23,6 @@ interface CartInterface
      *
      * @param  OrderableInterface $orderable
      * @param  int                $quantity
-     * @access public
      * @return OrderItem
      */
     public function addItem(OrderableInterface $orderable, $quantity = 1);
@@ -24,7 +31,6 @@ interface CartInterface
      * Removes an Orderitem from Order
      *
      * @param  OrderItem $item
-     * @access public
      * @return void
      */
     public function removeItem(OrderItem $item);
@@ -35,7 +41,6 @@ interface CartInterface
      * Returns the Payment instance.
      *
      * @param PaymentMethodInterface $method
-     * @access public
      * @return Larium\Shop\Payment\PaymentInterface
      */
     public function addPaymentMethod(PaymentMethodInterface $method, Money $amount = null);
@@ -48,7 +53,6 @@ interface CartInterface
      * context.
      *
      * @param ShippingMethodInterface $shipping_method
-     * @access public
      * @return Shipment
      */
     public function setShippingMethod(ShippingMethodInterface $shipping_method);

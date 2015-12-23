@@ -5,7 +5,7 @@
 /*
  * This file is part of the Larium Shop package.
  *
- * (c) Andreas Kollaros <andreaskollaros@ymail.com>
+ * (c) Andreas Kollaros <andreas@larium.net>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,6 +16,13 @@ use Larium\Shop\Payment\PaymentProviderInterface;
 use Larium\Shop\Payment\PaymentSourceInterface;
 use AktiveMerchant\Billing\CreditCard;
 
+/**
+ * Provides an implemantation for payment methods that require remote
+ * call, such as payment gateways.
+ *
+ * @uses PaymentProviderInterface
+ * @author  Andreas Kollaros <andreas@larium.net>
+ */
 class GatewayProvider implements PaymentProviderInterface
 {
     protected $gateway_class;

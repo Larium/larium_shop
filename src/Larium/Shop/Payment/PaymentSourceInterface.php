@@ -2,20 +2,26 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Payment;
 
 /**
  * PaymentSourceInterface
  *
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 interface PaymentSourceInterface
 {
     /**
      * Get the amount balance of this resource
      *
-     * @access public
      * @return integer|float
      */
     public function getBalance();
@@ -23,7 +29,6 @@ interface PaymentSourceInterface
     /**
      * Gets an identification number for this resource
      *
-     * @access public
      * @return void
      */
     public function getNumber();
@@ -31,7 +36,6 @@ interface PaymentSourceInterface
     /**
      * Checks if resource has expired and cannot be used.
      *
-     * @access public
      * @return boolean
      */
     public function isExpired();

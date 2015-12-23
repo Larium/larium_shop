@@ -5,7 +5,7 @@
 /*
  * This file is part of the Larium Shop package.
  *
- * (c) Andreas Kollaros <andreaskollaros@ymail.com>
+ * (c) Andreas Kollaros <andreas@larium.net>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -43,8 +43,7 @@ use InvalidArgumentException;
  *
  * @uses PaymentInterface
  * @uses StatefulInterface
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 class Payment implements PaymentInterface, StatefulInterface
 {

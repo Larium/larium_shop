@@ -30,7 +30,7 @@ $callbacks = [
         [
             'from' => ['unpaid', 'pending'],
             'to'   => 'paid',
-            'do'   => function(StatefulInterface $payment, TransitionEvent $e) {
+            'do'   => function (StatefulInterface $payment, TransitionEvent $e) {
                 $payment->process($e->getTransition()->getName());
             }
         ]

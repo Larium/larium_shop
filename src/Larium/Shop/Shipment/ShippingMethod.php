@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Shipment;
 
 use Larium\Shop\Sale\OrderInterface;
@@ -10,48 +18,34 @@ use Larium\Shop\Sale\OrderInterface;
  * ShippingMethod
  *
  * @uses ShippingMethodInterface
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 class ShippingMethod implements ShippingMethodInterface
 {
     /**
-     * label
-     *
      * @var string
-     * @access protected
      */
     protected $label;
 
     /**
-     * calculator_class
-     *
      * @var string
-     * @access protected
      */
     protected $calculator_class;
 
     /**
-     * calculator
-     *
      * @var Larium\Shop\Calculator\AbstractCalculator
-     * @access protected
      */
     protected $calculator;
 
     /**
-     * calculator_options
-     *
      * @var array
-     * @access protected
      */
     protected $calculator_options;
 
     /**
      * Gets label.
      *
-     * @access public
-     * @return mixed
+     * @return string
      */
     public function getLabel()
     {
@@ -61,8 +55,7 @@ class ShippingMethod implements ShippingMethodInterface
     /**
      * Sets label.
      *
-     * @param mixed $label the value to set.
-     * @access public
+     * @param string $label
      * @return void
      */
     public function setLabel($label)
@@ -77,7 +70,6 @@ class ShippingMethod implements ShippingMethodInterface
      * compute costs for ShippingMethod.
      *
      * @param OrderInterface $order
-     * @access public
      * @return number
      */
     public function calculateCost(OrderInterface $order = null)
@@ -88,7 +80,6 @@ class ShippingMethod implements ShippingMethodInterface
     /**
      * Gets a Calclulator instance to compute shipping costs.
      *
-     * @access public
      * @return Larium\Shop\Calculator\CalculatorInterface
      */
     public function getCalculator()
@@ -105,7 +96,6 @@ class ShippingMethod implements ShippingMethodInterface
     /**
      * Gets calculator_class.
      *
-     * @access public
      * @return string
      */
     public function getCalculatorClass()
@@ -117,7 +107,6 @@ class ShippingMethod implements ShippingMethodInterface
      * Sets calculator_class.
      *
      * @param mixed $calculator_class the value to set.
-     * @access public
      * @return void
      */
     public function setCalculatorClass($calculator_class)
@@ -128,7 +117,6 @@ class ShippingMethod implements ShippingMethodInterface
     /**
      * Gets an options array for instantiate a calculator class.
      *
-     * @access public
      * @return array
      */
     public function getCalculatorOptions()
@@ -141,7 +129,6 @@ class ShippingMethod implements ShippingMethodInterface
      *
      * @param array $calculator_options.
      *
-     * @access public
      * @return void
      */
     public function setCalculatorOptions(array $calculator_options)

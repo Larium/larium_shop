@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Payment\Provider;
 
 /**
@@ -9,7 +17,7 @@ namespace Larium\Shop\Payment\Provider;
  *
  * @uses    Response
  * @package Larium\Shop\Payment
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
+ * @author  Andreas Kollaros <andreas@larium.net>
  * @license MIT {@link http://opensource.org/licenses/mit-license.php}
  */
 class RedirectResponse extends Response

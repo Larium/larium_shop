@@ -36,14 +36,14 @@ $callbacks = [
         [
             'from' => [Order::CHECKOUT, Order::PARTIAL_PAID],
             'to'   => Order::PAID,
-            'do'   => function(StatefulInterface $order, TransitionEvent $e) {
+            'do'   => function (StatefulInterface $order, TransitionEvent $e) {
                 $order->processPayments();
             }
         ],
         [
             'from' => [Order::CHECKOUT, Order::PARTIAL_PAID],
             'to'   => Order::PAID,
-            'do'   => function(StatefulInterface $order, TransitionEvent $e) {
+            'do'   => function (StatefulInterface $order, TransitionEvent $e) {
                 /**
                  * Checks the balance of Order after a `pay` transition.
                  * If balance is greater than zero then rollback to `checkout` state to

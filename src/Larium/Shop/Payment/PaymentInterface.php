@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Payment;
 
 use Larium\Shop\Sale\OrderInterface;
@@ -19,15 +27,13 @@ use Larium\Shop\Sale\OrderInterface;
  * Order can use multiple Payment objects to fullfill the required amount.
  *
  *
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 interface PaymentInterface
 {
     /**
      * Gets all transactions associated with this payment.
      *
-     * @access public
      * @return array|Traversable
      */
     public function getTransactions();
@@ -36,8 +42,6 @@ interface PaymentInterface
      * Adds a new Transaction to Payment
      *
      * @param TransactionInterface $transaction
-     *
-     * @access public
      * @return void
      */
     public function addTransaction(TransactionInterface $transaction);
@@ -46,8 +50,6 @@ interface PaymentInterface
      * Removes a Transaction from Payment
      *
      * @param TransactionInterface $transaction
-     *
-     * @access public
      * @return void
      */
     public function removeTransaction(TransactionInterface $transaction);
@@ -56,8 +58,6 @@ interface PaymentInterface
      * Checks if given Transaction object exists.
      *
      * @param TransactionInterface $transaction
-     *
-     * @access public
      * @return void
      */
     public function containsTransaction(TransactionInterface $transaction);
@@ -65,9 +65,7 @@ interface PaymentInterface
     /**
      * Sets the amount of money to pay.
      *
-     * @param number $amount
-     *
-     * @access public
+     * @param Money\Money $amount
      * @return void
      */
     public function setAmount($amount);
@@ -75,15 +73,13 @@ interface PaymentInterface
     /**
      * Gets the amount to pay.
      *
-     * @access public
-     * @return number
+     * @return Money\Money
      */
     public function getAmount();
 
     /**
      * Gets the current state of Payment.
      *
-     * @access public
      * @return string
      */
     public function getState();
@@ -93,7 +89,6 @@ interface PaymentInterface
      *
      * @param string $state
      *
-     * @access public
      * @return void
      */
     public function setState($state);
@@ -101,7 +96,6 @@ interface PaymentInterface
     /**
      * Gets the PaymentMethod for this Payment.
      *
-     * @access public
      * @return PaymentMethod
      */
     public function getPaymentMethod();
@@ -109,7 +103,6 @@ interface PaymentInterface
     /**
      * Sets the PaymentMethod for this Payment.
      *
-     * @access public
      * @return void
      */
     public function setPaymentMethod(PaymentMethod $payment_method);
@@ -117,7 +110,6 @@ interface PaymentInterface
     /**
      * Gets the unique identifier for this payment.
      *
-     * @access public
      * @return string
      */
     public function getIdentifier();
@@ -126,7 +118,6 @@ interface PaymentInterface
     /**
      * Gets the Order object associated with this Payment.
      *
-     * @access public
      * @return Larium\Shop\Sale\OrderInterface
      */
     public function getOrder();
@@ -135,8 +126,6 @@ interface PaymentInterface
      * Sets associated Order object.
      *
      * @param Larium\Shop\Sale\OrderInterface $order
-     *
-     * @access public
      * @return void
      */
     public function setOrder(OrderInterface $order);
@@ -146,7 +135,6 @@ interface PaymentInterface
      *
      * Additional remove any adjustment created by Payment to Order.
      *
-     * @access public
      * @return void
      */
     public function detachOrder();
@@ -156,7 +144,6 @@ interface PaymentInterface
 
      * @throws InvalidArgumentException If PaymentMethod objects is missing.
      * @param string $action
-     * @access public
      * @return false|Larium\Shop\Payment\Provider\Response
      */
     public function process($state = null);

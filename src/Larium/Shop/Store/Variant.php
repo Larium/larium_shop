@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Store;
 
 use Larium\Shop\Sale\OrderableInterface;
@@ -12,8 +20,7 @@ use Larium\Shop\Common\CollectionInterface;
  * Variant
  *
  * @uses OrderableInterface
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 class Variant implements OrderableInterface
 {
@@ -21,7 +28,6 @@ class Variant implements OrderableInterface
      * The unique sku description.
      *
      * @var string
-     * @access protected
      */
     protected $sku;
 
@@ -29,7 +35,6 @@ class Variant implements OrderableInterface
      * unit_price
      *
      * @var Money\Money
-     * @access protected
      */
     protected $unit_price;
 
@@ -37,7 +42,6 @@ class Variant implements OrderableInterface
      * stock_units
      *
      * @var integer
-     * @access protected
      */
     protected $stock_units;
 
@@ -45,7 +49,6 @@ class Variant implements OrderableInterface
      * is_default
      *
      * @var boolean
-     * @access protected
      */
     protected $is_default;
 
@@ -53,7 +56,6 @@ class Variant implements OrderableInterface
      * product
      *
      * @var Larium\Shop\Store\Product
-     * @access protected
      */
     protected $product;
 
@@ -61,7 +63,6 @@ class Variant implements OrderableInterface
      * option_values
      *
      * @var Larium\Shop\Common\Collection
-     * @access protected
      */
     protected $option_values;
 
@@ -69,7 +70,6 @@ class Variant implements OrderableInterface
      * option_types
      *
      * @var Larium\Shop\Common\Collection
-     * @access protected
      */
     protected $option_types;
 
@@ -206,7 +206,6 @@ class Variant implements OrderableInterface
     /**
      * Gets option_values.
      *
-     * @access public
      * @return mixed
      */
     public function getOptionValues()
@@ -218,7 +217,6 @@ class Variant implements OrderableInterface
      * Sets option_values.
      *
      * @param CollectionInterface $option_values the value to set.
-     * @access public
      * @return void
      */
     public function setOptionValues(CollectionInterface $option_values)
@@ -230,7 +228,6 @@ class Variant implements OrderableInterface
      * Adds an OptionValue element to Variant.
      *
      * @param OptionValue $option_value
-     * @access public
      * @return void
      */
     public function addOptionValue(OptionValue $option_value)
@@ -251,7 +248,6 @@ class Variant implements OrderableInterface
      * Removes an OptionValue element from Variant.
      *
      * @param OptionValue $option_value
-     * @access public
      * @return void
      */
     public function removeOptionValue(OptionValue $option_value)
@@ -267,7 +263,6 @@ class Variant implements OrderableInterface
     /**
      * Gets option_types.
      *
-     * @access public
      * @return mixed
      */
     public function getOptionTypes()
@@ -279,7 +274,6 @@ class Variant implements OrderableInterface
      * Sets option_types.
      *
      * @param CollectionInterface $option_types the value to set.
-     * @access public
      * @return void
      */
     public function setOptionTypes(CollectionInterface $option_types)
@@ -296,7 +290,6 @@ class Variant implements OrderableInterface
      * Removes an OptionType element from Collection.
      *
      * @param OptionType $option_type
-     * @access public
      * @return void
      */
     public function removeOptionType(OptionType $option_type)

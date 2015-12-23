@@ -2,13 +2,20 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Sale;
 
 /**
  * OrderItemInterface
  *
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 interface OrderItemInterface
 {
@@ -19,7 +26,6 @@ interface OrderItemInterface
      * quantity.
      *
      * @param number $price
-     * @access public
      * @return void
      */
     public function setUnitPrice($price);
@@ -29,7 +35,6 @@ interface OrderItemInterface
     /**
      * Sets the quantity of item to be ordered.
      *
-     * @access public
      * @return void
      */
     public function setQuantity($quantity);
@@ -37,7 +42,6 @@ interface OrderItemInterface
     /**
      * Gets the quantity of item to be ordered.
      *
-     * @access public
      * @return integer
      */
     public function getQuantity();
@@ -46,7 +50,6 @@ interface OrderItemInterface
      * Sets the order object to this item.
      *
      * @param  OrderInterface $order
-     * @access public
      * @return void
      */
     public function setOrder(OrderInterface $order);
@@ -54,7 +57,6 @@ interface OrderItemInterface
     /**
      * Gets the order object of this item.
      *
-     * @access public
      * @return OrderInterface
      */
     public function getOrder();
@@ -63,7 +65,6 @@ interface OrderItemInterface
      * Returns the total amount of item based on price per quantity and on
      * Adjustments total amount.
      *
-     * @access public
      * @return number
      */
     public function getTotalPrice();
@@ -75,7 +76,6 @@ interface OrderItemInterface
     /**
      * Returns the unique identifier for thjis object.
      *
-     * @access public
      * @return void
      */
     public function getIdentifier();

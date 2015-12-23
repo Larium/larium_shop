@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Common;
 
 use Closure;
@@ -11,7 +19,6 @@ interface CollectionInterface
     /**
      * Returns the first element of Collection.
      *
-     * @access public
      * @return void
      */
     public function first();
@@ -19,7 +26,6 @@ interface CollectionInterface
     /**
      * Returns the last element of Collection.
      *
-     * @access public
      * @return void
      */
     public function last();
@@ -30,7 +36,6 @@ interface CollectionInterface
      * @param mixed    $element The element to remove.
      * @param Closure  $c       A callback for custom comparison of element to
      *                          remove.
-     * @access public
      * @return boolean True if element removed successful or false if element
      *                 does not exist.
      */
@@ -41,7 +46,6 @@ interface CollectionInterface
      * Alias of ArrayIterator::append()
      *
      * @param mixed $element
-     * @access public
      * @return boolean
      */
     public function add($element);
@@ -52,7 +56,6 @@ interface CollectionInterface
      * @param mixed    $element The element to check.
      * @param Closure  $c       A callback for custom comparison of element to
      *                          check.
-     * @access public
      * @return mixed|boolean    If closurer isset return the element that is
      *                          stored in collection else return true or false.
      */

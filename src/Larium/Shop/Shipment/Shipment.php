@@ -2,6 +2,14 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/*
+ * This file is part of the Larium Shop package.
+ *
+ * (c) Andreas Kollaros <andreas@larium.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Larium\Shop\Shipment;
 
 use Larium\Shop\Sale\OrderInterface;
@@ -12,56 +20,37 @@ use Larium\Shop\Common\Collection;
  * Shipment
  *
  * @uses ShipmentInterface
- * @author  Andreas Kollaros <andreaskollaros@ymail.com>
- * @license MIT {@link http://opensource.org/licenses/mit-license.php}
+ * @author  Andreas Kollaros <andreas@larium.net>
  */
 class Shipment implements ShipmentInterface
 {
     /**
-     * order
-     *
      * @var Larium\Shop\Sale\Order
-     * @access protected
      */
     protected $order;
 
     /**
-     * address
-     *
      * @var Larium\Shop\Shipment\Address
-     * @access protected
      */
     protected $address;
 
     /**
-     * shipping_method
-     *
      * @var Larium\Shop\Shipment\ShippingMethod
-     * @access protected
      */
     protected $shipping_method;
 
     /**
-     * order_items
-     *
      * @var Larium\Shop\Common\Collection
-     * @access protected
      */
     protected $order_items;
 
     /**
-     * cost
-     *
      * @var Money\Money
-     * @access protected
      */
     protected $cost;
 
     /**
-     * identifier
-     *
      * @var string
-     * @access protected
      */
     protected $identifier;
 
@@ -74,7 +63,7 @@ class Shipment implements ShipmentInterface
     {
         $this->order_items = new Collection();
 
-        $this->generate_identifier();
+        $this->generateIdentifier();
     }
 
     /**
@@ -193,7 +182,7 @@ class Shipment implements ShipmentInterface
     public function containsOrderItem(OrderItemInterface $order_item)
     {
 
-        return $this->order_items->contains($order_item, function($item) use ($order_item){
+        return $this->order_items->contains($order_item, function ($item) use ($order_item) {
             return $item->getIdentifier() == $order_item->getIdentifier();
         });
 
@@ -223,10 +212,9 @@ class Shipment implements ShipmentInterface
     /**
      * Generates a unique identifier for this shipment.
      *
-     * @access protected
      * @return string
      */
-    protected function generate_identifier()
+    protected function generateIdentifier()
     {
         $this->identifier = uniqid();
     }
