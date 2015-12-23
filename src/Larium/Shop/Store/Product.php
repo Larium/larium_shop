@@ -188,7 +188,7 @@ class Product
         $this->variants = $variants;
     }
 
-    public function addVariant(Variant $variant, $is_default=false)
+    public function addVariant(Variant $variant, $is_default = false)
     {
         $variant->setDefault();
         $this->variants->add($variant);
@@ -196,16 +196,16 @@ class Product
 
     public function removeVariant(Variant $variant)
     {
-        return $this->variants->remove($variant, function($v) use ($variant){
+        return $this->variants->remove($variant, function ($v) use ($variant) {
             return $variant->getSku() === $v->getSku();
         });
     }
 
     public function getDefaultVariant()
     {
-        if (null === $this->default_variant)  {
+        if (null === $this->default_variant) {
             $variants = $this->getVariants();
-            foreach( $variants as $v) {
+            foreach ($variants as $v) {
                 if ($v->isDefault()) {
                     $this->default_variant = $v;
                     break;

@@ -12,7 +12,7 @@ class CreditCard implements PaymentSourceInterface
 
     protected $options;
 
-    public function setOptions(array $options=array())
+    public function setOptions(array $options = array())
     {
         $this->options = $options;
 

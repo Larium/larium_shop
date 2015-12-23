@@ -40,13 +40,12 @@ class Cart implements CartInterface
     /**
      * {@inheritdoc}
      */
-    public function addItem(OrderableInterface $orderable, $quantity=1)
+    public function addItem(OrderableInterface $orderable, $quantity = 1)
     {
-        $item = $this->item_from_orderable($orderable, $quantity);
+        $item = $this->itemFromOrderable($orderable, $quantity);
 
         // Checks for duplicated item and increase quantity instead of adding.
         if ($order_item = $this->getOrder()->containsItem($item)) {
-
             $order_item->setQuantity(
                 $order_item->getQuantity() + $item->getQuantity()
             );
@@ -80,7 +79,7 @@ class Cart implements CartInterface
     {
         if (null === $this->order) {
             $this->order = new Order();
-            $this->initialize_state_machine();
+            $this->initializeStateMachine();
         }
 
         return $this->order;
@@ -186,7 +185,7 @@ class Cart implements CartInterface
      * @access protected
      * @return void
      */
-    protected function item_from_orderable(
+    protected function itemFromOrderable(
         OrderableInterface $orderable,
         $quantity = 1
     ) {
@@ -199,7 +198,7 @@ class Cart implements CartInterface
         return $item;
     }
 
-    protected function initialize_state_machine()
+    protected function initializeStateMachine()
     {
         $config = include __DIR__ . '/../../../config/cart_finite_state.php';
 

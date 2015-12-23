@@ -94,7 +94,6 @@ class ShippingMethod implements ShippingMethodInterface
     public function getCalculator()
     {
         if (null === $this->calculator) {
-
             $class = $this->calculator_class;
 
             $this->calculator = new $class($this->getCalculatorOptions());

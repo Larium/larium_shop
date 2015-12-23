@@ -43,10 +43,8 @@ class PriceSack extends AbstractCalculator
         $item_amount = $object->getItemsTotal();
 
         if ($item_amount < $this->minimal_amount) {
-
             return $this->normal_amount;
         } else {
-
             return $this->discount_amount;
         }
     }

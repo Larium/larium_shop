@@ -59,7 +59,7 @@ class Collection extends ArrayIterator implements CollectionInterface
      */
     public function append($value)
     {
-        $this->validate_element($value);
+        $this->validateElement($value);
         parent::append($value);
         return true;
     }
@@ -69,10 +69,9 @@ class Collection extends ArrayIterator implements CollectionInterface
      */
     public function remove($element, Closure $c = null)
     {
-        $this->validate_element($element);
+        $this->validateElement($element);
 
         if (null === $c) {
-
             $key = array_search($element, $this->getArrayCopy(), true);
 
             if ($key !== false) {
@@ -81,8 +80,7 @@ class Collection extends ArrayIterator implements CollectionInterface
             }
 
         } else {
-
-            if (false !== $key = $this->apply_filter_callback($c)) {
+            if (false !== $key = $this->applyCallbackFilter($c)) {
                 $this->offsetUnset($key);
                 return true;
             }
@@ -99,7 +97,7 @@ class Collection extends ArrayIterator implements CollectionInterface
         if (null === $c) {
             return in_array($element, $this->getArrayCopy(), true);
         } else {
-            if (false !== $key = $this->apply_filter_callback($c)) {
+            if (false !== $key = $this->applyCallbackFilter($c)) {
                 return $this->offsetGet($key);
             }
         }
@@ -112,11 +110,11 @@ class Collection extends ArrayIterator implements CollectionInterface
      */
     public function offsetSet($index, $newval)
     {
-        $this->validate_element($newval);
+        $this->validateElement($newval);
         parent::offsetSet($index, $newval);
     }
 
-    private function validate_element($value)
+    private function validateElement($value)
     {
         if ($this->elements_class
             && !($value instanceof $this->elements_class)
@@ -125,7 +123,7 @@ class Collection extends ArrayIterator implements CollectionInterface
         }
     }
 
-    private function apply_filter_callback(Closure $callback)
+    private function applyCallbackFilter(Closure $callback)
     {
         $elements = array_filter($this->getArrayCopy(), $callback);
 

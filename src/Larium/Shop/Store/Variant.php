@@ -237,7 +237,7 @@ class Variant implements OrderableInterface
     {
         $contains = $this->option_values->contains(
             $option_value,
-            function($element) use ($option_value) {
+            function ($element) use ($option_value) {
                 return $option_value->getName() == $element->getName();
             }
         );

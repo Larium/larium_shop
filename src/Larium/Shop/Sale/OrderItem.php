@@ -171,7 +171,7 @@ class OrderItem implements OrderItemInterface
     public function getIdentifier()
     {
         if (null == $this->identifier) {
-            $this->generate_identifier();
+            $this->generateIdentifier();
         }
 
         return $this->identifier;
@@ -181,7 +181,7 @@ class OrderItem implements OrderItemInterface
     {
         $this->orderable = $orderable;
 
-        $this->generate_identifier();
+        $this->generateIdentifier();
     }
 
     public function getOrderable()
@@ -189,7 +189,7 @@ class OrderItem implements OrderItemInterface
         return $this->orderable;
     }
 
-    protected function generate_identifier()
+    protected function generateIdentifier()
     {
         if (null === $this->getOrderable()) {
             throw new \Exception("You must add an Orderable object before adding this item in Order");

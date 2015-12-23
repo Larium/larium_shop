@@ -160,7 +160,6 @@ class Order implements OrderInterface, StatefulInterface
     public function removeItem(OrderItemInterface $item)
     {
         if ($remove = $this->containsItem($item)) {
-
             $this->items->remove($remove);
 
             $this->calculateTotalAmount();
@@ -172,7 +171,7 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function containsItem(OrderItemInterface $order_item)
     {
-        return $this->items->contains($order_item, function($item) use ($order_item){
+        return $this->items->contains($order_item, function ($item) use ($order_item) {
             return $item->getIdentifier() == $order_item->getIdentifier();
         });
 
@@ -203,7 +202,7 @@ class Order implements OrderInterface, StatefulInterface
     public function calculateItemsTotal()
     {
         $total = Money::EUR(0);
-        foreach ( $this->getItems() as $item) {
+        foreach ($this->getItems() as $item) {
             $total = $total->add($item->getTotalPrice());
         }
 
@@ -288,7 +287,7 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function removeShipment(ShipmentInterface $shipment)
     {
-        $removed = $this->shipments->remove($shipment, function($s) use ($shipment) {
+        $removed = $this->shipments->remove($shipment, function ($s) use ($shipment) {
             return $shipment->getIdentifier() === $s->getIdentifier();
         });
 
@@ -332,7 +331,7 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function removePayment(PaymentInterface $payment)
     {
-        $removed = $this->payments->remove($payment, function($p) use ($payment) {
+        $removed = $this->payments->remove($payment, function ($p) use ($payment) {
             return $payment->getIdentifier() === $p->getIdentifier();
         });
 
@@ -434,13 +433,11 @@ class Order implements OrderInterface, StatefulInterface
         }
 
         foreach ($this->state_machines as $sm) {
-
             $payment = $sm->getObject();
 
             $state = $payment->getState();
 
             if ('unpaid' === $state || 'pending' === $state) {
-
                 $this->setCurrentPayment($payment);
 
                 if ('unpaid' === $state) {
@@ -487,7 +484,7 @@ class Order implements OrderInterface, StatefulInterface
      */
     public function removeAdjustment(AdjustmentInterface $adjustment)
     {
-        $this->adjustments->remove($adjustment, function($a) use ($adjustment){
+        $this->adjustments->remove($adjustment, function ($a) use ($adjustment) {
             return $a->getLabel() === $adjustment->getLabel();
         });
 
@@ -522,7 +519,7 @@ class Order implements OrderInterface, StatefulInterface
     public function calculateAdjustmentsTotal()
     {
         $total = Money::EUR(0);
-        foreach ( $this->getAdjustments() as $item) {
+        foreach ($this->getAdjustments() as $item) {
             $total = $total->add($item->getAmount());
         }
 

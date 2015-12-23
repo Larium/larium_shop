@@ -79,7 +79,7 @@ class Payment implements PaymentInterface, StatefulInterface
     {
         $this->transactions = new Collection();
 
-        $this->generate_identifier();
+        $this->generateIdentifier();
     }
 
     /**
@@ -111,8 +111,8 @@ class Payment implements PaymentInterface, StatefulInterface
      */
     public function removeTransaction(TransactionInterface $transaction)
     {
-        return $this->getTransactions()->remove($transaction, function($trx) use ($transaction){
-           return $trx->getTransactionId() == $transaction->getTransactionId();
+        return $this->getTransactions()->remove($transaction, function ($trx) use ($transaction) {
+            return $trx->getTransactionId() == $transaction->getTransactionId();
         });
     }
 
@@ -121,8 +121,8 @@ class Payment implements PaymentInterface, StatefulInterface
      */
     public function containsTransaction(TransactionInterface $transaction)
     {
-        return $this->getTransactions()->contains($transaction, function($trx) use ($transaction){
-           return $trx->getTransactionId() == $transaction->getTransactionId();
+        return $this->getTransactions()->contains($transaction, function ($trx) use ($transaction) {
+            return $trx->getTransactionId() == $transaction->getTransactionId();
         });
     }
 
@@ -155,7 +155,7 @@ class Payment implements PaymentInterface, StatefulInterface
      */
     public function getAmount()
     {
-        return $this->payment_amount();
+        return $this->paymentAmount();
     }
 
     /**
@@ -172,7 +172,7 @@ class Payment implements PaymentInterface, StatefulInterface
     public function setOrder(OrderInterface $order)
     {
         $this->order = $order;
-        $this->create_payment_method_adjustment();
+        $this->createPaymentMethodAdjustment();
     }
 
     /**
@@ -204,13 +204,13 @@ class Payment implements PaymentInterface, StatefulInterface
             throw new InvalidArgumentException("You must set a PaymentMethod for this Payment.");
         }
 
-        $amount = $this->payment_amount();
+        $amount = $this->paymentAmount();
 
-        $response = $this->invoke_provider($amount, $state);
+        $response = $this->invokeProvider($amount, $state);
 
-        $this->create_transaction_from_response($response);
+        $this->createTransactionFromResponse($response);
 
-        if ($response instanceOf RedirectResponse) {
+        if ($response instanceof RedirectResponse) {
             $this->setState('pending');
         }
 
@@ -255,7 +255,7 @@ class Payment implements PaymentInterface, StatefulInterface
         $this->setState($state);
     }
 
-    protected function payment_amount()
+    protected function paymentAmount()
     {
         if (null === $this->amount && null === $this->getOrder()) {
             throw new \InvalidArgumentException('Amount cannot br null');
@@ -274,10 +274,9 @@ class Payment implements PaymentInterface, StatefulInterface
      * @access protected
      * @return void
      */
-    protected function create_payment_method_adjustment()
+    protected function createPaymentMethodAdjustment()
     {
         if (null === $this->getPaymentMethod()) {
-
             return;
         }
 
@@ -304,7 +303,7 @@ class Payment implements PaymentInterface, StatefulInterface
      * @access protected
      * @return Provider\Response
      */
-    protected function invoke_provider($amount, $state = null)
+    protected function invokeProvider($amount, $state = null)
     {
         $action = $state ?: $this->getPaymentMethod()->getAction();
         $provider = $this->getPaymentMethod()->getProvider();
@@ -335,12 +334,12 @@ class Payment implements PaymentInterface, StatefulInterface
         return $options;
     }
 
-    protected function create_transaction_from_response(Provider\Response $response)
+    protected function createTransactionFromResponse(Provider\Response $response)
     {
         $transaction = new Transaction();
 
         $transaction->setPayment($this);
-        $transaction->setAmount($this->payment_amount());
+        $transaction->setAmount($this->paymentAmount());
         $transaction->setTransactionId($response->getTransactionId());
 
         $this->transactions->add($transaction);
@@ -352,7 +351,7 @@ class Payment implements PaymentInterface, StatefulInterface
      * @access protected
      * @return string
      */
-    protected function generate_identifier()
+    protected function generateIdentifier()
     {
         $this->identifier = uniqid();
     }

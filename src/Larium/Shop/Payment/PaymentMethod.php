@@ -187,9 +187,7 @@ class PaymentMethod implements PaymentMethodInterface
     public function getPaymentSource()
     {
         if (null === $this->payment_source) {
-
             if (null === $this->getSourceClass()) {
-
                 return null;
             }
 
@@ -235,7 +233,7 @@ class PaymentMethod implements PaymentMethodInterface
     /**
      * {@inheritdoc}
      */
-    public function setSourceOptions(array $options=array())
+    public function setSourceOptions(array $options = array())
     {
         $this->source_options = $options;
     }
@@ -286,7 +284,7 @@ class PaymentMethod implements PaymentMethodInterface
      * @access public
      * @return void
      */
-    public function setGatewayOptions(array $gateway_options=array())
+    public function setGatewayOptions(array $gateway_options = array())
     {
         $this->gateway_options = $gateway_options;
     }
