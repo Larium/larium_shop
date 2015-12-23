@@ -10,12 +10,12 @@ class FixtureLoader
 
     protected $data = array();
 
-    public function __construct($file=null)
+    public function __construct($file = null)
     {
         $this->file = $file;
     }
 
-    protected function parse_file()
+    protected function parseFile()
     {
         $yaml = new Parser();
 
@@ -25,13 +25,13 @@ class FixtureLoader
     public function getData()
     {
         if (empty($this->data)) {
-            $this->parse_file();
+            $this->parseFile();
         }
 
         return $this->data;
     }
 
-    public function instanceFor($class, $key, array $constructor=array())
+    public function instanceFor($class, $key, array $constructor = array())
     {
         $data = $this->getData();
         $attrs = $data[$key];
@@ -39,7 +39,7 @@ class FixtureLoader
         return $this->init($class, $attrs, $constructor);
     }
 
-    public function init($class, array $attributes, array $constructor=array())
+    public function init($class, array $attributes, array $constructor = array())
     {
 
         if (!empty($constructor)) {
@@ -49,7 +49,7 @@ class FixtureLoader
             $object = new $class();
         }
 
-        foreach ($attributes as $name=>$value) {
+        foreach ($attributes as $name => $value) {
             $mutator = 'set' . self::camelize($name);
             $object->$mutator($value);
         }

@@ -18,7 +18,7 @@ class Hydrator
         $this->storage = new \SplObjectStorage();
     }
 
-    public function hydrate(array $data, $key=null, $class_name=null)
+    public function hydrate(array $data, $key = null, $class_name = null)
     {
         foreach ($this->storage as $item) {
             if ($this->storage[$item] == $key) {
@@ -35,21 +35,19 @@ class Hydrator
         $class = new $class_name();
 
         foreach ($data as $key => $value) {
-
             $mutator = 'set' . $this->camelize($key);
 
             if (is_array($value) && array_key_exists($key, $maps)) {
-
-                    $storage = new Collection();
-                    foreach ($value as $k=>$v) {
-                        $nest = $this->hydrate($v, null, $maps[$key]['class']);
-                        $storage->add($nest);
-                        if (isset($maps[$key]['inverse'])) {
-                            $nest_mutator = 'set' . $this->camelize($maps[$key]['inverse']);
-                            $nest->$nest_mutator($class);
-                        }
+                $storage = new Collection();
+                foreach ($value as $k => $v) {
+                    $nest = $this->hydrate($v, null, $maps[$key]['class']);
+                    $storage->add($nest);
+                    if (isset($maps[$key]['inverse'])) {
+                        $nest_mutator = 'set' . $this->camelize($maps[$key]['inverse']);
+                        $nest->$nest_mutator($class);
                     }
-                    $class->$mutator($storage);
+                }
+                $class->$mutator($storage);
 
             } else {
                 if (in_array($key, ['unit_price', 'cost', 'amount', 'total_price'])) {

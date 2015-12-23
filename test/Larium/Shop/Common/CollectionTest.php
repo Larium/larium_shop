@@ -46,7 +46,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $this->collection->add($b);
         $this->collection->add($c);
 
-        $removed = $this->collection->remove($d, function($var) use ($d){
+        $removed = $this->collection->remove($d, function ($var) use ($d) {
             return $var->name == $d->name;
         });
 
@@ -56,7 +56,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($removed);
 
-        $removed = $this->collection->remove($d, function($var) use ($e){
+        $removed = $this->collection->remove($d, function ($var) use ($e) {
             return $var->name == $e->name;
         });
 
@@ -87,7 +87,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->collection->contains($a));
 
         $this->assertTrue(
-            false !== $this->collection->contains($d, function($var) use($d) {
+            false !== $this->collection->contains($d, function ($var) use ($d) {
                 return $var->name == $d->name;
             })
         );

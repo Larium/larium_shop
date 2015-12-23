@@ -37,7 +37,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
         $payment = new Payment();
         $payment->setAmount(Money::EUR(100));
         $payment->setPaymentMethod($method);
-        $sm = $this->initialize_state_machine($payment);
+        $sm = $this->initializeStateMachine($payment);
         $sm->apply('purchase');
 
         $this->assertEquals('paid', $payment->getState());
@@ -50,14 +50,14 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
         $payment = new Payment();
         $payment->setAmount(Money::EUR(100));
         $payment->setPaymentMethod($method);
-        $sm = $this->initialize_state_machine($payment);
+        $sm = $this->initializeStateMachine($payment);
         $sm->apply('purchase');
 
         $this->assertEquals('paid', $payment->getState());
         $this->assertEquals(Money::EUR(100), $payment->getAmount());
     }
 
-    private function initialize_state_machine($payment)
+    private function initializeStateMachine($payment)
     {
         $config = include __DIR__ . '/../../../../src/config/payment_finite_state.php';
 
