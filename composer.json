@@ -13,16 +13,15 @@
     "require": {
         "php": ">=5.4",
         "yohang/finite": "~1.1",
-        "symfony/options-resolver": "2.4.*",
-        "symfony/event-dispatcher": "2.4.*",
+        "symfony/options-resolver": "2.6.*",
+        "symfony/event-dispatcher": "2.6.*",
         "aktive_merchant/aktive_merchant": "1.0.*",
-        "mathiasverraes/money": "dev-master"
+        "mathiasverraes/money": "~1.2"
     },
     "require-dev": {
-        "symfony/yaml": "2.4.*",
-        "phpunit/phpunit": "3.7.*"
+        "symfony/yaml": "2.6.*"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "autoload": {
         "psr-0": {
             "Larium\\": "src/"
