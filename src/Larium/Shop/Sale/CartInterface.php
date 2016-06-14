@@ -43,7 +43,7 @@ interface CartInterface
      * @param PaymentMethodInterface $method
      * @return Larium\Shop\Payment\PaymentInterface
      */
-    public function addPaymentMethod(PaymentMethodInterface $method, Money $amount = null);
+    public function setPaymentMethod(PaymentMethodInterface $method, Money $amount = null);
 
     /**
      * Customer can choose a shipping method. Cart class will create a Shipment

@@ -158,7 +158,7 @@ interface OrderInterface extends AdjustableInterface
      * @access public
      * @return void
      */
-    public function addPayment(PaymentInterface $payment);
+    public function setPayment(PaymentInterface $payment);
 
     /**
      * Removes a Payment from Order.
@@ -167,7 +167,7 @@ interface OrderInterface extends AdjustableInterface
      * @access public
      * @return void
      */
-    public function removePayment(PaymentInterface $payment);
+    public function removePayment();
 
     public function addShipment(ShipmentInterface $shipment);
 

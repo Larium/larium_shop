@@ -32,7 +32,7 @@ trait Helper
 
         $payment->setState('pending');
         $payment->setPaymentMethod($method);
-        $cart->getOrder()->addPayment($payment);
+        $cart->getOrder()->setPayment($payment);
 
         $cart->processTo('checkout');
 

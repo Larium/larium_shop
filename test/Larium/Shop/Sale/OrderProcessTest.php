@@ -9,7 +9,6 @@ use Money\Money;
 
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
-
     use Helper;
 
     protected $loader;
@@ -122,7 +121,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $method->setSourceOptions($this->getValidCreditCardOptions());
 
         // Given i add payment method to cart.
-        $payment = $cart->addPaymentMethod($method);
+        $payment = $cart->setPaymentMethod($method);
 
         // When i process cart to pay state.
         $cart->processTo('pay');
@@ -153,7 +152,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
         // Given i add cash on delivery payment method to cart.
         $method = $this->getPaymentMethod('cash_on_delivery_payment_method');
-        $payment = $cart->addPaymentMethod($method);
+        $payment = $cart->setPaymentMethod($method);
 
         // When i process cart to pay state.
         $cart->processTo('pay');
@@ -182,7 +181,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         // Given i add redirect payment method to cart.
         $method = $this->getPaymentMethod('redirect_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
-        $payment = $cart->addPaymentMethod($method);
+        $payment = $cart->setPaymentMethod($method);
 
         // Given i process cart to pay state
         $cart->processTo('pay');
@@ -223,7 +222,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
         // Given i add cash on delivery payment method to cart.
         $payment_method = $this->getPaymentMethod('cash_on_delivery_payment_method');
-        $payment = $cart->addPaymentMethod($payment_method);
+        $payment = $cart->setPaymentMethod($payment_method);
 
         // Given i add courier shipping method to cart.
         $shipping_method = $this->getShippingMethod('courier_shipping_method');
@@ -254,7 +253,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
         // Given i add cash on delivery payment method to cart.
         $payment_method = $this->getPaymentMethod('cash_on_delivery_payment_method');
-        $payment = $cart->addPaymentMethod($payment_method);
+        $payment = $cart->setPaymentMethod($payment_method);
 
         // Then order should have at least one adjustment
         $this->assertTrue($cart->getOrder()->getAdjustments()->count() != 0);
@@ -307,7 +306,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $payment_method->setSourceOptions($this->getValidCreditCardOptions());
 
         // Given i create a partial payment for the order.
-        $payment = $cart->addPaymentMethod($payment_method, $total_amount->subtract(Money::EUR(100)));
+        $payment = $cart->setPaymentMethod($payment_method, $total_amount->subtract(Money::EUR(100)));
 
         // When i process cart to pay state.
         $response = $cart->processTo('pay');
@@ -320,63 +319,12 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         // Given i add a new payment with the rest of amount
         $payment_method = $this->getPaymentMethod('creditcard_payment_method');
         $payment_method->setSourceOptions($this->getValidCreditCardOptions());
-        $payment = $cart->addPaymentMethod($payment_method);
+        $payment = $cart->setPaymentMethod($payment_method);
 
         // When i process cart to pay state.
         $response = $cart->processTo('pay');
 
         // Then order state should be paid.
         $this->assertEquals(Order::PAID, $cart->getOrder()->getState());
-    }
-
-    public function testMultiplePartialPayments()
-    {
-        // Given i fetch a cart with one item.
-        $cart = $this->getCartWithOneItem();
-
-        // Given i process cart to checkout state
-        $cart->processTo('checkout');
-
-        // Given i store order total amount before adding any adjustment.
-        $total_amount = $cart->getOrder()->getTotalAmount();
-
-        // Given i add cash on delivery payment method to cart.
-        $payment_method = $this->getPaymentMethod('creditcard_payment_method');
-        $payment_method->setSourceOptions($this->getValidCreditCardOptions());
-
-        // Given i create a partial payment for the order.
-        $payment = $cart->addPaymentMethod($payment_method, $total_amount->subtract(Money::EUR(400)));
-
-        // When i process cart to pay state.
-        $response = $cart->processTo('pay');
-
-        // Then order state should be partial_paid.
-        $this->assertEquals(Order::PARTIAL_PAID, $cart->getOrder()->getState());
-
-        $this->assertEquals(400, $cart->getOrder()->getBalance()->getAmount());
-
-        // Given i add a new payment with another amount.
-        $payment_method = $this->getPaymentMethod('creditcard_payment_method');
-        $payment_method->setSourceOptions($this->getValidCreditCardOptions());
-        $payment = $cart->addPaymentMethod($payment_method, Money::EUR(200));
-
-        // When i process cart to pay state.
-        $response = $cart->processTo('pay');
-
-        // Then order state should be partial_paid.
-        $this->assertEquals(Order::PARTIAL_PAID, $cart->getOrder()->getState());
-
-        // Given i add a new payment with the rest of amount.
-        $payment_method = $this->getPaymentMethod('creditcard_payment_method');
-        $payment_method->setSourceOptions($this->getValidCreditCardOptions());
-        $payment = $cart->addPaymentMethod($payment_method, Money::EUR(200));
-
-        // When i process cart to pay state.
-        $response = $cart->processTo('pay');
-
-        // Then order state should be partial_paid.
-        $this->assertEquals(Order::PAID, $cart->getOrder()->getState());
-
-        $this->assertEquals(3, $cart->getOrder()->getPayments()->count());
     }
 }

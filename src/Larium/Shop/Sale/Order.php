@@ -119,7 +119,7 @@ class Order implements OrderInterface, StatefulInterface
      * @var array
      * @access protected
      */
-    protected $state_machines = array();
+    protected $state_machine;
 
     public function __construct()
     {
@@ -128,10 +128,9 @@ class Order implements OrderInterface, StatefulInterface
 
     public function initialize()
     {
-        $this->items        = new Collection();
-        $this->adjustments  = new Collection();
-        $this->payments     = new Collection();
-        $this->shipments    = new Collection();
+        $this->items = new Collection();
+        $this->shipments = new Collection();
+        $this->adjustments = new Collection();
     }
 
     /**
@@ -322,9 +321,9 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * {@inheritdoc}
      */
-    public function addPayment(PaymentInterface $payment)
+    public function setPayment(PaymentInterface $payment)
     {
-        $this->payments->add($payment);
+        $this->payment = $payment;
 
         $payment->setOrder($this);
 
@@ -336,72 +335,31 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * {@inheritdoc}
      */
-    public function removePayment(PaymentInterface $payment)
+    public function removePayment()
     {
-        $removed = $this->payments->remove($payment, function ($p) use ($payment) {
-            return $payment->getIdentifier() === $p->getIdentifier();
-        });
+        $this->payment->detachOrder($this);
 
-        if ($removed) {
-            $payment->detachOrder($this);
+        $this->state_machine = null;
+        $this->payment = null;
 
-            foreach ($this->state_machines as $key => $sm) {
-                if ($sm->getObject()->getIdentifier() === $payment->getIdentifier()) {
-                    unset($this->state_machines[$key]);
-                }
-            }
-        }
-
-        return $removed != null;
+        return true;
     }
 
-    public function getPayments()
+    public function getPayment()
     {
-        return $this->payments;
-    }
-
-    /**
-     * Sets the Payment that currently is processed.
-     *
-     * @param PaymentInterface $payment
-     * @access public
-     * @return void
-     */
-    public function setCurrentPayment(PaymentInterface $current_payment)
-    {
-        $this->current_payment = $current_payment;
-    }
-
-    /**
-     * Returns the payment that currently is processed.
-     *
-     * @access public
-     * @return PaymentInterface
-     */
-    public function getCurrentPayment()
-    {
-        return $this->current_payment;
-    }
-
-    /**
-     * Unsets the current Payment.
-     *
-     * @access public
-     * @return void
-     */
-    public function unsetCurrentPayment()
-    {
-        $this->current_payment = null;
+        return $this->payment;
     }
 
     public function calculateTotalPaymentAmount()
     {
+        if (null == $this->payment) {
+            return;
+        }
+
         $total = Money::EUR(0);
 
-        foreach ($this->getPayments() as $payment) {
-            if ($payment->getState() == 'paid') {
-                $total = $total->add($payment->getAmount());
-            }
+        if ($this->payment->getState() == PaymentInterface::PAID) {
+            $total = $total->add($this->payment->getAmount());
         }
 
         $this->total_payment_amount = $total;
@@ -433,28 +391,27 @@ class Order implements OrderInterface, StatefulInterface
         return $this->getTotalAmount()->subtract($this->getTotalPaymentAmount());
     }
 
-    public function processPayments()
+    public function processPayment()
     {
         if (!$this->needsPayment()) {
             return;
         }
 
-        foreach ($this->state_machines as $sm) {
-            $payment = $sm->getObject();
+        $sm = $this->state_machine;
 
-            $state = $payment->getState();
+        $payment = $sm->getObject();
 
-            if ('unpaid' === $state || 'pending' === $state) {
-                $this->setCurrentPayment($payment);
+        $state = $payment->getState();
 
-                if ('unpaid' === $state) {
-                    $response = $sm->apply('purchase');
-                } elseif ('pending' === $state) {
-                    $response = $sm->apply('doPurchase');
-                }
 
-                return $response;
+        if ('unpaid' === $state || 'pending' === $state) {
+            if ('unpaid' === $state) {
+                $response = $sm->apply('purchase');
+            } elseif ('pending' === $state) {
+                $response = $sm->apply('doPurchase');
             }
+
+            return $response;
         }
     }
 
@@ -555,6 +512,6 @@ class Order implements OrderInterface, StatefulInterface
 
         $state_machine->initialize();
 
-        $this->state_machines[] = $state_machine;
+        $this->state_machine = $state_machine;
     }
 }

@@ -140,7 +140,7 @@ class Cart implements CartInterface
     /**
      * {@inheritdoc}
      */
-    public function addPaymentMethod(
+    public function setPaymentMethod(
         PaymentMethodInterface $method,
         Money $amount = null
     ) {
@@ -148,7 +148,7 @@ class Cart implements CartInterface
 
         $payment->setPaymentMethod($method);
         $payment->setAmount($amount);
-        $this->getOrder()->addPayment($payment);
+        $this->getOrder()->setPayment($payment);
 
         return $payment;
     }
@@ -198,7 +198,9 @@ class Cart implements CartInterface
 
     protected function initializeStateMachine()
     {
-        $config = include __DIR__ . '/../../../config/cart_finite_state.php';
+        $reflection = new OrderStateReflection();
+
+        $config = $reflection->getStateConfig();
 
         $loader = new ArrayLoader($config);
 

@@ -31,6 +31,16 @@ use Larium\Shop\Sale\OrderInterface;
  */
 interface PaymentInterface
 {
+    const UNPAID = 'unpaid';
+
+    const PENDING = 'pending';
+
+    const AUTHORIZED = 'authorized';
+
+    const PAID = 'paid';
+
+    const REFUNDED = 'refunded';
+
     /**
      * Gets all transactions associated with this payment.
      *
