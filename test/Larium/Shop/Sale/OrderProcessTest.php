@@ -186,12 +186,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         // Given i process cart to pay state
         $cart->processTo('pay');
 
-        //$response = $cart->getOrder()->getCurrentPayment()->getResponse();
-
-        // Then response should be instance of 'Larium\Shop\Payment\Provider\RedirectResponse'
-        //$this->assertInstanceOf('Larium\Shop\Payment\Provider\RedirectResponse', $response);
-
-        // And payment should be in 'in_progress' state
+        // And payment should be in 'pending' state
         $this->assertEquals('pending', $payment->getState());
 
         // Given i fetch a cart with payment in_process state
@@ -200,7 +195,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         // When i process cart to pay state
         $response = $cart->processTo('pay');
 
-        $payment = $cart->getOrder()->getCurrentPayment();
+        $payment = $cart->getOrder()->getPayment();
 
         // Then payment state should be 'paid'
         $this->assertTrue($payment->getState() == 'paid');

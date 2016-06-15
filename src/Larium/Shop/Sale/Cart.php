@@ -144,11 +144,11 @@ class Cart implements CartInterface
         PaymentMethodInterface $method,
         Money $amount = null
     ) {
-        $payment = new Payment();
-
-        $payment->setPaymentMethod($method);
-        $payment->setAmount($amount);
-        $this->getOrder()->setPayment($payment);
+        $payment = new Payment(
+            $this->getOrder(),
+            $method,
+            $amount
+        );
 
         return $payment;
     }

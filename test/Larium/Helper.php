@@ -28,11 +28,8 @@ trait Helper
 
         $method = $this->getPaymentMethod('redirect_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
-        $payment = new Payment();
-
+        $payment = $cart->setPaymentMethod($method);
         $payment->setState('pending');
-        $payment->setPaymentMethod($method);
-        $cart->getOrder()->setPayment($payment);
 
         $cart->processTo('checkout');
 

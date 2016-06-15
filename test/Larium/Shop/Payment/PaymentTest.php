@@ -4,11 +4,11 @@
 
 namespace Larium\Shop\Payment;
 
+use Money\Money;
 use Larium\Helper;
 use Larium\Shop\Sale\Order;
-use Finite\StateMachine\StateMachine;
 use Finite\Loader\ArrayLoader;
-use Money\Money;
+use Finite\StateMachine\StateMachine;
 
 class PaymentTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +21,8 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateInstance()
     {
-        $payment = new Payment();
+        $method = $this->getPaymentMethod('creditcard_payment_method');
+        $payment = new Payment(new Order(), $method);
 
         $this->assertInstanceOf('Larium\\Shop\\Payment\\PaymentInterface', $payment);
 
@@ -34,9 +35,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     {
         $method = $this->getPaymentMethod('creditcard_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
-        $payment = new Payment();
-        $payment->setAmount(Money::EUR(100));
-        $payment->setPaymentMethod($method);
+        $payment = new Payment(new Order(), $method, Money::EUR(100));
         $sm = $this->initializeStateMachine($payment);
         $sm->apply('purchase');
 
@@ -47,9 +46,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     {
         $method = $this->getPaymentMethod('cash_on_delivery_payment_method');
 
-        $payment = new Payment();
-        $payment->setAmount(Money::EUR(100));
-        $payment->setPaymentMethod($method);
+        $payment = new Payment(new Order(), $method, Money::EUR(100));
         $sm = $this->initializeStateMachine($payment);
         $sm->apply('purchase');
 

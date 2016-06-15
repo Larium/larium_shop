@@ -43,7 +43,7 @@ use InvalidArgumentException;
  *
  * @uses PaymentInterface
  * @uses StatefulInterface
- * @author  Andreas Kollaros <andreas@larium.net>
+ * @author Andreas Kollaros <andreas@larium.net>
  */
 class Payment implements PaymentInterface, StatefulInterface
 {
@@ -63,22 +63,31 @@ class Payment implements PaymentInterface, StatefulInterface
 
     protected $payment_method;
 
-    protected $state = 'unpaid';
+    protected $state = self::UNPAID;
 
     protected $identifier;
 
     protected $response;
 
-    public function __construct()
-    {
-        $this->initialize();
-    }
-
-    public function initialize()
-    {
-        $this->transactions = new Collection();
+    /**
+     * @param OrderInterface $order
+     * @param PaymentMethodInterface $paymentMethod
+     * @param Money $amount
+     */
+    public function __construct(
+        OrderInterface $order,
+        PaymentMethodInterface $paymentMethod,
+        Money $amount = null
+    ) {
 
         $this->generateIdentifier();
+        $this->order = $order;
+        $this->amount = $amount;
+        $this->payment_method = $paymentMethod;
+        $this->createPaymentMethodAdjustment();
+        $order->setPayment($this);
+
+        $this->transactions = new Collection();
     }
 
     /**
@@ -136,22 +145,6 @@ class Payment implements PaymentInterface, StatefulInterface
     /**
      * {@inheritdoc}
      */
-    public function setPaymentMethod(PaymentMethod $payment_method)
-    {
-        $this->payment_method = $payment_method;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = $amount;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getAmount()
     {
         return $this->paymentAmount();
@@ -168,15 +161,6 @@ class Payment implements PaymentInterface, StatefulInterface
     /**
      * {@inheritdoc}
      */
-    public function setOrder(OrderInterface $order)
-    {
-        $this->order = $order;
-        $this->createPaymentMethodAdjustment();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function detachOrder()
     {
         $label = $this->getIdentifier();
@@ -187,7 +171,6 @@ class Payment implements PaymentInterface, StatefulInterface
                 $this->order = null;
 
                 return true;
-                break;
             }
         }
 
@@ -215,7 +198,7 @@ class Payment implements PaymentInterface, StatefulInterface
 
         if ($response->isSuccess()) {
             if (null === $this->amount) {
-                $this->setAmount($amount);
+                $this->amount = $amount;
             }
 
             $this->response = $response;

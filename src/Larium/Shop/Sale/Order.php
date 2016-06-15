@@ -36,7 +36,6 @@ class Order implements OrderInterface, StatefulInterface
      * Order items.
      *
      * @var Larium\Shop\Common\Collection
-     * @access protected
      */
     protected $items;
 
@@ -44,23 +43,20 @@ class Order implements OrderInterface, StatefulInterface
      * Order adjustments
      *
      * @var Larium\Shop\Common\Collection
-     * @access protected
      */
     protected $adjustments;
 
     /**
-     * Order payments
+     * Order payment
      *
-     * @var Larium\Shop\Common\Collection
-     * @access protected
+     * @var Larium\Shop\Payment\Payment
      */
-    protected $payments;
+    protected $payment;
 
     /**
      * Order current processed payment
      *
      * @var Larium\Shop\Payment\Payment
-     * @access protected
      */
     protected $current_payment;
 
@@ -68,7 +64,6 @@ class Order implements OrderInterface, StatefulInterface
      * Order shipments
      *
      * @var Larium\Shop\Common\Collection
-     * @access protected
      */
     protected $shipments;
 
@@ -76,7 +71,6 @@ class Order implements OrderInterface, StatefulInterface
      * Order adjustments total amount
      *
      * @var Money\Money
-     * @access protected
      */
     protected $adjustments_total;
 
@@ -84,7 +78,6 @@ class Order implements OrderInterface, StatefulInterface
      * Order total items amount
      *
      * @var Money\Money
-     * @access protected
      */
     protected $items_total;
 
@@ -92,7 +85,6 @@ class Order implements OrderInterface, StatefulInterface
      * Order total amount
      *
      * @var Money\Money
-     * @access protected
      */
     protected $total_amount;
 
@@ -100,16 +92,14 @@ class Order implements OrderInterface, StatefulInterface
      * Order total payment amount
      *
      * @var Money\Money
-     * @access protected
      */
     protected $total_payment_amount;
 
     /**
      * Order current state.
-     * @see Order::getStates method for a listo of available states.
+     * @see Order::getStates method for a list of available states.
      *
      * @var string
-     * @access protected
      */
     protected $state;
 
@@ -325,11 +315,7 @@ class Order implements OrderInterface, StatefulInterface
     {
         $this->payment = $payment;
 
-        $payment->setOrder($this);
-
         $this->calculateTotalPaymentAmount();
-
-        $this->initializeStateMachine($payment);
     }
 
     /**
@@ -397,12 +383,9 @@ class Order implements OrderInterface, StatefulInterface
             return;
         }
 
+        $this->initializeStateMachine($this->payment);
         $sm = $this->state_machine;
-
-        $payment = $sm->getObject();
-
-        $state = $payment->getState();
-
+        $state = $this->payment->getState();
 
         if ('unpaid' === $state || 'pending' === $state) {
             if ('unpaid' === $state) {

@@ -73,14 +73,6 @@ interface PaymentInterface
     public function containsTransaction(TransactionInterface $transaction);
 
     /**
-     * Sets the amount of money to pay.
-     *
-     * @param Money\Money $amount
-     * @return void
-     */
-    public function setAmount($amount);
-
-    /**
      * Gets the amount to pay.
      *
      * @return Money\Money
@@ -111,13 +103,6 @@ interface PaymentInterface
     public function getPaymentMethod();
 
     /**
-     * Sets the PaymentMethod for this Payment.
-     *
-     * @return void
-     */
-    public function setPaymentMethod(PaymentMethod $payment_method);
-
-    /**
      * Gets the unique identifier for this payment.
      *
      * @return string
@@ -131,14 +116,6 @@ interface PaymentInterface
      * @return Larium\Shop\Sale\OrderInterface
      */
     public function getOrder();
-
-    /**
-     * Sets associated Order object.
-     *
-     * @param Larium\Shop\Sale\OrderInterface $order
-     * @return void
-     */
-    public function setOrder(OrderInterface $order);
 
     /**
      * Detach the Order object from Payment.
