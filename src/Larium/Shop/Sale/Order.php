@@ -12,15 +12,16 @@
  */
 namespace Larium\Shop\Sale;
 
-use Finite\StatefulInterface;
-use Finite\StateMachine\StateMachine;
+use Money\Money;
 use Finite\State\State;
+use Finite\StatefulInterface;
 use Finite\Loader\ArrayLoader;
 use Finite\Event\TransitionEvent;
+use Larium\Shop\Common\Collection;
+use Finite\StateMachine\StateMachine;
 use Larium\Shop\Payment\PaymentInterface;
 use Larium\Shop\Shipment\ShipmentInterface;
-use Larium\Shop\Common\Collection;
-use Money\Money;
+use Larium\Shop\Payment\PaymentStateReflection;
 
 /**
  * Order class
@@ -485,7 +486,9 @@ class Order implements OrderInterface, StatefulInterface
 
     public function initializeStateMachine(StatefulInterface $payment)
     {
-        $config = include __DIR__ . '/../../../config/payment_finite_state.php';
+        $reflection = new PaymentStateReflection();
+
+        $config = $reflection->getStateConfig();
 
         $loader = new ArrayLoader($config);
 

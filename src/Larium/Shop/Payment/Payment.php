@@ -50,10 +50,9 @@ class Payment implements PaymentInterface, StatefulInterface
     protected $transactions;
 
     /**
-     * Amount to be paid on this payment
+     * Amount to be paid.
      *
      * @var Money\Money
-     * @access protected
      */
     protected $amount;
 
