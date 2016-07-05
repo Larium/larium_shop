@@ -240,7 +240,7 @@ class Payment implements PaymentInterface, StatefulInterface
     protected function paymentAmount()
     {
         if (null === $this->amount && null === $this->getOrder()) {
-            throw new \InvalidArgumentException('Amount cannot br null');
+            throw new \InvalidArgumentException('Amount cannot be null');
         }
 
         return $this->amount ?: $this->getOrder()->getTotalAmount();
