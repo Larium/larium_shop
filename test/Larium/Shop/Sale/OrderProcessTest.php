@@ -7,7 +7,7 @@ namespace Larium\Shop\Sale;
 use Larium\Helper;
 use Money\Money;
 
-class OrderTest extends \PHPUnit_Framework_TestCase
+class OrderProcessTest extends \PHPUnit_Framework_TestCase
 {
     use Helper;
 

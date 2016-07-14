@@ -10,7 +10,7 @@ use AktiveMerchant\Billing\CreditCard;
 
 class RedirectProvider extends GatewayProvider implements PaymentProviderInterface
 {
-    public function purchase($amount, array $options=array())
+    public function purchase($amount, array $options = array())
     {
         $response = new RedirectResponse();
 
@@ -24,7 +24,7 @@ class RedirectProvider extends GatewayProvider implements PaymentProviderInterfa
         return $response;
     }
 
-    public function doPurchase($amount, array $options=array())
+    public function doPurchase($amount, array $options = array())
     {
         $response = new Response();
 
