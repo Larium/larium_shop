@@ -92,7 +92,6 @@ class Collection extends ArrayIterator implements CollectionInterface
                 $this->offsetUnset($key);
                 return true;
             }
-
         } else {
             if (false !== $key = $this->applyCallbackFilter($c)) {
                 $this->offsetUnset($key);

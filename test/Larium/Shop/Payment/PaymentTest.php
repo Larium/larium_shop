@@ -56,7 +56,9 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
 
     private function initializeStateMachine($payment)
     {
-        $config = include __DIR__ . '/../../../../src/config/payment_finite_state.php';
+        $reflection = new PaymentStateReflection();
+
+        $config = $reflection->getStateConfig();
 
         $loader = new ArrayLoader($config);
 

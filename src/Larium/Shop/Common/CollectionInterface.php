@@ -56,7 +56,7 @@ interface CollectionInterface
      * @param mixed    $element The element to check.
      * @param Closure  $c       A callback for custom comparison of element to
      *                          check.
-     * @return mixed|boolean    If closurer isset return the element that is
+     * @return mixed|boolean    If closure isset return the element that is
      *                          stored in collection else return true or false.
      */
     public function contains($element, Closure $c = null);
