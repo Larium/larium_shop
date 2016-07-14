@@ -4,14 +4,12 @@
 
 namespace Larium\Shop\Store;
 
+use Larium\FixtureHelper;
 use Larium\Shop\Common\Collection;
 
 class VariantTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        $this->loader = new \FixtureLoader();
-    }
+    use FixtureHelper;
 
     public function testCreateVariantOptionValues()
     {
@@ -44,15 +42,6 @@ class VariantTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    private function getOptionType($id)
-    {
-        $data = $this->loader->getData();
-        $hydrator = new \Hydrator('Larium\Shop\\Store\\OptionType');
-
-        return $hydrator->hydrate($data[$id], $id);
-
-    }
-
     private function populateOptionValues()
     {
         $output = array();
@@ -65,7 +54,7 @@ class VariantTest extends \PHPUnit_Framework_TestCase
             array('XXLarge', 'xxlarge')
         );
 
-        $option_type = $this->getOptionType('size_option_type');
+        $option_type = $this->optionTypes('size_option_type');
 
         foreach ($fixtures as $index => $f) {
             $option_value = new OptionValue();

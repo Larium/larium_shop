@@ -128,11 +128,11 @@ class PaymentMethod implements PaymentMethodInterface
     /**
      * Set cost.
      *
-     * @param number $cost the value to set.
+     * @param int $cost.
      */
     public function setCost($cost)
     {
-        $this->cost = $cost;
+        $this->cost = Money::EUR($cost);
     }
 
     /**

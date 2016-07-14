@@ -1,0 +1,4 @@
+# vim: set expandtab tabstop=2 shiftwidth=2 softtabstop=2:
+Larium\Shop\Sale\Cart:
+  cart_with_one_item:
+    addItem: [@product_1_variant_1]

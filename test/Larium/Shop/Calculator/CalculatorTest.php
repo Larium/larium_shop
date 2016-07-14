@@ -5,7 +5,7 @@
 namespace Larium\Shop\Calculator;
 
 use Money\Money;
-use Stub\Order;
+use Larium\Stub\Order;
 
 class CalculatorTest extends \PHPUnit_Framework_TestCase
 {

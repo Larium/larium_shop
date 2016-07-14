@@ -132,7 +132,7 @@ class Product
     /**
      * Delegate set unit price to default variant.
      *
-     * @param float|integer $price
+     * @param int $price
      * @return void
      */
     public function setUnitPrice($price)
@@ -178,12 +178,18 @@ class Product
     public function setVariants($variants)
     {
         $this->variants = $variants;
+        foreach ($variants as $variant) {
+            $variant->setProduct($this);
+        }
     }
 
     public function addVariant(Variant $variant, $is_default = false)
     {
-        $variant->setDefault();
+        if ($is_default) {
+            $variant->setDefault();
+        }
         $this->variants->add($variant);
+        $variant->setProduct($this);
     }
 
     public function removeVariant(Variant $variant)

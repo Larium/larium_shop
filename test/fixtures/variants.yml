@@ -1,0 +1,21 @@
+# vim: set expandtab tabstop=2 shiftwidth=2 softtabstop=2:
+Larium\Shop\Store\Variant:
+  product_1_variant_1:
+    sku: 'PRD-01-0001'
+    setUnitPrice: [1200]
+    is_default: true
+  product_1_variant_2:
+    sku: 'PRD-01-0002'
+    setUnitPrice: [600]
+  product_2_variant_1:
+    sku: 'PRD-02-0001'
+    setUnitPrice: [900]
+    is_default: true
+  product_2_variant_2:
+    sku: 'PRD-02-0002'
+    setUnitPrice: [900]
+Larium\Shop\Common\Collection:
+  product_1_variants:
+    __construct: [[@product_1_variant_1, @product_1_variant_2]]
+  product_2_variants:
+    __construct: [[@product_2_variant_1, @product_2_variant_2]]

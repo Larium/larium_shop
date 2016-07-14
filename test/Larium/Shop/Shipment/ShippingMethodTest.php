@@ -4,20 +4,15 @@
 
 namespace Larium\Shop\Shipment;
 
+use Larium\FixtureHelper;
+
 class ShippingMethodTest extends \PHPUnit_Framework_TestCase
 {
-    protected $loader;
-
-    protected $data;
-
-    public function setUp()
-    {
-        $this->loader = new \FixtureLoader();
-    }
+    use FixtureHelper;
 
     public function testInstance()
     {
-        $shipping_method = $this->getShippingMethod('courier_shipping_method');
+        $shipping_method = $this->shippingMethods('courier_shipping_method');
 
         $this->assertInstanceOf(
             'Larium\Shop\\Calculator\\CalculatorInterface',
@@ -32,22 +27,11 @@ class ShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testShippingMethodCalculator()
     {
-        $shipping_method = $this->getShippingMethod('courier_shipping_method');
+        $shipping_method = $this->shippingMethods('courier_shipping_method');
 
         $this->assertEquals(
-            $this->data['courier_shipping_method']['calculator_options']['amount'],
+            500,
             $shipping_method->calculateCost()->getAmount()
         );
-    }
-
-    /*- ( Fixtures ) -------------------------------------------------------- */
-
-    private function getShippingMethod($id)
-    {
-        $this->data = $this->loader->getData();
-
-        $hydrator = new \Hydrator('Larium\Shop\\Shipment\\ShippingMethod');
-
-        return $hydrator->hydrate($this->data[$id], $id);
     }
 }

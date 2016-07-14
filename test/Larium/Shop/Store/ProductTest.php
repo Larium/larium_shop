@@ -4,38 +4,23 @@
 
 namespace Larium\Shop\Store;
 
+use Larium\FixtureHelper;
+
 class ProductTest extends \PHPUnit_Framework_TestCase
 {
-
-    public function setUp()
-    {
-        $this->loader = new \FixtureLoader();
-    }
+    use FixtureHelper;
 
     public function testCreateProduct()
     {
         $product = new Product();
 
-        $this->assertFalse(is_null($product->getDefaultVariant()));
+        $this->assertNotNull($product->getDefaultVariant());
 
         $this->assertInstanceOf('Larium\Shop\Store\Variant', $product->getDefaultVariant());
 
-        $unit_price = 10;
+        $unit_price = 1000;
         $product->setUnitPrice($unit_price);
 
-        $this->assertEquals($unit_price, $product->getDefaultVariant()->getUnitPrice());
-    }
-
-
-
-    /*- ( Fixtures ) -------------------------------------------------------- */
-
-    private function getProduct($id)
-    {
-        $data = $this->loader->getData();
-
-        $hydrator = new \Hydrator('Larium\Shop\\Store\\Product');
-
-        return $hydrator->hydrate($data[$id], $id);
+        $this->assertEquals($unit_price, $product->getDefaultVariant()->getUnitPrice()->getAmount());
     }
 }

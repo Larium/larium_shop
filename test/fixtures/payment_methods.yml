@@ -1,0 +1,38 @@
+# vim: set expandtab tabstop=2 shiftwidth=2 softtabstop=2:
+Larium\Shop\Payment\PaymentMethod:
+  creditcard_payment_method:
+    action: 'purchase'
+    source_class: 'Larium\Shop\Payment\Source\CreditCard'
+    provider_class: 'Larium\Shop\Payment\Provider\GatewayProvider'
+    gateway_class: 'AktiveMerchant\Billing\Gateways\Bogus'
+    gateway_options: {login: 'x', password: 'y'}
+    title: 'Credit card payment'
+    setCost: [0]
+    id: 1 # Optional value assigned probably from storage engine
+    description: 'Some description' # Optional value used to inform end user.
+  cash_on_delivery_payment_method:
+    action: 'purchase'
+    source_class: 'Larium\Shop\Payment\Source\CashOnDelivery'
+    provider_class: 'Larium\Shop\Payment\Provider\LocalProvider'
+    title: 'Cash On Delivery payment'
+    setCost: [400]
+    id: 2
+    description: 'Some description'
+  giftcard_payment_method:
+    action: 'purchase'
+    source_class: 'Larium\Shop\Payment\Source\Giftcard'
+    provider_class: 'Larium\Shop\Payment\Provider\LocalProvider'
+    title: 'Giftcard payment'
+    cost: 0
+    id: 3
+    description: 'Some description'
+  redirect_payment_method:
+    action: 'doPurchase'
+    source_class: 'Larium\Shop\Payment\Source\CreditCard'
+    provider_class: 'Larium\Shop\Payment\Provider\RedirectProvider'
+    gateway_class: 'AktiveMerchant\Billing\Gateways\Bogus'
+    gateway_options: {login: 'x', password: 'y'}
+    title: 'Redirect payment'
+    cost: 0
+    id: 4
+    description: 'Some description'

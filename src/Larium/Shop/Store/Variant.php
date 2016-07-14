@@ -12,8 +12,9 @@
  */
 namespace Larium\Shop\Store;
 
-use Larium\Shop\Sale\OrderableInterface;
+use Money\Money;
 use Larium\Shop\Common\Collection;
+use Larium\Shop\Sale\OrderableInterface;
 use Larium\Shop\Common\CollectionInterface;
 
 /**
@@ -155,11 +156,11 @@ class Variant implements OrderableInterface
     /**
      * Sets unit price.
      *
-     * @param float|integer $unit_price
+     * @param int $unit_price
      */
     public function setUnitPrice($unit_price)
     {
-        $this->unit_price = $unit_price;
+        $this->unit_price = Money::EUR($unit_price);
     }
 
     /**

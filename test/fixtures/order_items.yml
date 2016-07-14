@@ -1,0 +1,9 @@
+# vim: set expandtab tabstop=2 shiftwidth=2 softtabstop=2:
+Larium\Shop\Sale\OrderItem:
+  order_item_1:
+    unit_price: 12
+    quantity: 1
+    total_price: 12
+    sku: 'PRD-01-0001'
+    description: 'T-Shirt LongSleeve'
+    orderable: @product_1_variant_1

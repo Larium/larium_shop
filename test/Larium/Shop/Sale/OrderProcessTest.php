@@ -4,19 +4,12 @@
 
 namespace Larium\Shop\Sale;
 
-use Larium\Helper;
 use Money\Money;
+use Larium\FixtureHelper;
 
 class OrderProcessTest extends \PHPUnit_Framework_TestCase
 {
-    use Helper;
-
-    protected $loader;
-
-    public function setUp()
-    {
-        $this->loader = new \FixtureLoader();
-    }
+    use FixtureHelper;
 
     public function testCartAddingItems()
     {
@@ -24,7 +17,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $cart = new Cart();
 
         // Given i fetch a product
-        $product1 = $this->getProduct('product_1');
+        $product1 = $this->products('product_1');
 
         // Given i get the default variant from product
         $variant1 = $product1->getDefaultVariant();
@@ -36,7 +29,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $cart->getItemsCount());
 
         // Given i fetch another product
-        $product2 = $this->getProduct('product_2');
+        $product2 = $this->products('product_2');
 
         // Given i get the default variant from product
         $variant2 = $product2->getDefaultVariant();
@@ -61,7 +54,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $cart = new Cart();
 
         // Given i fetch a product
-        $product = $this->getProduct('product_1');
+        $product = $this->products('product_1');
 
         // Given i get the default variant from product
         $variant = $product->getDefaultVariant();
@@ -86,7 +79,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $order = $cart->getOrder();
 
         // Given i fetch a product
-        $product = $this->getProduct('product_1');
+        $product = $this->products('product_1');
 
         // Given i get the default variant from product
         $variant = $product->getDefaultVariant();
@@ -98,7 +91,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(false !== $order->containsItem($item));
 
         // Given i fetch an item from an order
-        $item = $this->getOrderItem('order_item_1');
+        $item = $this->orderItems('order_item_1');
 
         // And i assign to this item the order.
         $item->setOrder($order);
@@ -111,13 +104,13 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
     public function testOrderPaymentWithCreditCard()
     {
         // Given i fetch a cart with one item.
-        $cart = $this->getCartWithOneItem();
+        $cart = $this->carts('cart_with_one_item');
 
         // Given i process cart to checkout state.
         $cart->processTo('checkout');
 
         // Given i fetch creditcard payment method.
-        $method = $this->getPaymentMethod('creditcard_payment_method');
+        $method = $this->paymentMethods('creditcard_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
 
         // Given i add payment method to cart.
@@ -142,7 +135,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
     public function testOrderPaymentWithCashOnDelivery()
     {
         // Given i fetch a cart with one item.
-        $cart = $this->getCartWithOneItem();
+        $cart = $this->carts('cart_with_one_item');
 
         // Given i store order total amount.
         $total_amount = $cart->getOrder()->getTotalAmount();
@@ -151,7 +144,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $cart->processTo('checkout');
 
         // Given i add cash on delivery payment method to cart.
-        $method = $this->getPaymentMethod('cash_on_delivery_payment_method');
+        $method = $this->paymentMethods('cash_on_delivery_payment_method');
         $payment = $cart->setPaymentMethod($method);
 
         // When i process cart to pay state.
@@ -173,13 +166,13 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
     public function testRedirectPayment()
     {
         // Given i fetch a cart with one item.
-        $cart = $this->getCartWithOneItem();
+        $cart = $this->carts('cart_with_one_item');
 
         // Given i process cart to checkout state
         $cart->processTo('checkout');
 
         // Given i add redirect payment method to cart.
-        $method = $this->getPaymentMethod('redirect_payment_method');
+        $method = $this->paymentMethods('redirect_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
         $payment = $cart->setPaymentMethod($method);
 
@@ -210,17 +203,17 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
     public function testOrderWithShippingMethod()
     {
         // Given i fetch a cart with one item.
-        $cart = $this->getCartWithOneItem();
+        $cart = $this->carts('cart_with_one_item');
 
         // Given i process cart to checkout state
         $cart->processTo('checkout');
 
         // Given i add cash on delivery payment method to cart.
-        $payment_method = $this->getPaymentMethod('cash_on_delivery_payment_method');
+        $payment_method = $this->paymentMethods('cash_on_delivery_payment_method');
         $payment = $cart->setPaymentMethod($payment_method);
 
         // Given i add courier shipping method to cart.
-        $shipping_method = $this->getShippingMethod('courier_shipping_method');
+        $shipping_method = $this->shippingMethods('courier_shipping_method');
 
         // Given i set shipping method to cart.
         $cart->setShippingMethod($shipping_method);
@@ -238,7 +231,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
     public function testRemovePaymentWillRemoveAdjustmentToo()
     {
         // Given i fetch a cart with one item.
-        $cart = $this->getCartWithOneItem();
+        $cart = $this->carts('cart_with_one_item');
 
         // Given i process cart to checkout state
         $cart->processTo('checkout');
@@ -247,7 +240,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $total_amount = $cart->getOrder()->getTotalAmount();
 
         // Given i add cash on delivery payment method to cart.
-        $payment_method = $this->getPaymentMethod('cash_on_delivery_payment_method');
+        $payment_method = $this->paymentMethods('cash_on_delivery_payment_method');
         $payment = $cart->setPaymentMethod($payment_method);
 
         // Then order should have at least one adjustment
@@ -266,13 +259,13 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
     public function testRemoveShipmentWillRemoveAdjustmentToo()
     {
         // Given i fetch a cart with one item.
-        $cart = $this->getCartWithOneItem();
+        $cart = $this->carts('cart_with_one_item');
 
         // Given i process cart to checkout state
         $cart->processTo('checkout');
 
         // Given i set shipping method to cart.
-        $shipping_method = $this->getShippingMethod('courier_shipping_method');
+        $shipping_method = $this->shippingMethods('courier_shipping_method');
         $shipment = $cart->setShippingMethod($shipping_method);
 
         // Then order should have at least one adjustment
@@ -288,7 +281,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
     public function testRollbackPayment()
     {
         // Given i fetch a cart with one item.
-        $cart = $this->getCartWithOneItem();
+        $cart = $this->carts('cart_with_one_item');
 
         // Given i process cart to checkout state
         $cart->processTo('checkout');
@@ -297,7 +290,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $total_amount = $cart->getOrder()->getTotalAmount();
 
         // Given i add cash on delivery payment method to cart.
-        $payment_method = $this->getPaymentMethod('creditcard_payment_method');
+        $payment_method = $this->paymentMethods('creditcard_payment_method');
         $payment_method->setSourceOptions($this->getValidCreditCardOptions());
 
         // Given i create a partial payment for the order.
@@ -312,7 +305,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(100, $cart->getOrder()->getBalance()->getAmount());
 
         // Given i add a new payment with the rest of amount
-        $payment_method = $this->getPaymentMethod('creditcard_payment_method');
+        $payment_method = $this->paymentMethods('creditcard_payment_method');
         $payment_method->setSourceOptions($this->getValidCreditCardOptions());
         $payment = $cart->setPaymentMethod($payment_method);
 

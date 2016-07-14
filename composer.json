@@ -19,7 +19,8 @@
         "mathiasverraes/money": "~1.2"
     },
     "require-dev": {
-        "symfony/yaml": "2.6.*"
+        "symfony/yaml": "2.6.*",
+        "nelmio/alice": "2.1.*"
     },
     "minimum-stability": "stable",
     "autoload": {
@@ -28,6 +29,8 @@
         }
     },
     "autoload-dev": {
-        "files": ["test/FixtureLoader.php", "test/Hydrator.php", "test/Larium/RedirectProvider.php", "test/Stub/Order.php", "test/Larium/Helper.php"]
+        "psr-0": {
+            "Larium\\": "test/"
+        }
     }
 }

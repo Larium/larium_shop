@@ -1,0 +1,6 @@
+# vim: set expandtab tabstop=2 shiftwidth=2 softtabstop=2:
+Larium\Shop\Shipment\ShippingMethod:
+  courier_shipping_method:
+    label: 'Local courier'
+    calculator_class: 'Larium\Shop\Calculator\FlatRate'
+    calculator_options: {amount: 500}
