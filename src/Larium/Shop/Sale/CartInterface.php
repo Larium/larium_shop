@@ -19,6 +19,14 @@ use Money\Money;
 interface CartInterface
 {
     /**
+     * Gets the Order that handle the Cart.
+     * Creates new if does not exist.
+     *
+     * @return OrderInterface
+     */
+    public function getOrder();
+
+    /**
      * Add an Orderable object to the Order.
      *
      * @param  OrderableInterface $orderable

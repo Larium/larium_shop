@@ -42,6 +42,13 @@ class Cart implements CartInterface
      */
     protected $state_machine;
 
+    public function __construct(OrderInterface $order = null)
+    {
+        if ($this->order = $order) {
+            $this->initializeStateMachine();
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -74,10 +81,7 @@ class Cart implements CartInterface
     }
 
     /**
-     * Gets the Order that handle the Cart.
-     * Creates new if does not exist.
-     *
-     * @return Order
+     * {@inheritdoc}
      */
     public function getOrder()
     {
@@ -95,7 +99,7 @@ class Cart implements CartInterface
      * @param  Order $order
      * @return void
      */
-    public function setOrder(Order $order)
+    private function setOrder(Order $order)
     {
         $this->order = $order;
     }
@@ -217,7 +221,7 @@ class Cart implements CartInterface
      *
      * @return StateMachine
      */
-    public function getStateMachine()
+    private function getStateMachine()
     {
         return $this->state_machine;
     }

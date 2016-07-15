@@ -40,42 +40,18 @@ trait FixtureHelper
         return $cart;
     }
 
-    protected function products($key)
+    public function __call($method, $args)
     {
-        return $this->objects[__FUNCTION__][$key];
+        if (empty($args)) {
+            return $this->objects[$method];
+        }
+
+        $key = reset($args);
+
+        return $this->objects[$method][$key];
     }
 
-    protected function orderItems($key)
-    {
-        return $this->objects[__FUNCTION__][$key];
-    }
-
-    protected function carts($key)
-    {
-        return $this->objects[__FUNCTION__][$key];
-    }
-
-    protected function creditCards($key)
-    {
-        return $this->objects[__FUNCTION__][$key];
-    }
-
-    protected function paymentMethods($key)
-    {
-        return $this->objects[__FUNCTION__][$key];
-    }
-
-    protected function shippingMethods($key)
-    {
-        return $this->objects[__FUNCTION__][$key];
-    }
-
-    protected function optionTypes($key)
-    {
-        return $this->objects[__FUNCTION__][$key];
-    }
-
-    private function fixturesSetUp()
+    protected function fixturesSetUp()
     {
         $loader = new Loader();
         $this->objects['variants'] = $loader->load(__DIR__.'/../fixtures/variants.yml');

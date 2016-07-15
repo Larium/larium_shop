@@ -28,11 +28,17 @@ use Larium\Shop\Payment\PaymentStateReflection;
  *
  * @uses OrderInterface
  * @uses StatefulInterface
- * @uses StateMachineAwareInterface
  * @author Andreas Kollaros <andreas@larium.net>
  */
 class Order implements OrderInterface, StatefulInterface
 {
+    /**
+     * The unique order number
+     *
+     * @var string
+     */
+    private $number;
+
     /**
      * Order items.
      *
@@ -122,6 +128,12 @@ class Order implements OrderInterface, StatefulInterface
         $this->items = new Collection();
         $this->shipments = new Collection();
         $this->adjustments = new Collection();
+        $this->generateOrderNumber();
+    }
+
+    public function getNumber()
+    {
+        return $this->number;
     }
 
     /**
@@ -499,5 +511,18 @@ class Order implements OrderInterface, StatefulInterface
         $state_machine->initialize();
 
         $this->state_machine = $state_machine;
+    }
+
+    private function generateOrderNumber()
+    {
+        $this->number = $this->getUniqNumber();
+    }
+
+    private function getUniqNumber()
+    {
+        $u = uniqid(null, true);
+        $v = strpos($u, '.');
+
+        return substr($u, $v + 1);
     }
 }
