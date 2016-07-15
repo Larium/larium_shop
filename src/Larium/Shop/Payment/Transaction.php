@@ -33,7 +33,7 @@ class Transaction implements TransactionInterface
     /**
      * amount
      *
-     * @var Money\Money
+     * @var int
      */
     protected $amount;
 

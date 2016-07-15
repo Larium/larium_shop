@@ -12,8 +12,6 @@
  */
 namespace Larium\Shop\Calculator;
 
-use Money\Money;
-
 /**
  * Allows compute fees based on rules in order items.
  *
@@ -54,6 +52,6 @@ class FlexiRate extends AbstractCalculator
             }
         }
 
-        return Money::EUR($sum);
+        return $sum;
     }
 }

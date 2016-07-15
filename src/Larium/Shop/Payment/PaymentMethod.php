@@ -12,8 +12,6 @@
  */
 namespace Larium\Shop\Payment;
 
-use Money\Money;
-
 /**
  * Implementation of PaymentMethodInterface
  *
@@ -52,7 +50,7 @@ class PaymentMethod implements PaymentMethodInterface
             'source_class' => '',
             'provider_class' => '',
             'title' => '',
-            'cost' => Money::EUR(0),
+            'cost' => 0,
             'id' => null,
             'description' => ''
         );
@@ -62,9 +60,7 @@ class PaymentMethod implements PaymentMethodInterface
         $this->source_class = $options['source_class'];
         $this->provider_class = $options['provider_class'];
         $this->title = $options['title'];
-        $this->cost = is_numeric($options['cost'])
-            ? Money::EUR($options['cost']*100)
-            : $options['cost'];
+        $this->cost = $options['cost'];
         $this->id = $options['id'];
         $this->description = $options['description'];
     }
@@ -132,7 +128,7 @@ class PaymentMethod implements PaymentMethodInterface
      */
     public function setCost($cost)
     {
-        $this->cost = Money::EUR($cost);
+        $this->cost = $cost;
     }
 
     /**

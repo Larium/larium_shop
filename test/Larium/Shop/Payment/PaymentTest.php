@@ -4,7 +4,6 @@
 
 namespace Larium\Shop\Payment;
 
-use Money\Money;
 use Larium\FixtureHelper;
 use Larium\Shop\Sale\Order;
 use Finite\Loader\ArrayLoader;
@@ -30,7 +29,7 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     {
         $method = $this->paymentMethods('creditcard_payment_method');
         $method->setSourceOptions($this->getValidCreditCardOptions());
-        $payment = new Payment(new Order(), $method, Money::EUR(100));
+        $payment = new Payment(new Order(), $method, 100);
         $sm = $this->initializeStateMachine($payment);
         $sm->apply('purchase');
 
@@ -41,12 +40,12 @@ class PaymentTest extends \PHPUnit_Framework_TestCase
     {
         $method = $this->paymentMethods('cash_on_delivery_payment_method');
 
-        $payment = new Payment(new Order(), $method, Money::EUR(100));
+        $payment = new Payment(new Order(), $method, 100);
         $sm = $this->initializeStateMachine($payment);
         $sm->apply('purchase');
 
         $this->assertEquals('paid', $payment->getState());
-        $this->assertEquals(Money::EUR(100), $payment->getAmount());
+        $this->assertEquals(100, $payment->getAmount());
     }
 
     private function initializeStateMachine($payment)

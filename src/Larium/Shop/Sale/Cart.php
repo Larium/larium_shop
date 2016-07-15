@@ -20,7 +20,6 @@ use Larium\Shop\Payment\Payment;
 use Larium\Shop\Payment\PaymentMethodInterface;
 use Larium\Shop\Shipment\ShippingMethodInterface;
 use Larium\Shop\Shipment\Shipment;
-use Money\Money;
 
 /**
  * Cart
@@ -146,7 +145,7 @@ class Cart implements CartInterface
      */
     public function setPaymentMethod(
         PaymentMethodInterface $method,
-        Money $amount = null
+        $amount = null
     ) {
         $payment = new Payment(
             $this->getOrder(),

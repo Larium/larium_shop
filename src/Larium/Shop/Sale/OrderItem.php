@@ -12,6 +12,8 @@
  */
 namespace Larium\Shop\Sale;
 
+use Money\Money;
+
 /**
  * OrderItem
  *
@@ -105,7 +107,7 @@ class OrderItem implements OrderItemInterface
 
     public function calculateTotalPrice()
     {
-        $this->total_price = $this->getUnitPrice()->multiply($this->getQuantity());
+        $this->total_price = $this->getUnitPrice() * $this->getQuantity();
     }
 
     /**

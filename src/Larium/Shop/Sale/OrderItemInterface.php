@@ -25,7 +25,7 @@ interface OrderItemInterface
      * Total price of item will be calculated from this price and the
      * quantity.
      *
-     * @param number $price
+     * @param int $price
      * @return void
      */
     public function setUnitPrice($price);
@@ -74,9 +74,9 @@ interface OrderItemInterface
     public function setDescription($description);
 
     /**
-     * Returns the unique identifier for thjis object.
+     * Returns the unique identifier for this object.
      *
-     * @return void
+     * @return string
      */
     public function getIdentifier();
 }

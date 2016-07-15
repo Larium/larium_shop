@@ -4,7 +4,6 @@
 
 namespace Larium\Shop\Sale;
 
-use Money\Money;
 use Larium\FixtureHelper;
 
 class OrderProcessTest extends \PHPUnit_Framework_TestCase
@@ -44,7 +43,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $cart->getTotalQuantity());
 
         // And the order should have 21 total amount
-        $this->assertEquals(2100, $cart->getOrder()->getTotalAmount()->getAmount());
+        $this->assertEquals(2100, $cart->getOrder()->getTotalAmount());
 
     }
 
@@ -129,7 +128,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('1', $method->getPaymentSource()->getNumber());
 
         // And order should have zero balance.
-        $this->assertEquals(0, $cart->getOrder()->getBalance()->getAmount());
+        $this->assertEquals(0, $cart->getOrder()->getBalance());
     }
 
     public function testOrderPaymentWithCashOnDelivery()
@@ -160,7 +159,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('paid', $payment->getState());
 
         // And order should have zero balance.
-        $this->assertEquals(0, $cart->getOrder()->getBalance()->getAmount());
+        $this->assertEquals(0, $cart->getOrder()->getBalance());
     }
 
     public function testRedirectPayment()
@@ -222,10 +221,10 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $response = $cart->processTo('pay');
 
         // Then order balance should be zero.
-        $this->assertEquals(0, $cart->getOrder()->getBalance()->getAmount());
+        $this->assertEquals(0, $cart->getOrder()->getBalance());
 
         // And order shipping cost should be equal to shipping method cost
-        $this->assertEquals($shipping_method->calculateCost($cart->getOrder())->getAmount(), $cart->getOrder()->getShippingCost()->getAmount());
+        $this->assertEquals($shipping_method->calculateCost($cart->getOrder()), $cart->getOrder()->getShippingCost());
     }
 
     public function testRemovePaymentWillRemoveAdjustmentToo()
@@ -294,7 +293,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         $payment_method->setSourceOptions($this->getValidCreditCardOptions());
 
         // Given i create a partial payment for the order.
-        $payment = $cart->setPaymentMethod($payment_method, $total_amount->subtract(Money::EUR(100)));
+        $payment = $cart->setPaymentMethod($payment_method, $total_amount - 100);
 
         // When i process cart to pay state.
         $response = $cart->processTo('pay');
@@ -302,7 +301,7 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         // Then order state should be still to checkout.
         $this->assertEquals(Order::PARTIAL_PAID, $cart->getOrder()->getState());
 
-        $this->assertEquals(100, $cart->getOrder()->getBalance()->getAmount());
+        $this->assertEquals(100, $cart->getOrder()->getBalance());
 
         // Given i add a new payment with the rest of amount
         $payment_method = $this->paymentMethods('creditcard_payment_method');

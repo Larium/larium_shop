@@ -21,6 +21,6 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $unit_price = 1000;
         $product->setUnitPrice($unit_price);
 
-        $this->assertEquals($unit_price, $product->getDefaultVariant()->getUnitPrice()->getAmount());
+        $this->assertEquals($unit_price, $product->getDefaultVariant()->getUnitPrice());
     }
 }

@@ -19,7 +19,6 @@ use Larium\Shop\Sale\OrderInterface;
 use Larium\Shop\Common\Collection;
 use Larium\Shop\Payment\Provider\RedirectResponse;
 use Larium\Shop\Sale\Adjustment;
-use Money\Money;
 use InvalidArgumentException;
 
 /**
@@ -76,7 +75,7 @@ class Payment implements PaymentInterface, StatefulInterface
     public function __construct(
         OrderInterface $order,
         PaymentMethodInterface $paymentMethod,
-        Money $amount = null
+        $amount = null
     ) {
 
         $this->generateIdentifier();
@@ -263,7 +262,7 @@ class Payment implements PaymentInterface, StatefulInterface
 
         $cost = $this->getPaymentMethod()->getCost();
 
-        if ($cost->getAmount()) {
+        if ($cost) {
             $adj = new Adjustment();
             $adj->setAmount($cost);
             $adj->setLabel($this->getIdentifier());

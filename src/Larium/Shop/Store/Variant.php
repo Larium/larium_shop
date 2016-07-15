@@ -12,7 +12,6 @@
  */
 namespace Larium\Shop\Store;
 
-use Money\Money;
 use Larium\Shop\Common\Collection;
 use Larium\Shop\Sale\OrderableInterface;
 use Larium\Shop\Common\CollectionInterface;
@@ -35,7 +34,7 @@ class Variant implements OrderableInterface
     /**
      * unit_price
      *
-     * @var Money\Money
+     * @var int
      */
     protected $unit_price;
 
@@ -49,7 +48,7 @@ class Variant implements OrderableInterface
     /**
      * is_default
      *
-     * @var boolean
+     * @var bool
      */
     protected $is_default;
 
@@ -103,9 +102,9 @@ class Variant implements OrderableInterface
     }
 
     /**
-     * Sets if the current variant is the default or not.
+     * Sets the current variant as default.
      *
-     * @param boolean $value
+     * @param bool $value
      * @return void
      */
     public function setDefault($value = true)
@@ -160,7 +159,7 @@ class Variant implements OrderableInterface
      */
     public function setUnitPrice($unit_price)
     {
-        $this->unit_price = Money::EUR($unit_price);
+        $this->unit_price = $unit_price;
     }
 
     /**

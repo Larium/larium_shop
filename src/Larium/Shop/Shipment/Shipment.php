@@ -12,9 +12,10 @@
  */
 namespace Larium\Shop\Shipment;
 
+use Larium\Shop\Sale\Adjustment;
+use Larium\Shop\Common\Collection;
 use Larium\Shop\Sale\OrderInterface;
 use Larium\Shop\Sale\OrderItemInterface;
-use Larium\Shop\Common\Collection;
 
 /**
  * Shipment
@@ -45,9 +46,9 @@ class Shipment implements ShipmentInterface
     protected $order_items;
 
     /**
-     * @var Money\Money
+     * @var int
      */
-    protected $cost;
+    protected $cost = 0;
 
     /**
      * @var string
@@ -105,8 +106,8 @@ class Shipment implements ShipmentInterface
     {
         $this->order = $order;
         $this->cost = $this->getShippingMethod()->calculateCost($order);
-        if ($this->cost->getAmount()) {
-            $adj = new \Larium\Shop\Sale\Adjustment();
+        if ($this->cost) {
+            $adj = new Adjustment();
             $adj->setAmount($this->cost);
             $adj->setLabel($this->getIdentifier());
 

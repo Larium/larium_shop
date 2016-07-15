@@ -4,7 +4,6 @@
 
 namespace Larium\Shop\Calculator;
 
-use Money\Money;
 use Larium\Stub\Order;
 
 class CalculatorTest extends \PHPUnit_Framework_TestCase
@@ -14,10 +13,10 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
         $options = array('amount' => 400);
         $calc = new FlatRate($options);
 
-        $opt = array('item_total' => Money::EUR(4042));
+        $opt = array('item_total' => 4042);
         $order = new Order($opt);
 
-        $this->assertEquals($options['amount'], $calc->compute($order)->getAmount());
+        $this->assertEquals($options['amount'], $calc->compute($order));
     }
 
     public function testFlatPercentItemTotal()
@@ -25,10 +24,10 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
         $options = array('flat_percent' => 10);
         $calc = new FlatPercentItemTotal($options);
 
-        $opt = array('item_total' => Money::EUR(4042));
+        $opt = array('item_total' => 4042);
         $order = new Order($opt);
 
-        $this->assertEquals(404, $calc->compute($order)->getAmount());
+        $this->assertEquals(404, $calc->compute($order));
     }
 
     /**
@@ -46,7 +45,7 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
         $opt = array('item_count' => 10);
         $order = new Order($opt);
 
-        $this->assertEquals($expects, $calc->compute($order)->getAmount());
+        $this->assertEquals($expects, $calc->compute($order));
     }
 
     public function flexiRateProvider()
