@@ -1,0 +1,5 @@
+# vim: set expandtab tabstop=2 shiftwidth=2 softtabstop=2:
+Larium\Shop\Sale\Order:
+  order_with_one_item:
+    number: '1234-ABCD'
+    setItems: [[@order_item_1]]

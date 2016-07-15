@@ -4,6 +4,7 @@
 
 namespace Larium\Shop\Sale\Command;
 
+use Larium\Shop\Sale\Cart;
 use Larium\Shop\Sale\Repository\OrderRepositoryInterface;
 
 class CartRemoveItemHandler
@@ -17,6 +18,34 @@ class CartRemoveItemHandler
 
     public function handle(CartRemoveItemCommand $command)
     {
+        if (false === $cart = $this->getCart($command->orderNumber)) {
+            throw new \DomainException(
+                sprintf('Could not find Cart with number `%s`', $command->orderNumber)
+            );
+        }
 
+        $identifier = $command->identifier;
+        $item = $cart->getItems()->select(function ($i) use ($identifier) {
+            return $i->getIdentifier() == $identifier;
+        });
+
+        if (false === $item) {
+            throw new \DomainException(
+                sprintf('Order item `%s` does not exist.', $identifier)
+            );
+        }
+
+        $cart->removeItem($item);
+
+        return $cart;
+    }
+
+    private function getCart($orderNumber)
+    {
+        if ($order = $this->orderRepository->getOneByNumber($orderNumber)) {
+            return new Cart($order);
+        }
+
+        return false;
     }
 }

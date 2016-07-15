@@ -61,6 +61,7 @@ trait FixtureHelper
         $this->objects['paymentMethods'] = $loader->load(__DIR__.'/../fixtures/payment_methods.yml');
         $this->objects['shippingMethods'] = $loader->load(__DIR__.'/../fixtures/shipping_methods.yml');
         $this->objects['optionTypes'] = $loader->load(__DIR__.'/../fixtures/option_types.yml');
+        $this->objects['orders'] = $loader->load(__DIR__.'/../fixtures/orders.yml');
 
     }
     protected function tearDown()

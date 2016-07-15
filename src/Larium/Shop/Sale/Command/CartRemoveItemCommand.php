@@ -10,11 +10,8 @@ class CartRemoveItemCommand
 
     public $identifier;
 
-    public $quantity;
-
-    public function __construct($identifier, $quantity, $orderNumber)
+    public function __construct($identifier, $orderNumber)
     {
-        $this->quantity = $quantity;
         $this->identifier = $identifier;
         $this->orderNumber = $orderNumber;
     }

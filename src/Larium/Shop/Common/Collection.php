@@ -75,7 +75,21 @@ class Collection extends ArrayIterator implements CollectionInterface
     {
         $this->validateElement($value);
         parent::append($value);
+
         return true;
+    }
+
+    /**
+     * Selects th first element that satisfies callback and return it.
+     *
+     * @param Closure $c
+     * @return mixed|false
+     */
+    public function select(Closure $c)
+    {
+        $key = $this->applyCallbackFilter($c);
+
+        return $this->offsetGet($key);
     }
 
     /**
