@@ -82,7 +82,6 @@ class Payment implements PaymentInterface, StatefulInterface
         $this->order = $order;
         $this->amount = $amount;
         $this->payment_method = $paymentMethod;
-        $this->createPaymentMethodAdjustment();
         $order->setPayment($this);
 
         $this->transactions = new Collection();
@@ -242,34 +241,6 @@ class Payment implements PaymentInterface, StatefulInterface
         }
 
         return $this->amount ?: $this->getOrder()->getTotalAmount();
-    }
-
-    /**
-     * Creates an adjustment for payment cost if needed and calculates the
-     * amount for this payment.
-     *
-     * If Payment has already an amount then this amount will be used else
-     * the total amount of Order will be used.
-     *
-     * @access protected
-     * @return void
-     */
-    protected function createPaymentMethodAdjustment()
-    {
-        if (null === $this->getPaymentMethod()) {
-            return;
-        }
-
-        $cost = $this->getPaymentMethod()->getCost();
-
-        if ($cost) {
-            $adj = new Adjustment();
-            $adj->setAmount($cost);
-            $adj->setLabel($this->getIdentifier());
-            $this->getOrder()->addAdjustment($adj);
-
-            $this->getOrder()->calculateTotalAmount();
-        }
     }
 
     /**

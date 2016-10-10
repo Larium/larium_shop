@@ -327,6 +327,15 @@ class Order implements OrderInterface, StatefulInterface
     {
         $this->payment = $payment;
 
+        if ($cost = $payment->getPaymentMethod()->getCost()) {
+            $adj = new Adjustment();
+            $adj->setAmount($cost);
+            $adj->setLabel($payment->getIdentifier());
+            $this->addAdjustment($adj);
+
+            $this->calculateTotalAmount();
+        }
+
         $this->calculateTotalPaymentAmount();
     }
 
