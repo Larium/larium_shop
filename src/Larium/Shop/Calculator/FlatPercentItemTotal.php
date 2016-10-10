@@ -29,7 +29,7 @@ class FlatPercentItemTotal extends AbstractCalculator
      */
     public function compute($object = null)
     {
-        $item_total = $object->getItemsTotal();
+        $item_total = $object->getItemsTotalAmount();
         $value = $item_total * ($this->flat_percent / 100);
 
         $value = round($value);

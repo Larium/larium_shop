@@ -207,7 +207,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * {@inheritdoc}
      */
-    public function calculateItemsTotal()
+    public function calculateItemsTotalAmount()
     {
         $total = 0;
         foreach ($this->getItems() as $item) {
@@ -220,7 +220,7 @@ class Order implements OrderInterface, StatefulInterface
     /**
      * {@inheritdoc}
      */
-    public function getItemsTotal()
+    public function getItemsTotalAmount()
     {
         return $this->items_total;
     }
@@ -231,7 +231,7 @@ class Order implements OrderInterface, StatefulInterface
     public function calculateTotalAmount()
     {
         $total = 0;
-        $this->calculateItemsTotal();
+        $this->calculateItemsTotalAmount();
 
         $this->calculateAdjustmentsTotal();
 

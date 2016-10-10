@@ -44,7 +44,6 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
 
         // And the order should have 21 total amount
         $this->assertEquals(2100, $cart->getOrder()->getTotalAmount());
-
     }
 
     public function testCartAddSameVariant()

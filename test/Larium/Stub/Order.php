@@ -13,7 +13,7 @@ class Order
         $this->options = $options;
     }
 
-    public function getItemsTotal()
+    public function getItemsTotalAmount()
     {
         return $this->options['item_total'];
     }

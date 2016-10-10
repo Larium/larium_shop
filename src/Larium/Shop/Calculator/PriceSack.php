@@ -20,7 +20,6 @@ namespace Larium\Shop\Calculator;
  */
 class PriceSack extends AbstractCalculator
 {
-
     /**
      * The minimal amount of money needed to apply the discount amount.
      *
@@ -44,7 +43,7 @@ class PriceSack extends AbstractCalculator
 
     public function compute($object = null)
     {
-        $item_amount = $object->getItemsTotal();
+        $item_amount = $object->getItemsTotalAmount();
 
         if ($item_amount < $this->minimal_amount) {
             return $this->normal_amount;
