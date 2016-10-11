@@ -2,7 +2,7 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-namespace Larium\Shop\Store;
+namespace Larium\Shop\Catalog;
 
 use Larium\FixtureHelper;
 use Larium\Shop\Common\Collection;

@@ -1,5 +1,5 @@
 # vim: set expandtab tabstop=2 shiftwidth=2 softtabstop=2:
-Larium\Shop\Store\Variant:
+Larium\Shop\Catalog\Variant:
   product_1_variant_1:
     sku: 'PRD-01-0001'
     setUnitPrice: [1200]

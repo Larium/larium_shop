@@ -10,7 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Larium\Shop\Store;
+namespace Larium\Shop\Catalog;
 
 use Larium\Shop\Common\Collection;
 use Larium\Shop\Sale\OrderableInterface;
@@ -82,12 +82,12 @@ class Variant implements OrderableInterface
     {
         $this->option_values = new Collection(
             array(),
-            'Larium\\Shop\\Store\\OptionValue'
+            'Larium\\Shop\\Catalog\\OptionValue'
         );
 
         $this->option_types = new Collection(
             array(),
-            'Larium\\Shop\\Store\\OptionType'
+            'Larium\\Shop\\Catalog\\OptionType'
         );
     }
 

@@ -1,5 +1,5 @@
 # vim: set expandtab tabstop=2 shiftwidth=2 softtabstop=2:
-Larium\Shop\Store\OptionType:
+Larium\Shop\Catalog\OptionType:
   size_option_type:
     name: 'size'
     title: 'Size'

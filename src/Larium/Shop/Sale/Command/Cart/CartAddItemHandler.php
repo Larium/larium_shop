@@ -6,7 +6,7 @@ namespace Larium\Shop\Sale\Command\Cart;
 
 use Larium\Shop\Sale\Cart;
 use Larium\Shop\Sale\Repository\OrderRepositoryInterface;
-use Larium\Shop\Store\Repository\VariantRepositoryInterface;
+use Larium\Shop\Catalog\Repository\VariantRepositoryInterface;
 
 class CartAddItemHandler
 {

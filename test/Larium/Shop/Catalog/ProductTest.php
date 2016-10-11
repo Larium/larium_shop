@@ -2,7 +2,7 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-namespace Larium\Shop\Store;
+namespace Larium\Shop\Catalog;
 
 use Larium\FixtureHelper;
 
@@ -16,7 +16,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotNull($product->getDefaultVariant());
 
-        $this->assertInstanceOf('Larium\Shop\Store\Variant', $product->getDefaultVariant());
+        $this->assertInstanceOf('Larium\Shop\Catalog\Variant', $product->getDefaultVariant());
 
         $unit_price = 1000;
         $product->setUnitPrice($unit_price);

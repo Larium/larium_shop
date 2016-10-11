@@ -5,7 +5,7 @@
 namespace Larium\Shop\Sale\Command\Cart;
 
 use Larium\Shop\Sale\Repository\InMemoryOrderRepository;
-use Larium\Shop\Store\Repository\InMemoryVariantRepository;
+use Larium\Shop\Catalog\Repository\InMemoryVariantRepository;
 
 class CartAddItemCommandTest extends \PHPUnit_Framework_TestCase
 {

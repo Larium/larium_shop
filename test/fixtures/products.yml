@@ -1,5 +1,5 @@
 # vim: set expandtab tabstop=2 shiftwidth=2 softtabstop=2:
-Larium\Shop\Store\Product:
+Larium\Shop\Catalog\Product:
   product_1:
     title: 'T-Shirt LongSleeve'
     variants: @product_1_variants

@@ -2,10 +2,10 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-namespace Larium\Shop\Store\Repository;
+namespace Larium\Shop\Catalog\Repository;
 
 use Larium\FixtureHelper;
-use Larium\Shop\Store\Variant;
+use Larium\Shop\Catalog\Variant;
 
 class InMemoryVariantRepository implements VariantRepositoryInterface
 {
