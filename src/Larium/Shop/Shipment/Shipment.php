@@ -16,6 +16,7 @@ use Larium\Shop\Sale\Adjustment;
 use Larium\Shop\Common\Collection;
 use Larium\Shop\Sale\OrderInterface;
 use Larium\Shop\Sale\OrderItemInterface;
+use Larium\Shop\Addressing\AddressInterface;
 
 /**
  * Shipment
@@ -31,7 +32,7 @@ class Shipment implements ShipmentInterface
     protected $order;
 
     /**
-     * @var Larium\Shop\Shipment\Address
+     * @var Larium\Shop\Store\Address
      */
     protected $address;
 

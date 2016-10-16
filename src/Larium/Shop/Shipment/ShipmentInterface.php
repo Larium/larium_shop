@@ -14,6 +14,7 @@ namespace Larium\Shop\Shipment;
 
 use Larium\Shop\Sale\OrderInterface;
 use Larium\Shop\Sale\OrderItemInterface;
+use Larium\Shop\Addressing\AddressInterface;
 
 /**
  * ShipmentInterface

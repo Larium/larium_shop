@@ -10,7 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Larium\Shop\Shipment;
+namespace Larium\Shop\Addressing;
 
 /**
  * Address
@@ -102,7 +102,7 @@ class Address implements AddressInterface
     }
 
     /**
-     * Sets address1.
+     * Sets 1st line address.
      *
      * @param string $address1 the value to set.
      *
@@ -122,7 +122,7 @@ class Address implements AddressInterface
     }
 
     /**
-     * Sets address2.
+     * Sets 2nd line address.
      *
      * @param string $address2 the value to set.
      *
