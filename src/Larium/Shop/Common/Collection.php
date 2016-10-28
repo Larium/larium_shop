@@ -80,7 +80,7 @@ class Collection extends ArrayIterator implements CollectionInterface
     }
 
     /**
-     * Selects th first element that satisfies callback and return it.
+     * Selects the first element that satisfies callback and return it.
      *
      * @param Closure $c
      * @return mixed|false
@@ -88,6 +88,10 @@ class Collection extends ArrayIterator implements CollectionInterface
     public function select(Closure $c)
     {
         $key = $this->applyCallbackFilter($c);
+
+        if (false === $key) {
+            return false;
+        }
 
         return $this->offsetGet($key);
     }
@@ -152,7 +156,8 @@ class Collection extends ArrayIterator implements CollectionInterface
 
     private function applyCallbackFilter(Closure $callback)
     {
-        $elements = array_filter($this->getArrayCopy(), $callback);
+        $copy = $this->getArrayCopy();
+        $elements = array_filter($copy, $callback);
 
         $keys = array_keys($elements);
 
