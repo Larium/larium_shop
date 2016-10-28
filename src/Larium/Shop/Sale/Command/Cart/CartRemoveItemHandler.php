@@ -19,7 +19,7 @@ class CartRemoveItemHandler
     public function handle(CartRemoveItemCommand $command)
     {
         if (false === $cart = $this->getCart($command->orderNumber)) {
-            throw new \DomainException(
+            throw new \InvalidArgumentException(
                 sprintf('Could not find Cart with number `%s`', $command->orderNumber)
             );
         }
@@ -30,7 +30,7 @@ class CartRemoveItemHandler
         });
 
         if (false === $item) {
-            throw new \DomainException(
+            throw new \InvalidArgumentException(
                 sprintf('Order item `%s` does not exist.', $identifier)
             );
         }

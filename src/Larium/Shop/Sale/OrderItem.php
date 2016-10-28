@@ -180,7 +180,7 @@ class OrderItem implements OrderItemInterface
     protected function generateIdentifier()
     {
         if (null === $this->getOrderable()) {
-            throw new \Exception("You must add an Orderable object before adding this item in Order");
+            throw new \DomainException("You must add an Orderable object before adding this item in Order");
         }
 
         $this->identifier = $this->getOrderable()->getSku();
