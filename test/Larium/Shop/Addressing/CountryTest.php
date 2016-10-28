@@ -11,9 +11,9 @@ class CountryTest extends \PHPUnit_Framework_TestCase
         $country = new Country(
             'Greece',
             null,
-            'GRE'
+            'GRC'
         );
 
-        print_r($country);
+        $this->assertEquals('Greece', $country->getName());
     }
 }

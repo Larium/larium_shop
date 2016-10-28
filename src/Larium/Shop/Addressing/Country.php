@@ -25,6 +25,26 @@ final class Country
         $this->find($args);
     }
 
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getAlpha2()
+    {
+        return $this->alpha2;
+    }
+
+    public function getAlpha3()
+    {
+        return $this->alpha3;
+    }
+
+    public function getNumeric()
+    {
+        return $this->numeric;
+    }
+
     private function find($args)
     {
         $item = array_filter(self::$COUNTRIES, function ($c) use ($args) {
