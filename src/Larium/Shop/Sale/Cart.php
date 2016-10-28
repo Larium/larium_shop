@@ -212,7 +212,6 @@ class Cart implements CartInterface
         $loader->load($this->state_machine);
 
         $this->state_machine->initialize();
-
     }
 
     /**
