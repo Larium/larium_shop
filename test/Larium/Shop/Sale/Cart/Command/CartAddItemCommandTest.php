@@ -2,7 +2,7 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-namespace Larium\Shop\Sale\Command\Cart;
+namespace Larium\Shop\Sale\Cart\Command;
 
 use Larium\Shop\Sale\Repository\InMemoryOrderRepository;
 use Larium\Shop\Catalog\Repository\InMemoryVariantRepository;

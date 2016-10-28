@@ -2,7 +2,7 @@
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
-namespace Larium\Shop\Sale\Command\Cart;
+namespace Larium\Shop\Sale\Cart\Command;
 
 class CartRemoveItemCommand
 {
