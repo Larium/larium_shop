@@ -313,4 +313,15 @@ class OrderProcessTest extends \PHPUnit_Framework_TestCase
         // Then order state should be paid.
         $this->assertEquals(Order::PAID, $cart->getOrder()->getState());
     }
+
+    /**
+     * @expectedException DomainException
+     */
+    public function testOrderShouldNotBeEmpty()
+    {
+        // Given i initialize a Cart object.
+        $cart = new Cart();
+
+        $cart->processTo(Order::CHECKOUT);
+    }
 }
