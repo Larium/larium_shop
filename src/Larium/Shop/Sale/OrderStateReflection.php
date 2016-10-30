@@ -5,9 +5,10 @@
 namespace Larium\Shop\Sale;
 
 use Finite\State\State;
-use Finite\StatefulInterface;
-use Finite\Event\TransitionEvent;
 use Larium\Shop\Sale\Order;
+use Larium\Shop\Sale\Cart\Listener\PayOrderListener;
+use Larium\Shop\Sale\Cart\Listener\CheckCartIsEmptyListener;
+use Larium\Shop\Sale\Cart\Listener\CheckOrderNeedsPaymentListener;
 
 class OrderStateReflection
 {
@@ -44,27 +45,23 @@ class OrderStateReflection
     public function getCallbacks()
     {
         return [
+            'before' => [
+                [
+                    'from' => Order::CART,
+                    'to'   => Order::CHECKOUT,
+                    'do'   => new CheckCartIsEmptyListener(),
+                ]
+            ],
             'after' => [
                 [
                     'from' => [Order::CHECKOUT, Order::PARTIAL_PAID],
                     'to'   => Order::PAID,
-                    'do'   => function (StatefulInterface $order, TransitionEvent $e) {
-                        $order->processPayment();
-                    }
+                    'do'   => new PayOrderListener(),
                 ],
                 [
                     'from' => [Order::CHECKOUT, Order::PARTIAL_PAID],
                     'to'   => Order::PAID,
-                    'do'   => function (StatefulInterface $order, TransitionEvent $e) {
-                        /**
-                         * Checks the balance of Order after a `pay` transition.
-                         * If balance is greater than zero then rollback to `checkout` state to
-                         * fullfil the payment of the Order.
-                         */
-                        if ($order->needsPayment()) {
-                            $e->getStateMachine()->apply('partial_pay');
-                        }
-                    }
+                    'do'   => new CheckOrderNeedsPaymentListener(),
                 ]
             ]
         ];
