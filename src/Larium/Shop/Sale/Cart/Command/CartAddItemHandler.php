@@ -5,10 +5,12 @@
 namespace Larium\Shop\Sale\Cart\Command;
 
 use Larium\Shop\Sale\Cart;
+use Larium\Shop\Core\Command\CommandHandler;
+use Larium\Shop\Sale\Cart\Event\ItemAddedEvent;
 use Larium\Shop\Sale\Repository\OrderRepositoryInterface;
 use Larium\Shop\Catalog\Repository\VariantRepositoryInterface;
 
-class CartAddItemHandler
+class CartAddItemHandler extends CommandHandler
 {
     private $variantRepository;
 
@@ -24,10 +26,17 @@ class CartAddItemHandler
 
     public function handle(CartAddItemCommand $command)
     {
-        $orderable = $this->variantRepository->getOneBySku($command->sku);
+        if (null == $orderable = $this->variantRepository->getOneBySku($command->sku)) {
+            throw new \InvalidArgumentException(
+                sprintf('Could not find product with id `%s`', $command->sku)
+            );
+        }
 
         $cart = $this->getCart($command->orderNumber);
-        $cart->addItem($orderable, $command->quantity);
+        $orderItem = $cart->addItem($orderable, $command->quantity);
+
+        $event = new ItemAddedEvent($cart, $orderItem);
+        $this->getEventProvider()->raise($event);
 
         return $cart;
     }
