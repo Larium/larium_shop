@@ -5,9 +5,11 @@
 namespace Larium\Shop\Sale\Cart\Command;
 
 use Larium\Shop\Sale\Cart;
+use Larium\Shop\Core\Command\CommandHandler;
+use Larium\Shop\Sale\Cart\Event\ItemRemovedEvent;
 use Larium\Shop\Sale\Repository\OrderRepositoryInterface;
 
-class CartRemoveItemHandler
+class CartRemoveItemHandler extends CommandHandler
 {
     private $orderRepository;
 
@@ -36,6 +38,9 @@ class CartRemoveItemHandler
         }
 
         $cart->removeItem($item);
+
+        $event = new ItemRemovedEvent($cart, $item);
+        $this->getEventProvider()->raise($event);
 
         return $cart;
     }

@@ -4,6 +4,7 @@
 
 namespace Larium\Shop\Sale\Cart\Command;
 
+use Larium\Shop\Core\Event\EventProvider;
 use Larium\Shop\Sale\Repository\InMemoryOrderRepository;
 
 class CartRemoveItemCommandTest extends \PHPUnit_Framework_TestCase
@@ -14,6 +15,8 @@ class CartRemoveItemCommandTest extends \PHPUnit_Framework_TestCase
     const FAILED_VARIANT_ID = 'PRD-01-XXXX';
     const FAILED_ORDER_NUM = '1234-XXXX';
 
+    private $eventProvider;
+
     public function testSuccessRemoveItem()
     {
         $identifier = self::SUCCESS_VARIANT_ID;
@@ -21,12 +24,19 @@ class CartRemoveItemCommandTest extends \PHPUnit_Framework_TestCase
 
         $command = new CartRemoveItemCommand($identifier, $orderNumber);
 
-        $orderRepository = new InMemoryOrderRepository();
-        $commandHandler = new CartRemoveItemHandler($orderRepository);
+        $commandHandler = $this->createHandler();
 
         $cart = $commandHandler->handle($command);
 
         $this->assertEquals(0, $cart->getItems()->count());
+
+        $events = $this->getEventProvider()->releaseEvents();
+
+        $this->assertNotEmpty($events);
+        $this->assertInstanceOf(
+            'Larium\Shop\Sale\Cart\Event\ItemRemovedEvent',
+            reset($events)
+        );
     }
 
     /**
@@ -39,8 +49,7 @@ class CartRemoveItemCommandTest extends \PHPUnit_Framework_TestCase
 
         $command = new CartRemoveItemCommand($identifier, $orderNumber);
 
-        $orderRepository = new InMemoryOrderRepository();
-        $commandHandler = new CartRemoveItemHandler($orderRepository);
+        $commandHandler = $this->createHandler();
 
         $cart = $commandHandler->handle($command);
     }
@@ -55,9 +64,24 @@ class CartRemoveItemCommandTest extends \PHPUnit_Framework_TestCase
 
         $command = new CartRemoveItemCommand($identifier, $orderNumber);
 
-        $orderRepository = new InMemoryOrderRepository();
-        $commandHandler = new CartRemoveItemHandler($orderRepository);
+        $commandHandler = $this->createHandler();
 
         $cart = $commandHandler->handle($command);
+    }
+
+    private function createHandler()
+    {
+        $orderRepository = new InMemoryOrderRepository();
+
+        $handler = new CartRemoveItemHandler($orderRepository);
+        $handler->setEventProvider($this->getEventProvider());
+
+        return $handler;
+    }
+
+    private function getEventProvider()
+    {
+        return $this->eventProvider
+            ?: $this->eventProvider = new EventProvider();
     }
 }
